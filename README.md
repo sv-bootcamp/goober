@@ -10,3 +10,5 @@ cp config/local.example.json config/local.json
 npm run watch
 # Running Tests
 npm run tests
+# Linting (Code Analysis)
+npm run lint
