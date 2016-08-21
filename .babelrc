@@ -1,0 +1,30 @@
+{
+  "presets": ["es2015", "react", "stage-0"],
+  "plugins": [
+    "transform-object-assign",
+  ],
+  "env": {
+    "hot": {
+      "plugins": [
+        ["react-transform", {
+          "transforms": [{
+            "transform": "livereactload/babel-transform",
+            "imports": ["react"]
+          }]
+        }], ["instrument-istanbul", {
+          "ignore": "src/test/"
+        }]
+      ]
+    },
+    "cover": {
+      "plugins": [
+        ["instrument-istanbul", {
+          "ignore": "src/test/"
+        }]
+      ]
+    }
+  },
+  "ignore": [
+    "*.es5.js"
+  ]
+}
