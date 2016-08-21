@@ -4,4 +4,4 @@ node_js:
 before_script:
   - npm install
   - echo '{}' > config/local.json
-script: gulp test
+script: npm test
