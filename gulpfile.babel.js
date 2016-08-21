@@ -87,6 +87,15 @@ gulp.task("watch", ["build"], () => {
   })
 });
 
+gulp.task("server", ["build"], () => {
+  nodemon({
+    script: 'server.js',
+    watch: false,
+    env: {'NODE_ENV': 'production'}
+  })
+});
+
+
 const compileClientJS = (entries, destName, destDir) =>
   browserify({
     entries: entries

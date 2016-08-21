@@ -1,9 +1,9 @@
 {
   "name": "Example Project",
-  "port": 8080,
+  "port": 5000,
   "fb": {
     "version": "v2.7",
-    "appId": "1219511361412665",
+    "appId": "1221904451173356",
     "appSecret": ""
   }
 }

@@ -20,7 +20,7 @@ class Index extends Component {
       return (
         <div>
           <FacebookLogin
-            appId={Config.fb.appId}
+            appId={process.env.FB_APP_ID || Config.fb.appId}
             autoLoad={true}
             fields="name"
             callback={onFacebookLoad}

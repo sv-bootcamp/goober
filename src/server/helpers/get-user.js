@@ -5,7 +5,7 @@ import Config from '../../shared/config';
 
 FB.options({
   version: Config.fb.version,
-  appId: Config.fb.appId,
+  appId:  process.env.FB_APP_ID || Config.fb.appId,
   appSecret: process.env.FB_APP_SECRET || Config.fb.appSecret
 });
 
