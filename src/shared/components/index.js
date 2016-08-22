@@ -1,7 +1,7 @@
+import config from 'config';
 import FacebookLogin from 'react-facebook-login';
 import moment from 'moment';
 import React, {Component} from 'react';
-import Config from '../config';
 
 class Index extends Component {
   render() {
@@ -20,7 +20,7 @@ class Index extends Component {
       return (
         <div>
           <FacebookLogin
-            appId={process.env.FB_APP_ID || Config.fb.appId}
+            appId={process.env.FB_APP_ID || config.get('Client.fb.appId')}
             autoLoad={true}
             fields="name"
             callback={onFacebookLoad}

@@ -1,12 +1,14 @@
+import config from 'config';
 import Cache from 'memory-cache';
 import {FB} from 'fb';
 import moment from 'moment';
-import Config from '../../shared/config';
+
+const {version, appId, appSecret} = config;
 
 FB.options({
-  version: Config.fb.version,
-  appId:  process.env.FB_APP_ID || Config.fb.appId,
-  appSecret: process.env.FB_APP_SECRET || Config.fb.appSecret
+  version,
+  appId:  process.env.FB_APP_ID || appId,
+  appSecret: process.env.FB_APP_SECRET || appSecret
 });
 
 const getCount = (id) => {

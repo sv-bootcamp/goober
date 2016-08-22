@@ -1,6 +1,6 @@
 import express from 'express';
 import path from 'path';
-import config from '../shared/config';
+import config from 'config';
 import getUser from './helpers/get-user';
 import routes from './routes';
 
@@ -9,6 +9,7 @@ export default (cb) => {
 
   app.use('/javascripts', express.static(path.join(__dirname, '../../dist-client/javascripts')));
   app.use('/static', express.static(path.join(__dirname, '../../dist-client/static')));
+  app.use('/config', express.static(path.join(__dirname, '../../dist-client/config')));
 
   app.get('/user', (req, res) => {
     const {accessToken} = req.query;

@@ -5,3 +5,5 @@ before_script:
   - npm install
   - echo '{}' > config/local.json
 script: npm test
+notifications:
+  slack: siliconvalleybootcamp:mXUOjkig0w1mLypOLlHWKZ1I

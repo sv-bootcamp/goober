@@ -20,13 +20,19 @@
     "server": "gulp server"
   },
   "dependencies": {
+    "coffee-script": "^1.10.0",
+    "config": "^1.21.0",
+    "cson": "^3.0.2",
     "express": "^4.13.4",
     "fb": "^1.1.1",
     "gulp": "^3.9.1",
+    "hjson": "^2.0.5",
+    "iced-coffee-script": "^108.0.11",
     "memory-cache": "^0.1.6",
     "moment": "^2.14.1",
     "morgan": "~1.7.0",
     "node-simple-logger": "0.0.1",
+    "properties": "^1.2.1",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
     "react-facebook-login": "^3.1.0",
@@ -37,7 +43,10 @@
     "redux-thunk": "^2.1.0",
     "serve-favicon": "~2.3.0",
     "source-map-support": "^0.4.2",
-    "sync-request": "^3.0.1"
+    "sync-request": "^3.0.1",
+    "toml": "^2.3.0",
+    "x2js": "^2.0.1",
+    "yaml": "^0.3.0"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",

@@ -3,7 +3,9 @@ import babel from 'gulp-babel';
 import babelify from 'babelify';
 import browserify from 'browserify';
 import buffer from 'vinyl-buffer';
+import configify from 'config-browserify';
 import changed from 'gulp-changed';
+import envify from 'envify';
 import eslint from 'gulp-eslint';
 import gulp from 'gulp';
 import gutil from 'gulp-util';
@@ -15,24 +17,24 @@ import sourcemaps from 'gulp-sourcemaps';
 import unitest from 'unitest';
 
 //Default task. This will be run when no task is passed in arguments to gulp
-gulp.task("default", ["watch"]);
+gulp.task('default', ['watch']);
 
-gulp.task("build:static", ['clean:client'], () =>
-  gulp.src("./src/client/static/**/*")
-    .pipe(gulp.dest("./dist-client/static"))
+gulp.task('build:static', ['clean:client'], () =>
+  gulp.src('./src/client/static/**/*')
+    .pipe(gulp.dest('./dist-client/static'))
 );
 
 //Convert ES6 code in all js files in src/js folder and copy to
 //build folder as bundle.js
-gulp.task("build:client", ['clean:client'], () => compileClientJS(["./src/client/javascripts/main.js"], "main.js", "./dist-client/javascripts"));
+gulp.task('build:client', ['clean:client'], () => compileClientJS(['./src/client/javascripts/main.js'], 'main.js', './dist-client/javascripts'));
 
-gulp.task("build:server", ['clean:server'], () => compileNodeJS("src/{server,shared}/**/*.js", "./dist-server"));
+gulp.task('build:server', ['clean:server'], () => compileNodeJS('src/{server,shared}/**/*.js', './dist-server'));
 
 gulp.task('build', ['build:client', 'build:server', 'build:static']);
 
-gulp.task('build:test-client', ['clean:test'], () => compileClientJS(["./src/test/browser/index.js"], "index.js", "./dist-test/test/browser"));
+gulp.task('build:test-client', ['clean:test'], () => compileClientJS(['./src/test/browser/index.js'], 'index.js', './dist-test/test/browser'));
 
-gulp.task('build:test-server', ['clean:test'], () => compileNodeJS(['src/!(client)/!(browser)/**/*.js', 'src/!(client)/*.js'], "./dist-test"));
+gulp.task('build:test-server', ['clean:test'], () => compileNodeJS(['src/!(client)/!(browser)/**/*.js', 'src/!(client)/*.js'], './dist-test'));
 
 gulp.task('build:test-json', ['clean:test'], () => gulp.src('src/**/*.json')
   .pipe(changed('src/**/*.json'))
@@ -41,28 +43,28 @@ gulp.task('build:test-json', ['clean:test'], () => gulp.src('src/**/*.json')
 
 gulp.task('build:test', ['build:test-client', 'build:test-server', 'build:test-json']);
 
-gulp.task("clean:test", () => rimraf.sync('./dist-test'));
+gulp.task('clean:test', () => rimraf.sync('./dist-test'));
 
-gulp.task("clean:client", () => rimraf.sync('./dist-client'));
+gulp.task('clean:client', () => rimraf.sync('./dist-client'));
 
-gulp.task("clean:server", () => rimraf.sync('./dist-server'));
+gulp.task('clean:server', () => rimraf.sync('./dist-server'));
 
 gulp.task('clean', ['clean:test', 'clean:server', 'clean:client']);
 
-gulp.task("run:eslint", () => gulp.src("src/**/*.js")
+gulp.task('run:eslint', () => gulp.src('src/**/*.js')
   .pipe(eslint())
   .pipe(eslint.format())
   .pipe(eslint.results(lintReporter))
   .pipe(eslint.failAfterError())
 );
 
-gulp.task("run:jsonlint", () => gulp.src(['**/*.json', '!node_modules/**'])
+gulp.task('run:jsonlint', () => gulp.src(['**/*.json', '!node_modules/**'])
   .pipe(jsonlint())
   .pipe(jsonlint.reporter(lintReporter))
   .pipe(jsonlint.failAfterError())
 );
 
-gulp.task("run:test", ["build:test"], () => {
+gulp.task('run:test', ['build:test'], () => {
   const output = unitest({
     browser: 'dist-test/test/browser/index.js',
     node: 'dist-test/test/node/index.js'
@@ -78,16 +80,16 @@ gulp.task("run:test", ["build:test"], () => {
 gulp.task('lint', ['run:eslint', 'run:jsonlint']);
 gulp.task('test', ['lint', 'run:test']);
 
-gulp.task("watch", ["build"], () => {
+gulp.task('watch', ['build'], () => {
   nodemon({
     script: 'server.js',
     watch: 'src',
-    tasks: ["build"],
+    tasks: ['build'],
     env: {'NODE_ENV': 'development'}
   })
 });
 
-gulp.task("server", ["build"], () => {
+gulp.task('server', ['build'], () => {
   nodemon({
     script: 'server.js',
     watch: false,
@@ -101,6 +103,8 @@ const compileClientJS = (entries, destName, destDir) =>
     entries: entries
   })
     .transform(babelify)
+    .transform(configify)
+    .transform(envify)
     .bundle()
     .pipe(source(destName))
     .pipe(buffer())

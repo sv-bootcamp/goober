@@ -1,4 +1,4 @@
-import Config from '../shared/config';
+import config from 'config';
 
 export default (html, initialState) => {
   return `
@@ -6,7 +6,7 @@ export default (html, initialState) => {
 <html lang="utf-8">
   <head>
     <link rel="shortcut icon" href="/static/favicon.ico">
-    <title>${Config.name}</title>
+    <title>${config.name}</title>
   </head>
   <body>
     <div id="app-container">${html}</div>
