@@ -44,12 +44,5 @@ dist-server
 dist-test
 /.idea/
 .idea/
-app.js
-bin/
 example-project.iml
-package.json
-public/
-routes/
-views/
-/example-project.iml
 /config/local.json
