@@ -43,9 +43,9 @@
     "reduce-reducers": "^0.1.2",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",
+    "request": "^2.74.0",
     "serve-favicon": "~2.3.0",
     "source-map-support": "^0.4.2",
-    "sync-request": "^3.0.1",
     "toml": "^2.3.0",
     "x2js": "^2.0.1",
     "yaml": "^0.3.0"
