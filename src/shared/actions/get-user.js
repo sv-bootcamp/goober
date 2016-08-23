@@ -5,6 +5,7 @@ export default (accessToken) => (dispatch, getState) => {
   const response = request('GET', url, {
     qs: {accessToken}
   });
+
   if (response.statusCode === 200) {
     const user = JSON.parse(response.body);
     const {count, name} = user;
@@ -14,12 +15,12 @@ export default (accessToken) => (dispatch, getState) => {
       type: 'GET_USER_SUCCESS',
       payload
     });
-  } else {
-    dispatch({
-      type: 'GET_USER_FAILURE',
-      payload: Object.assign({
-        accessToken
-      }, getState())
-    });
+    return;
   }
+  dispatch({
+    type: 'GET_USER_FAILURE',
+    payload: Object.assign({
+      accessToken
+    }, getState())
+  });
 };

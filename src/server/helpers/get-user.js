@@ -11,12 +11,6 @@ const {
   }
 } = config;
 
-FB.options({
-  version,
-  appId: process.env.FB_APP_ID || appId,
-  appSecret: process.env.FB_APP_SECRET || appSecret
-});
-
 const getCount = (id) => {
   const date = moment().toISOString().split('T')[0];
   const key = `${date}-${id}`;
@@ -25,6 +19,12 @@ const getCount = (id) => {
   Cache.put(key, count, 86400000);
   return count;
 };
+
+FB.options({
+  version,
+  appId: process.env.FB_APP_ID || appId,
+  appSecret: process.env.FB_APP_SECRET || appSecret
+});
 
 export default (accessToken, res) => {
   FB.setAccessToken(accessToken);
