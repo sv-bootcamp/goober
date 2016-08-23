@@ -3,15 +3,13 @@ import Index from '../components/index';
 import getUserAction from '../actions/get-user';
 
 const mapDispatchToProps = {
-  onFacebookLoad: getUserAction
+  getUser: getUserAction
 };
 
 // Utilizing mapStateToProps allows the container component to be rendered with props
 // that come from the application store (read state).
-function mapStateToProps(state) {
-  return {
-    user: state.user
-  };
-}
+const mapStateToProps = (state) => ({
+  user: state.user
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Index);

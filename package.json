@@ -14,7 +14,7 @@
     "test": "NODE_ENV=test npm run build-test && gulp test",
     "fast-test": "NODE_ENV=test gulp run:tests",
     "lint": "gulp lint",
-    "watch": "NODE_ENV=local gulp watch",
+    "watch": "gulp watch",
     "build": "gulp build",
     "build-production": "NODE_ENV=production npm run build",
     "server": "gulp server"
