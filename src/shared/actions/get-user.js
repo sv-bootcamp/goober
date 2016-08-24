@@ -2,10 +2,10 @@ import request from 'request';
 
 export default (accessToken) => (dispatch, getState) => {
   const url = `${location.protocol}//${location.host}/user`;
-  const response = request.get({
+  request.get({
     url,
     qs: {accessToken},
-    json: true,
+    json: true
   }, function (error, response, user) {
     if (response.statusCode === 200) {
       const {count, name} = user;

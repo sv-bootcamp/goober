@@ -1,26 +1,17 @@
 import express from 'express';
 import path from 'path';
 import config from 'config';
-import getUser from './helpers/get-user';
-import routes from './routes';
+import serverRoutes from './routes';
+import reactRoutes from './react-routes';
 
 export default (cb) => {
   const app = express();
 
   app.use('/javascripts', express.static(path.join(__dirname, '../../dist-client/javascripts')));
   app.use('/static', express.static(path.join(__dirname, '../../dist-client/static')));
-  app.use('/config', express.static(path.join(__dirname, '../../dist-client/config')));
 
-  app.get('/user', (req, res) => {
-    const {accessToken} = req.query;
-    if (!accessToken) {
-      res.status(400).send('AccessToken required.');
-    } else {
-      getUser(accessToken, res);
-    }
-  });
-
-  app.use(routes);
+  app.use(serverRoutes);
+  app.use(reactRoutes);
 
   // development error handler
   // will print stacktrace

@@ -1,26 +1,21 @@
 {
-  "presets": ["es2015", "react", "stage-0"],
+  "presets": [
+    "es2015",
+    "react",
+    "stage-0"
+  ],
   "plugins": [
-    "transform-object-assign",
+    "transform-object-assign"
   ],
   "env": {
-    "hot": {
+    "test": {
       "plugins": [
-        ["react-transform", {
-          "transforms": [{
-            "transform": "livereactload/babel-transform",
-            "imports": ["react"]
-          }]
-        }], ["instrument-istanbul", {
-          "ignore": "src/test/"
-        }]
-      ]
-    },
-    "cover": {
-      "plugins": [
-        ["instrument-istanbul", {
-          "ignore": "src/test/"
-        }]
+        [
+          "__coverage__",
+          {
+            "ignore": "src/test/"
+          }
+        ]
       ]
     }
   },

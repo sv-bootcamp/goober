@@ -67,7 +67,8 @@ gulp.task('run:jsonlint', () => gulp.src(['**/*.json', '!node_modules/**'])
 gulp.task('run:test', ['build:test'], () => {
   const output = unitest({
     browser: 'dist-test/test/browser/index.js',
-    node: 'dist-test/test/node/index.js'
+    node: 'dist-test/test/node/index.js',
+    report: ['text']
   }, (exitCode) => {
     if (exitCode !== 0) {
       console.error('Tests failed! - Test script exited with non-zero status code.');
