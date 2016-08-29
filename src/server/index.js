@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
 import config from 'config';
-import serverRoutes from './routes';
 import reactRoutes from './react-routes';
 
 export default (cb) => {
@@ -10,7 +9,6 @@ export default (cb) => {
   app.use('/javascripts', express.static(path.join(__dirname, '../../dist-client/javascripts')));
   app.use('/static', express.static(path.join(__dirname, '../../dist-client/static')));
 
-  app.use(serverRoutes);
   app.use(reactRoutes);
 
   // development error handler
