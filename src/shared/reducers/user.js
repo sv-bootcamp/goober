@@ -5,7 +5,7 @@ const defaultState = {
 };
 
 export default reduceReducers(
-  (state = defaultState, action) => {
+  (state = defaultState) => {
     return state;
   }
 );

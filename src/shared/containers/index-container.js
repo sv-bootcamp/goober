@@ -7,7 +7,7 @@ const mapDispatchToProps = {
 
 // Utilizing mapStateToProps allows the container component to be rendered with props
 // that come from the application store (read state).
-const mapStateToProps = (state) => ({
+const mapStateToProps = () => ({
   //TBD
 });
 
