@@ -6,4 +6,4 @@ before_script:
   - echo '{}' > config/local.json
 script: npm test
 notifications:
-  slack: siliconvalleybootcamp:mXUOjkig0w1mLypOLlHWKZ1I
+  slack: siliconvalleybootcamp:SnRpv9p0fK5FmSEFa7iVqJAw
