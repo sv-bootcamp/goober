@@ -3,6 +3,8 @@ This is Goober's base code. You can build up from this. It is done by deleting u
 npm install
 # Running Service
 npm run watch
+or
+gulp watch
 # Running Tests
 npm test
 # Linting (Code Analysis)
