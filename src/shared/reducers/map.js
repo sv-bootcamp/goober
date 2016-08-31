@@ -13,8 +13,7 @@ export default function map(state, action) {
 	if(typeof state === "undefined") {
 		state = initialState;
 	}
-
-	let position = action.position;
+	
 	switch(action.type) {
 		case types.GET_MAP_MARKERS_SUCCESS:
 			return update(state, {

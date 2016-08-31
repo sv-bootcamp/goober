@@ -8,11 +8,12 @@ import api from './routes'
 export default (cb) => {
   const app = express();
 
+  app.use('/api', api);
+  
   app.use('/javascripts', express.static(path.join(__dirname, '../../dist-client/javascripts')));
   app.use('/static', express.static(path.join(__dirname, '../../dist-client/static')));
 
   app.use(reactRoutes);
-  app.use('/api', api);
 
   // development error handler
   // will print stacktrace
