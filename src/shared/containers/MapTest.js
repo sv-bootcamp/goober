@@ -12,23 +12,23 @@ class MapTest extends Component {
     super(props);        
 
     this.shouldComponentUpdate = shouldPureComponentUpdate;
-  }
 
-  _onBoundsChange = (center, zoom) => {
-    this.props.onCenterChange(center);
-    this.props.onZoomChange(zoom);
-  }
+    this._onBoundsChange = (center, zoom) => {
+      this.props.onCenterChange(center);
+      this.props.onZoomChange(zoom);
+    }
 
-  _onChildClick = (key, childProps) => {
-    this.props.onCenterChange([childProps.lat, childProps.lng]);
-  }
+    this._onChildClick = (key, childProps) => {
+      this.props.onCenterChange([childProps.lat, childProps.lng]);
+    }
 
-  _onChildMouseEnter = (key /*, childProps */) => {
-    this.props.onHoverKeyChange(key);
-  }
+    this._onChildMouseEnter = (key /*, childProps */) => {
+      this.props.onHoverKeyChange(key);
+    }
 
-  _onChildMouseLeave = (/* key, childProps */) => {
-    this.props.onHoverKeyChange(null);
+    this._onChildMouseLeave = (/* key, childProps */) => {
+      this.props.onHoverKeyChange(null);
+    }
   }
 
   render() {

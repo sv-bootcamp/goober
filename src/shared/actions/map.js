@@ -1,5 +1,5 @@
 import {
-	GET_MAP_MARKERS,
+	// GET_MAP_MARKERS,
 	GET_MAP_MARKERS_SUCCESS,
 	GET_MAP_MARKERS_FAILURE	
 } from './ActionTypes';

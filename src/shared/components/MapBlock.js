@@ -11,24 +11,24 @@ class MapBlock extends Component {
     	super(props);
 
     	this.shouldComponentUpdate = shouldPureComponentUpdate;
-  	}
 
-  	_onBoundsChange = (center, zoom, bounds, marginBounds) => {  		
-	    this.props.onCenterChange(center);
-	    this.props.onZoomChange(zoom);	    
-  	}
+    	this._onBoundsChange = (center, zoom, bounds, marginBounds) => {  		
+		    this.props.onCenterChange(center);
+		    this.props.onZoomChange(zoom);	    
+	  	}
 
-  	_onChildClick = (key, childProps) => {
-  		this.props.onCenterChange([childProps.lat, childProps.lng]);
-	}
+	  	this._onChildClick = (key, childProps) => {
+	  		this.props.onCenterChange([childProps.lat, childProps.lng]);
+		}
 
-	_onChildMouseEnter = (key, childProps) => {
-		
-	}	
+		this._onChildMouseEnter = (key, childProps) => {
+			
+		}	
 
-	_onChildMouseLeave = (/* key, childProps */) => {
-		
-	}
+		this._onChildMouseLeave = (/* key, childProps */) => {
+			
+		}
+  	}  	
 
 	render() {
 		const markers = this.props.markers
