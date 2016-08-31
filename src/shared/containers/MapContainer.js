@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PropTypes, Component} from 'react';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import { connect } from 'react-redux';
 
@@ -32,6 +32,16 @@ class MapContainer extends Component {
 		);
 	}
 }
+
+MapContainer.propTypes = {
+	status: PropTypes.string,
+	markers: PropTypes.object,
+	getMapMarkers: PropTypes.func
+};
+
+MapContainer.defaultProps = {
+
+};
 
 const mapStateToProps = (state) => {
 	return {
