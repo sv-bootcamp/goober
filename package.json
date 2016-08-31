@@ -25,6 +25,7 @@
     "test"
   ],
   "dependencies": {
+    "axios": "^0.14.0",
     "coffee-script": "^1.10.0",
     "config": "^1.21.0",
     "config-browserify": "^1.0.5",
@@ -32,6 +33,7 @@
     "envify": "^3.4.1",
     "express": "^4.13.4",
     "fb": "^1.1.1",
+    "google-map-react": "^0.18.3",
     "gulp": "^3.9.1",
     "hjson": "^2.0.5",
     "iced-coffee-script": "^108.0.11",
@@ -41,8 +43,11 @@
     "node-simple-logger": "0.0.1",
     "properties": "^1.2.1",
     "react": "^15.3.1",
+    "react-addons-update": "^15.3.0",
+    "react-controllables": "^0.6.0",
     "react-dom": "^15.3.1",
     "react-facebook-login": "^3.1.0",
+    "react-pure-render": "^1.0.2",
     "react-redux": "^4.4.5",
     "react-router": "^2.6.1",
     "reduce-reducers": "^0.1.2",
