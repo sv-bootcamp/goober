@@ -5,30 +5,32 @@ import controllable from 'react-controllables';
 import GoogleMap from 'google-map-react';
 import Marker from '../components/Marker.js';
 
-class MapTest extends Component {  
-
-  
+class MapTest extends Component {
   constructor(props) {
-    super(props);        
+    super(props);
 
     this.shouldComponentUpdate = shouldPureComponentUpdate;
 
-    this._onBoundsChange = (center, zoom) => {
+    this.onBoundsChange = (center, zoom) => {
       this.props.onCenterChange(center);
       this.props.onZoomChange(zoom);
-    }
+    };
 
-    this._onChildClick = (key, childProps) => {
+    this.onChildClick = (key, childProps) => {
       this.props.onCenterChange([childProps.lat, childProps.lng]);
-    }
+    };
 
-    this._onChildMouseEnter = (key /*, childProps */) => {
+    this.onChildMouseEnter = (key
+      /* , childProps */
+      ) => {
       this.props.onHoverKeyChange(key);
-    }
+    };
 
-    this._onChildMouseLeave = (/* key, childProps */) => {
+    this.onChildMouseLeave = (
+      /* key, childProps */
+      ) => {
       this.props.onHoverKeyChange(null);
-    }
+    };
   }
 
   render() {
@@ -41,17 +43,17 @@ class MapTest extends Component {
       );
     });
 
-    return (      
+    return (
       <section style={{ width: '100%', height: '500px' }}>
         <h4>coords: {this.props.center}</h4>
          <GoogleMap
           center={this.props.center}
           zoom={this.props.zoom}
           hoverDistance={20}
-          onBoundsChange={this._onBoundsChange}
-          onChildClick={this._onChildClick}
-          onChildMouseEnter={this._onChildMouseEnter}
-          onChildMouseLeave={this._onChildMouseLeave}
+          onBoundsChange={this.onBoundsChange}
+          onChildClick={this.onChildClick}
+          onChildMouseEnter={this.onChildMouseEnter}
+          onChildMouseLeave={this.onChildMouseLeave}
           >
             {places}
         </GoogleMap>
@@ -61,13 +63,20 @@ class MapTest extends Component {
 }
 
 MapTest.propTypes = {
-  center: PropTypes.array, // @controllable
-  zoom: PropTypes.number, // @controllable
-  hoverKey: PropTypes.string, // @controllable
-  clickKey: PropTypes.string, // @controllable
-  onCenterChange: PropTypes.func, // @controllable generated fn
-  onZoomChange: PropTypes.func, // @controllable generated fn
-  onHoverKeyChange: PropTypes.func, // @controllable generated fn
+  center: PropTypes.array,
+  // @controllable
+  zoom: PropTypes.number,
+  // @controllable
+  hoverKey: PropTypes.string,
+  // @controllable
+  clickKey: PropTypes.string,
+  // @controllable
+  onCenterChange: PropTypes.func,
+  // @controllable generated fn
+  onZoomChange: PropTypes.func,
+  // @controllable generated fn
+  onHoverKeyChange: PropTypes.func,
+  // @controllable generated fn
 
   greatPlaces: PropTypes.array
 };
