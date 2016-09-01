@@ -6,8 +6,8 @@ import IndexContainer from '../containers/index-container';
 import MapContainer from '../containers/MapContainer';
 
 export default (
-    <Route path="/" component={AppContainer}>
-        <IndexRoute component={IndexContainer}/>        
-        <Route path="map" component={MapContainer}/>
-    </Route>
+  <Route path="/" component={AppContainer}>
+    <IndexRoute component={IndexContainer}/>
+    <Route path="map" component={MapContainer}/>
+  </Route>
 );
