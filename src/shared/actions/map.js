@@ -5,17 +5,6 @@ import {
 } from './ActionTypes';
 import axios from 'axios';
 
-export function getMapMarkers() {
-	return (dispatch) => {
-		return axios.get('/api/map/getmarkers')
-		.then((response) => {
-			dispatch(getMapMarkersSuccess(response));
-		}).catch((error) => {
-			dispatch(getMapMarkersFailure(error));
-		});
-	}
-}
-
 export function getMapMarkersSuccess(data) {
 	return {
 		type: GET_MAP_MARKERS_SUCCESS,
@@ -29,3 +18,16 @@ export function getMapMarkersFailure(error) {
 		error
 	};
 }
+
+export function getMapMarkers() {
+	return (dispatch) => {
+		return axios.get('/api/map/getmarkers')
+		.then((response) => {
+			dispatch(getMapMarkersSuccess(response));
+		}).catch((error) => {
+			dispatch(getMapMarkersFailure(error));
+		});
+	}
+}
+
+

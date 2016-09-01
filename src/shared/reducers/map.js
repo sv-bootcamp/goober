@@ -10,19 +10,20 @@ const initialState = {
 };
 
 export default function map(state, action) {
-	if(typeof state === "undefined") {
-		state = initialState;
+	let thisState = state;
+	if(typeof thisState === "undefined") {
+		thisState = initialState;
 	}
 	
 	switch(action.type) {
 		case types.GET_MAP_MARKERS_SUCCESS:
-			return update(state, {
+			return update(thisState, {
 				get: {
 					status: { $set: 'SUCCESS'},
 					markers: { $set: action.data }
 				}				
 			});		
 		default:
-			return state;			
+			return thisState;			
 	}
 }
