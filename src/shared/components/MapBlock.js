@@ -11,7 +11,7 @@ class MapBlock extends Component {
 
     this.shouldComponentUpdate = shouldPureComponentUpdate;
 
-    this.onBoundsChange = (center, zoom, bounds, marginBounds) => {
+    this.onBoundsChange = (center, zoom) => {
       this.props.onCenterChange(center);
       this.props.onZoomChange(zoom);
     };
@@ -20,7 +20,7 @@ class MapBlock extends Component {
       this.props.onCenterChange([childProps.lat, childProps.lng]);
     };
 
-    this.onChildMouseEnter = (key, childProps) => {
+    this.onChildMouseEnter = (/*key, childProps*/) => {
 
     };
 

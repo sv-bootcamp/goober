@@ -90,13 +90,13 @@ MapTest.defaultProps = {
     {id: 'C', lat: 37.565398, lng: 126.9987941}
   ],
   onCenterChange: (center) => {
-    console.error('center change not defined');
+    console.error('center change not defined'+center);
   },
   onZoomChange: (zoom) => {
-    console.error('zoom change not defined');
+    console.error('zoom change not defined'+zoom);
   },
   onHoverKeyChange: (key) => {
-    console.error('hover key  not defined');
+    console.error('hover key  not defined'+key);
   }
 
 };
