@@ -12,7 +12,7 @@
   "scripts": {
     "build-test": "gulp build:test",
     "build-cover": "npm run build-test -- --cover",
-    "test": "BABEL_ENV=test NODE_ENV=test npm run build-test && gulp test",
+    "test": "BABEL_ENV=test NODE_ENV=test && gulp test",
     "fast-test": "NODE_ENV=test gulp run:test",
     "cover": "NODE_ENV=test npm run build-cover && gulp test",
     "lint": "gulp lint",
@@ -26,6 +26,7 @@
   ],
   "dependencies": {
     "axios": "^0.14.0",
+    "body-parser": "^1.15.2",
     "coffee-script": "^1.10.0",
     "config": "^1.21.0",
     "config-browserify": "^1.0.5",
@@ -37,6 +38,8 @@
     "gulp": "^3.9.1",
     "hjson": "^2.0.5",
     "iced-coffee-script": "^108.0.11",
+    "leveldown": "^1.4.6",
+    "levelup": "^1.3.2",
     "memory-cache": "^0.1.6",
     "moment": "^2.14.1",
     "morgan": "~1.7.0",
