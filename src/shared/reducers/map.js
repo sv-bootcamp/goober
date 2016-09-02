@@ -9,11 +9,8 @@ const initialState = {
   }
 };
 
-export default function map(state, action) {
-  let thisState = state;
-  if (typeof thisState === 'undefined') {
-    thisState = initialState;
-  }
+export default (state, action) => {
+  const thisState = state || initialState;
 
   switch (action.type) {
   case GET_MAP_MARKERS_SUCCESS:
@@ -26,4 +23,4 @@ export default function map(state, action) {
   default:
     return thisState;
   }
-}
+};

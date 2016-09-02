@@ -2,20 +2,14 @@ import React, {PropTypes, Component} from 'react';
 import { connect } from 'react-redux';
 
 import { getMapMarkers } from '../actions/map';
-import MapBlock from '../components/MapBlock.js';
+import MapBlock from './MapBlock.js';
 
-
-class MapContainer extends Component {
-
-  constructor(props) {
-    super(props);
-    
-  }
+class MapLayout extends Component {
 
   componentDidMount() {
     this.props.getMapMarkers().then(
       () => {
-        console.log('dd:' + this.props.status + '/' + JSON.stringify(this.props.markers.data));
+        // console.log('dd:' + this.props.status + '/' + JSON.stringify(this.props.markers.data));
       }
     );
   }
@@ -30,13 +24,13 @@ class MapContainer extends Component {
   }
 }
 
-MapContainer.propTypes = {
+MapLayout.propTypes = {
   status: PropTypes.string,
   markers: PropTypes.object,
   getMapMarkers: PropTypes.func
 };
 
-MapContainer.defaultProps = {
+MapLayout.defaultProps = {
 
 };
 
@@ -55,4 +49,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(MapLayout);

@@ -6,26 +6,19 @@ import Marker from './Marker.js';
 
 class MapBlock extends Component {
   constructor(props) {
-    super(props);    
+    super(props);
 
-    this.onBoundsChange = (center, zoom) => {
-      this.props.onCenterChange(center);
-      this.props.onZoomChange(zoom);
-    };
+    this.onBoundsChange = this.onBoundsChange.bind(this);
+    this.onChildClick = this.onChildClick.bind(this);
+  }
 
-    this.onChildClick = (key, childProps) => {
-      this.props.onCenterChange([childProps.lat, childProps.lng]);
-    };
+  onBoundsChange(center, zoom) {
+    this.props.onCenterChange(center);
+    this.props.onZoomChange(zoom);
+  }
 
-    this.onChildMouseEnter = (/*key, childProps*/) => {
-
-    };
-
-    this.onChildMouseLeave = (
-      /* key, childProps */
-      ) => {
-
-    };
+  onChildClick(key, childProps) {
+    this.props.onCenterChange([childProps.lat, childProps.lng]);
   }
 
   render() {
@@ -49,8 +42,6 @@ class MapBlock extends Component {
           zoom={this.props.zoom}
           onBoundsChange={this.onBoundsChange}
           onChildClick={this.onChildClick}
-          onChildMouseEnter={this.onChildMouseEnter}
-          onChildMouseLeave={this.onChildMouseLeave}
           hoverDistance={20}>
         {markers}
       </GoogleMap>
@@ -61,9 +52,7 @@ class MapBlock extends Component {
 
 MapBlock.propTypes = {
   onCenterChange: PropTypes.func,
-  // @controllable generated fn
   onZoomChange: PropTypes.func,
-  // @controllable generated fn
   onBoundsChange: PropTypes.func,
   onMarkerHover: PropTypes.func,
   onChildClick: PropTypes.func,

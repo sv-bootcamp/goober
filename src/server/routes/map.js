@@ -3,7 +3,7 @@ import express from 'express';
 const router = express.Router();
 
 router.get('/getmarkers', (req, res) => {
-  let markersData = [
+  const markersData = [
     {
       id: 'red selo',
       lat: 37.563398,
