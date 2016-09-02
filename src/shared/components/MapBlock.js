@@ -1,5 +1,4 @@
 import React, {PropTypes, Component} from 'react';
-import shouldPureComponentUpdate from 'react-pure-render/function';
 import controllable from 'react-controllables';
 
 import GoogleMap from 'google-map-react';
@@ -7,9 +6,7 @@ import Marker from './Marker.js';
 
 class MapBlock extends Component {
   constructor(props) {
-    super(props);
-
-    this.shouldComponentUpdate = shouldPureComponentUpdate;
+    super(props);    
 
     this.onBoundsChange = (center, zoom) => {
       this.props.onCenterChange(center);

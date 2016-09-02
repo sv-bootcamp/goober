@@ -1,5 +1,4 @@
 import React, {PropTypes, Component} from 'react';
-import shouldPureComponentUpdate from 'react-pure-render/function';
 import { connect } from 'react-redux';
 
 import { getMapMarkers } from '../actions/map';
@@ -10,7 +9,7 @@ class MapContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.shouldComponentUpdate = shouldPureComponentUpdate;
+    
   }
 
   componentDidMount() {
