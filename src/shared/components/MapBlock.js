@@ -3,6 +3,7 @@ import controllable from 'react-controllables';
 
 import GoogleMap from 'google-map-react';
 import Marker from './Marker.js';
+import CardList from './CardList.js';
 
 class MapBlock extends Component {
   constructor(props) {
@@ -47,6 +48,7 @@ class MapBlock extends Component {
           hoverDistance={20}>
         {markers}
       </GoogleMap>
+      <CardList/>
       </section>
     );
   }
