@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { getMapMarkers } from '../actions/map';
 import MapBlock from './MapBlock.js';
+import MapCard from './MapCard.js';
 
 class MapLayout extends Component {
 
@@ -19,6 +20,7 @@ class MapLayout extends Component {
       <section>
         <h2>test map</h2>
         <MapBlock markers={this.props.markers.data} />
+        <MapCard />
       </section>
     );
   }
