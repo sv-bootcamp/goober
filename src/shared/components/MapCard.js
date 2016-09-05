@@ -21,7 +21,7 @@ class MapCard extends Component {
 	render() {
 
 		return (
-			<ReactCSSTransitionGroup transitionName="animStart" transitionAppear={true} 
+			<ReactCSSTransitionGroup transitionName="animstart" transitionAppear={true} 
 			transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={300}>
 				<section key={1} className='mapcard'
 					style={{ position: 'absolute', background: '#fff', 

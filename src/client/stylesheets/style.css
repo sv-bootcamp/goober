@@ -1,4 +1,15 @@
 
+
+/** MapCard.js **/
 .mapcard h3 {
-	color: #fff000;
+	color: #000;
+}
+
+.animstart-appear {
+	opacity: 0.01;	
+}
+
+.animstart-appear-active {
+	opacity: 1;	
+	transition: opacity .8s ease-in;
 }
