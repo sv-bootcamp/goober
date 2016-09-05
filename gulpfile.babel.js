@@ -27,10 +27,11 @@ gulp.task('build:static', ['clean:client'], () =>
 //Convert ES6 code in all js files in src/js folder and copy to
 //build folder as bundle.js
 gulp.task('build:client', ['clean:client'], () => compileClientJS(['./src/client/javascripts/main.js'], 'main.js', './dist-client/javascripts'));
+gulp.task('build:clientcss', [], () => compileClientCSS('./src/client/stylesheets/style.css', './dist-client/stylesheets'));
 
 gulp.task('build:server', ['clean:server'], () => compileNodeJS('src/{server,shared}/**/*.js', './dist-server'));
 
-gulp.task('build', ['build:client', 'build:server', 'build:static']);
+gulp.task('build', ['build:client', 'build:clientcss', 'build:server', 'build:static']);
 
 gulp.task('build:test-client', ['clean:test'], () => compileClientJS(['./src/test/browser/index.js'], 'index.js', './dist-test/test/browser'));
 
@@ -112,6 +113,12 @@ const compileClientJS = (entries, destName, destDir) =>
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(destDir));
+
+const compileClientCSS = (src, destDir) =>
+  gulp.src(src)
+    .pipe(gulp.dest(destDir));
+
+
 
 // Compile js to be run in node and dependent sources using babel
 // with options specified

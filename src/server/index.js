@@ -14,6 +14,7 @@ export default (cb) => {
 
   app.use('/api', api);
   app.use('/javascripts', express.static(path.join(__dirname, '../../dist-client/javascripts')));
+  app.use('/stylesheets', express.static(path.join(__dirname, '../../dist-client/stylesheets')));
   app.use('/static', express.static(path.join(__dirname, '../../dist-client/static')));
 
   app.use(apiRoutes);

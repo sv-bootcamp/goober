@@ -21,8 +21,12 @@ class MapCard extends Component {
 	render() {
 
 		return (
-			<ReactCSSTransitionGroup transitionName="animStart" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={300}>
-				<section key={1} style={{ position: 'absolute', background: '#fff', bottom: '100px', width: '500px', height: '300px'}} onClick={this.handleMove}>				
+			<ReactCSSTransitionGroup transitionName="animStart" transitionAppear={true} 
+			transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={300}>
+				<section key={1} className='mapcard'
+					style={{ position: 'absolute', background: '#fff', 
+					bottom: '100px', width: '500px', height: '300px'}} 
+					onClick={this.handleMove}>				
 					<h3>Lion popup store</h3>
 					<h5>14 Mission St.Palo Alto, CA</h5>
 					<h5>11:00 am - 4:00 pm</h5>
