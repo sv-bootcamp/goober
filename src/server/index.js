@@ -2,9 +2,6 @@ import express from 'express';
 import path from 'path';
 import config from 'config';
 import reactRoutes from './react-routes';
-import api from './routes';
-import apiRoutes from './routes/api-routes';
-import bodyParser from 'body-parser';
 
 import api from './routes';
 import apiRoutes from './routes/api-routes';
