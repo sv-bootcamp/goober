@@ -1,5 +1,4 @@
 import levelup from 'levelup';
+import config from 'config';
 
-const db = levelup('../../goober_db');
-
-export default db;
+export default levelup(config.database, {valueEncoding: 'json'});
