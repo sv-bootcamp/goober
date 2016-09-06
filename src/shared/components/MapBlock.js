@@ -4,13 +4,18 @@ import controllable from 'react-controllables';
 import GoogleMap from 'google-map-react';
 import Marker from './Marker.js';
 import CardList from './CardList.js';
+import update from 'react-addons-update';
 
 class MapBlock extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      numOfClicked : 0,
+      cards : []
+    }
     this.onBoundsChange = this.onBoundsChange.bind(this);
     this.onChildClick = this.onChildClick.bind(this);
+    this.mapClick = this.mapClick.bind(this);
   }
 
   onBoundsChange(center, zoom) {
@@ -22,6 +27,24 @@ class MapBlock extends Component {
     this.props.onCenterChange([childProps.lat, childProps.lng]);
 
     this.props.onSelectMarker(key, childProps);
+  }
+
+  mapClick(){
+    this.setState({
+      numOfClicked : this.state.numOfClicked+1,
+      cards: update(this.state.cards, { $push: [{text : "card" + this.state.numOfClicked}]})
+    })
+    //let string = "card" + this.state.numOfClicked;
+    console.log(JSON.stringify(this.state.cards))
+  }
+
+  cardClick(i){
+    console.log(i);
+    this.setState({
+      cards: update(this.state.cards,
+        { $splice: [[i, 1]]}
+      )
+    });
   }
 
   render() {
@@ -45,10 +68,13 @@ class MapBlock extends Component {
           zoom={this.props.zoom}
           onBoundsChange={this.onBoundsChange}
           onChildClick={this.onChildClick}
-          hoverDistance={20}>
+          hoverDistance={20}
+          onClick = {this.mapClick}>
         {markers}
       </GoogleMap>
-      <CardList/>
+      <CardList
+        cards = {this.state.cards}
+        cardClick = {this.cardClick}/>
       </section>
     );
   }
