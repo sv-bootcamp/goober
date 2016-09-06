@@ -7,9 +7,12 @@
 
 .animstart-appear {
 	opacity: 0.01;	
+	max-height : 0;
 }
 
 .animstart-appear-active {
 	opacity: 1;	
-	transition: opacity .8s ease-in;
+	transition: all .9s ease-in;
+	max-height : 1000px;
+
 }

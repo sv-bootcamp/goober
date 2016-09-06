@@ -88,7 +88,8 @@ gulp.task('watch', ['build'], () => {
     watch: 'src',
     tasks: ['build'],
     env: {'NODE_ENV': 'development'}
-  })
+  });
+  gulp.watch('./src/client/stylesheets/*.css', ['build:clientcss']);
 });
 
 gulp.task('server', ['build'], () => {
