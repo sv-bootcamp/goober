@@ -46,3 +46,4 @@ dist-test
 .idea/
 example-project.iml
 /config/local.json
+doc
