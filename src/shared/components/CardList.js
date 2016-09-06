@@ -1,12 +1,15 @@
 import React, {PropTypes} from 'react';
 import Card from './Card'
 
-const CardList = ({cards}) => (
+
+const CardList = ({cards}, {cardClick}) => (
   <div>
     <ul>
-      {cards.map(card =>
+      {cards.map((card, i) =>
         <Card
           text={card.text}
+          key = {i}
+          onClick = {()=>cardClick(i)}
         />
       )}
     </ul>
@@ -16,7 +19,8 @@ const CardList = ({cards}) => (
 CardList.propTypes = {
   cards: PropTypes.arrayOf(PropTypes.shape({
     text: PropTypes.string
-  }))
+  })),
+  cardClick: PropTypes.func
 }
 
 CardList.defaultProps = {
