@@ -1,21 +1,19 @@
 import React, {PropTypes, Component} from 'react';
+import { connect } from 'react-redux';
 import controllable from 'react-controllables';
 
 import GoogleMap from 'google-map-react';
 import Marker from './Marker.js';
 import CardList from './CardList.js';
-import update from 'react-addons-update';
+
+
+import { addCard } from '../actions/map';
 
 class MapBlock extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      numOfClicked : 0,
-      cards : []
-    }
     this.onBoundsChange = this.onBoundsChange.bind(this);
     this.onChildClick = this.onChildClick.bind(this);
-    this.mapClick = this.mapClick.bind(this);
   }
 
   onBoundsChange(center, zoom) {
@@ -29,16 +27,8 @@ class MapBlock extends Component {
     this.props.onSelectMarker(key, childProps);
   }
 
-  mapClick(){
-    this.setState({
-      numOfClicked : this.state.numOfClicked+1,
-      cards: update(this.state.cards, { $push: [{text : "card" + this.state.numOfClicked}]})
-    })
-    //let string = "card" + this.state.numOfClicked;
-    console.log(JSON.stringify(this.state.cards))
-  }
-
-  cardClick(i){
+/*
+  cardClick(i) {
     console.log(i);
     this.setState({
       cards: update(this.state.cards,
@@ -46,6 +36,7 @@ class MapBlock extends Component {
       )
     });
   }
+*/
 
   render() {
     const markers = this.props.markers
@@ -69,12 +60,13 @@ class MapBlock extends Component {
           onBoundsChange={this.onBoundsChange}
           onChildClick={this.onChildClick}
           hoverDistance={20}
-          onClick = {this.mapClick}>
+          onClick = {() => {
+            this.props.mapClick();
+          }}>
         {markers}
       </GoogleMap>
       <CardList
-        cards = {this.state.cards}
-        cardClick = {this.cardClick}/>
+        cards = {this.props.cards}/>
       </section>
     );
   }
@@ -89,7 +81,12 @@ MapBlock.propTypes = {
   center: PropTypes.any,
   zoom: PropTypes.number,
   markers: PropTypes.any,
-  onSelectMarker: PropTypes.func
+  onSelectMarker: PropTypes.func,
+  cards: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    text: PropTypes.string
+  })),
+  mapClick: PropTypes.func
 };
 
 MapBlock.defaultProps = {
@@ -102,6 +99,20 @@ MapBlock.defaultProps = {
   ]
 };
 
+const mapStateToProps = (state) => {
+  return {
+    cards: state.map.cards
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    mapClick: () => {
+      dispatch(addCard());
+    }
+  };
+};
+
 MapBlock = controllable(MapBlock, ['center', 'zoom', 'markers']);
 
-export default MapBlock;
+export default connect(mapStateToProps, mapDispatchToProps)(MapBlock);

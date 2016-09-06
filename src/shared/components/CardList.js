@@ -1,34 +1,22 @@
 import React, {PropTypes} from 'react';
-import Card from './Card'
+import Card from './Card';
 
-
-const CardList = ({cards}, {cardClick}) => (
+const CardList = ({cards}) => (
   <div>
     <ul>
-      {cards.map((card, i) =>
+      {cards.map(card =>
         <Card
-          text={card.text}
-          key = {i}
-          onClick = {()=>cardClick(i)}
-        />
+          {...card}/>
       )}
     </ul>
   </div>
-)
+);
 
 CardList.propTypes = {
   cards: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
     text: PropTypes.string
-  })),
-  cardClick: PropTypes.func
-}
-
-CardList.defaultProps = {
-  cards: [
-    {text: 'card1'},
-    {text: 'card2'},
-    {text: 'card3'}
-  ]
-}
+  }))
+};
 
 export default CardList;
