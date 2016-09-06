@@ -1,5 +1,5 @@
 {
-  "name": "Example Project",
+  "name": "goober",
   "port": 5000,
   "database": "../../goober-db",
   "fb": {

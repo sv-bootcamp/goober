@@ -3,7 +3,7 @@ import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import testDB from '../../../server/database';
 
-const item1 = {
+const itemRedSelo = {
   description: 'This is Red Selo',
   lat: 30.565398,
   lng: 126.9907941,
@@ -12,7 +12,7 @@ const item1 = {
   modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
   category: 'default'
 };
-const item2 = {
+const itemAlaska = {
   description: 'This is Alaska',
   lat: 37.565398,
   lng: 126.9907941,
@@ -23,9 +23,9 @@ const item2 = {
 };
 
 test('get all items from database', t => {
-  let ops = [
-    { type: 'put', key: 'item1', value: item1 },
-    { type: 'put', key: 'item2', value: item2 }
+  const ops = [
+    { type: 'put', key: 'item1', value: itemRedSelo },
+    { type: 'put', key: 'item2', value: itemAlaska }
   ];
 
   testDB.batch(ops, (err) => {
@@ -34,15 +34,17 @@ test('get all items from database', t => {
     }
 
     const expected = {
-      item1,
-      item2
+      itemRedSelo,
+      itemAlaska
     };
 
     const res = httpMocks.createResponse();
     ItemController.getAll(res, () => {
-      let data = res._getData();
-      t.equal(data.item1.description, expected.item1.description, 'should be same description');
-      t.equal(data.item2.description, expected.item2.description, 'should be same description');
+      const data = res._getData();
+      t.equal(data.item1.description, expected.itemRedSelo.description,
+        'should be same description');
+      t.equal(data.item2.description, expected.itemAlaska.description,
+        'should be same description');
 
       /*
       leveldown.destroy(dbPath, (errr) => {

@@ -1,6 +1,5 @@
 import db from '../database';
 
-
 export default {
   getAll: (res, cb) => {
     let result = {};
