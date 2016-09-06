@@ -1,9 +1,6 @@
 
 
 /** MapCard.js **/
-.mapcard h3 {
-	color: #000;
-}
 
 .animstart-appear {
 	opacity: 0.01;	
@@ -14,5 +11,41 @@
 	opacity: 1;	
 	transition: all .9s ease-in;
 	max-height : 1000px;
-
 }
+
+.mapcard {
+	position: absolute;
+	background: #fff000;
+	bottom: 10px;
+	width: 400px;
+	height: 200px;
+	text-align: center;
+}
+
+.mapcard h3 {
+	color: #000;
+}
+
+.mapcard .footer .leftFooter{
+	position: absolute;
+	bottom: 20px;
+	left: 10px;
+}
+
+.mapcard .footer .rightFooter{
+	position: absolute;
+	bottom: 20px;
+	right: 10px;
+}
+
+.mapcard .footer .rightFooter div {
+	float: left;
+	margin-right: 10px;
+}
+
+.mapcard .star {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
