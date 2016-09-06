@@ -40,6 +40,7 @@ test('get all items from database', t => {
 
     const req = httpMocks.createRequest();
     const res = httpMocks.createResponse();
+
     ItemController.getAll(req, res, () => {
       const data = res._getData();
       t.equal(data.item1.description, expected.itemRedSelo.description,
