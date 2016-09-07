@@ -2,7 +2,7 @@ import db from '../database';
 
 export default {
   getAll: (req, res, cb) => {
-    let result = {
+    const result = {
       items: []
     };
     db.createReadStream({
