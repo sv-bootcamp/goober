@@ -23,6 +23,7 @@ const itemAlaska = {
 };
 
 test('get all items from database', t => {
+  
   const ops = [
     { type: 'put', key: 'item1', value: itemRedSelo },
     { type: 'put', key: 'item2', value: itemAlaska }
@@ -43,9 +44,9 @@ test('get all items from database', t => {
 
     ItemController.getAll(req, res, () => {
       const data = res._getData();
-      t.equal(data.item1.description, expected.itemRedSelo.description,
+      t.equal(data.items[0].description, expected.itemRedSelo.description,
         'should be same description');
-      t.equal(data.item2.description, expected.itemAlaska.description,
+      t.equal(data.items[1].description, expected.itemAlaska.description,
         'should be same description');
 
       /*
@@ -58,7 +59,32 @@ test('get all items from database', t => {
     });
   });
 });
+test('get a item from database', t => {
 
+  testDB.put('item1', itemRedSelo, (err) => {
+    if(err) {
+      t.end(err);
+    }
+  });
+
+  const expected = itemRedSelo;
+
+  const req = httpMocks.createRequest({
+    method: 'GET',
+    url: '/items/1',
+    params: {
+      id: 1
+    }
+  });
+
+  const res = httpMocks.createResponse();
+
+  ItemController.getById(req, res, () => {
+      const data = res._getData();
+      t.equal(data.description, expected.description, 'should be same description');
+      t.end();
+  });
+});
 test('delete an item from database', t => {
   const ops = [
     { type: 'put', key: 'item1', value: itemRedSelo }
