@@ -38,8 +38,10 @@ test('get all items from database', t => {
       itemAlaska
     };
 
+    const req = httpMocks.createRequest();
     const res = httpMocks.createResponse();
-    ItemController.getAll(res, () => {
+
+    ItemController.getAll(req, res, () => {
       const data = res._getData();
       t.equal(data.item1.description, expected.itemRedSelo.description,
         'should be same description');
@@ -52,6 +54,43 @@ test('get all items from database', t => {
         console.log('clear db');
       });
       */
+      t.end();
+    });
+  });
+});
+
+test('delete an item from database', t => {
+  const ops = [
+    { type: 'put', key: 'item1', value: itemRedSelo }
+  ];
+
+  testDB.batch(ops, (err) => {
+    if (err) {
+      t.end(err);
+    }
+
+    const expected = {
+      status: 200,
+      message: 'success'
+    };
+
+    const req = httpMocks.createRequest({
+      method: 'GET',
+      url: '/items/1',
+      params: {
+        id: 1
+      }
+    });
+
+    const res = httpMocks.createResponse();
+
+    ItemController.remove(req, res, () => {
+      const status = res.statusCode;
+      const message = res._getData().message;
+      t.equal(status, expected.status,
+        'should be same status');
+      t.equal(message, expected.message,
+        'should be same message');
       t.end();
     });
   });
