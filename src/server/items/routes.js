@@ -39,9 +39,30 @@ router.put('/', (req, res, next) => {
   next();
 });
 
-router.delete('/', (req, res, next) => {
-  next();
-});
+/**
+ * @api {delete} /items Remove all item
+ * @apiName removeAllItem
+ * @apiGroup Item
+ *
+ * @apiParam {None} None
+ *
+ * @apiSuccess {String} message success
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       message: "success"
+ *     }
+ *
+ * @apiError (Error 500) Internal server error
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 500 Internal Server Error
+ *     {
+ *       error: ['item1', 'item2', ..]
+ *     }
+ */
+router.delete('/', ItemContollers.removeAll);
 
 router.get('/:id', (req, res, next) => {
   next();
@@ -52,7 +73,7 @@ router.put('/:id', (req, res, next) => {
 });
 
 /**
- * @api {deleye} /items/:id Remove an item
+ * @api {delete} /items/:id Remove an item
  * @apiName removeAnItem
  * @apiGroup Item
  *

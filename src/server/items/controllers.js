@@ -30,5 +30,32 @@ export default {
       }
       cb();
     });
+  },
+
+  removeAll: (req, res, cb) => {
+    const errorList = [];
+    db.createReadStream({
+      start: 'item1',
+      end: 'item' + '\xFF'
+    }).on('data', (data) => {
+      db.del(data.key, (err) => {
+        if (err) {
+          errorList.push(data.key);
+        }
+      });
+    }).on('close', () => {
+      if (errorList.length > 0) {
+        res.status(500);
+        res.send({
+          error: errorList
+        });
+      } else {
+        res.status(200);
+        res.send({
+          message: 'success'
+        });
+      }
+      return cb();
+    });
   }
 };
