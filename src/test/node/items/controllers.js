@@ -98,7 +98,7 @@ test('delete an item from database', t => {
     };
 
     const req = httpMocks.createRequest({
-      method: 'GET',
+      method: 'DELETE',
       url: '/items/1',
       params: {
         id: 1
@@ -115,6 +115,55 @@ test('delete an item from database', t => {
       t.equal(message, expected.message,
         'should be same message');
       t.end();
+    });
+  });
+});
+
+test('delete all item from database', t => {
+  const ops = [
+    { type: 'put', key: 'item1', value: itemRedSelo },
+    { type: 'put', key: 'item2', value: itemAlaska }
+  ];
+
+  testDB.batch(ops, (err) => {
+    if (err) {
+      t.end(err);
+    }
+
+    const expected = {
+      status: 200,
+      message: 'success'
+    };
+
+    const req = httpMocks.createRequest({
+      method: 'DELETE',
+      url: '/items'
+    });
+
+    const res = httpMocks.createResponse();
+
+    ItemController.removeAll(req, res, () => {
+      const status = res.statusCode;
+      const message = res._getData().message;
+      testDB.get('item1', (err1) => {
+        if (err1 && err1.notFound) {
+          testDB.get('item2', (err2) => {
+            if (err2 && err2.notFound) {
+              t.equal(status, expected.status,
+                'should be same status');
+              t.equal(message, expected.message,
+                'should be same message');
+              t.end();
+              return;
+            }
+            t.fail('item2 is not removed');
+            t.end();
+          });
+          return;
+        }
+        t.fail('item1 is not removed');
+        t.end();
+      });
     });
   });
 });
