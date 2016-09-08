@@ -14,7 +14,7 @@ class Card extends Component {
 }
 
 Card.propTypes = {
-  id: PropTypes.number,
+  id: PropTypes.string,
   text: PropTypes.string,
   onClick: PropTypes.func
 };
