@@ -67,7 +67,7 @@ gulp.task('apidoc', ['clean:apidoc'], function(done){
   apidoc( apidocConfig ,done);
 });
 
-gulp.task('run:eslint', () => gulp.src(['src/**/*.js', '!src/__tests__/browser/components/*.js'])
+gulp.task('run:eslint', () => gulp.src('src/**/*.js')
   .pipe(eslint())
   .pipe(eslint.format())
   .pipe(eslint.results(lintReporter))
