@@ -1,19 +1,19 @@
 import { connect } from 'react-redux';
 import CardList from '../components/CardList';
-import { addCard } from '../actions/cardList'
+import { addCard } from '../actions/cardList';
 
 const mapStateToProps = (state) => {
-	return {
-		cards: state.cards.cards
-	};
+  return {
+    cards: state.cards.cards
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
-	return {
-		onCardClick: () => {
-			dispatch(addCard());
-		}
-	}
+  return {
+    onCardClick: () => {
+      dispatch(addCard());
+    }
+  };
 };
 
 const CategorizedCardList = connect(

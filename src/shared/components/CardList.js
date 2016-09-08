@@ -1,17 +1,24 @@
-import React, {PropTypes} from 'react';
+import React, {PropTypes, Component} from 'react';
 import Card from './Card';
 
-const CardList = ({cards, onCardClick}) => (
-  <div>
-    <ul>
-      {cards.map(card =>
-        <Card
-          onClick={() => onCardClick()}
-          {...card}/>
-      )}
-    </ul>
-  </div>
-);
+class CardList extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div>
+        <ul>
+          {this.props.cards.map(card =>
+            <Card
+              {...card}/>
+          )}
+        </ul>
+      </div>
+    );
+  }
+}
 
 CardList.propTypes = {
   cards: PropTypes.arrayOf(PropTypes.shape({
