@@ -2,51 +2,49 @@ import db from '../database';
 
 export default {
   getAll: (req, res, cb) => {
-    const result = {
-      items: []
-    };
+    const items = [];
     db.createReadStream({
       start: 'item1',
       end: 'item' + '\xFF'
     }).on('data', (data) => {
-      result.items.push(data.value);
+      items.push(data.value);
     }).on('error', (err) => {
-      if(err.notFound) {
+      if (err.notFound) {
         res.status(200);
-        res.send(result);
-        return cb(result);
+        res.send({items:items});
+        return cb({items:items});
       }
       res.status(500);
       res.send({
-        error: "database error"
-      })
+        error: 'database error'
+      });
       return cb(err);
     })
     .on('close', () => {
-      if(result.items.length !== 0 ) {
-        res.send(result);
+      if (items.length !== 0 ) {
+        res.send({items:items});
         cb();
       }
     });
   },
   getById: (req, res, cb) => {
-    const key = 'item' + req.params.id;
+    const {id} = req.params;
+    const key = `item${id}`;
     db.get(key, (err, value) => {
-      if(err){
-        if(err.notFound) {
+      if (err) {
+        if (err.notFound) {
           res.status(400);
           res.send({
-            error: "Item was not found."
+            error: 'Item was not found.'
           });
           return cb(err);
         }
         res.status(500);
         res.send({
-          error: "database error"
+          error: 'database error'
         })
         return cb(err);
       }
-      
       res.status(200);
       res.send(value);
       return cb();

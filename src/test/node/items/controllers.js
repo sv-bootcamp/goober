@@ -21,9 +21,8 @@ const itemAlaska = {
   modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
   category: 'default'
 };
-
+ 
 test('get all items from database', t => {
-  
   const ops = [
     { type: 'put', key: 'item1', value: itemRedSelo },
     { type: 'put', key: 'item2', value: itemAlaska }
@@ -60,9 +59,8 @@ test('get all items from database', t => {
   });
 });
 test('get a item from database', t => {
-
   testDB.put('item1', itemRedSelo, (err) => {
-    if(err) {
+    if (err) {
       t.end(err);
     }
   });
@@ -80,9 +78,9 @@ test('get a item from database', t => {
   const res = httpMocks.createResponse();
 
   ItemController.getById(req, res, () => {
-      const data = res._getData();
-      t.equal(data.description, expected.description, 'should be same description');
-      t.end();
+    const data = res._getData();
+    t.equal(data.description, expected.description, 'should be same description');
+    t.end();
   });
 });
 test('delete an item from database', t => {
