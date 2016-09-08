@@ -1,5 +1,4 @@
 import React, {PropTypes, Component} from 'react';
-
 import {markerStyle, markerStyleHover} from './marker-style.js';
 
 class Marker extends Component {
