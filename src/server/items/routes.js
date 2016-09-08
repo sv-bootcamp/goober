@@ -1,4 +1,5 @@
 import express from 'express';
+import ItemContollers from './controllers';
 
 const router = express.Router();
 
@@ -28,9 +29,7 @@ const router = express.Router();
  *       "error": "ItemNotFound"
  *     }
  */
-router.get('/', (req, res, next) => {
-  next();
-});
+router.get('/', ItemContollers.getAll);
 
 router.post('/', (req, res, next) => {
   next();
@@ -52,8 +51,29 @@ router.put('/:id', (req, res, next) => {
   next();
 });
 
-router.delete('/:id', (req, res, next) => {
-  next();
-});
+/**
+ * @api {deleye} /items/:id Remove an item
+ * @apiName removeAnItem
+ * @apiGroup Item
+ *
+ * @apiParam {Number} id Item's own id
+ *
+ * @apiSuccess {String} message success
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       message: "success"
+ *     }
+ *
+ * @apiError (Error 400) ItemNotFound The id of the Item was not found.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       message: "error message..."
+ *     }
+ */
+router.delete('/:id', ItemContollers.remove);
 
 export default router;
