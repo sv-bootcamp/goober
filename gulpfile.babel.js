@@ -18,14 +18,6 @@ import unitest from 'unitest';
 import apidoc from 'gulp-apidoc';
 import jest from 'gulp-jest';
 
-gulp.task('jest', function() {
-  return gulp.src('src/**/__tests__/browser').pipe(jest({
-    rootDir: 'src',
-    scriptPreprocessor: '../node_modules/6to5-jest',
-    unmockedModulePathPatterns: [ 'react' ]
-  }));
-});
-
 //Default task. This will be run when no task is passed in arguments to gulp
 gulp.task('default', ['watch']);
 
@@ -79,6 +71,14 @@ gulp.task('run:jsonlint', () => gulp.src(['**/*.json', '!node_modules/**'])
   .pipe(jsonlint.reporter(lintReporter))
   .pipe(jsonlint.failAfterError())
 );
+
+gulp.task('jest', function() {
+  return gulp.src('src/**/__tests__/browser').pipe(jest({
+    rootDir: 'src',
+    scriptPreprocessor: '../node_modules/6to5-jest',
+    unmockedModulePathPatterns: [ 'react' ]
+  }));
+});
 
 gulp.task('run:test', ['build:test', 'jest'], () => {
   const output = unitest({
