@@ -1,7 +1,7 @@
 {
   "name": "goober",
   "port": 5000,
-  "database": "../../goober-db",
+  "database": "goober-db",
   "fb": {
     "version": "v2.7",
     "appId": "1221904451173356",
