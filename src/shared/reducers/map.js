@@ -1,4 +1,4 @@
-import {GET_MAP_MARKERS_SUCCESS} from '../actions/ActionTypes';
+import {GET_MAP_MARKERS_SUCCESS, ADD_CARD} from '../actions/ActionTypes';
 import update from 'react-addons-update';
 
 const initialState = {
@@ -6,10 +6,11 @@ const initialState = {
     status: 'INIT',
     markers: [],
     error: -1
-  }
+  },
+  cards: []
 };
 
-export default (state, action) => {
+export default (state = initialState, action) => {
   const thisState = state || initialState;
 
   switch (action.type) {
@@ -20,7 +21,11 @@ export default (state, action) => {
         markers: { $set: action.data }
       }
     });
+  case ADD_CARD:
+    return update(thisState, {
+      cards: { $push: [{ id: action.id, text: 'card' + action.id }]}
+    });
   default:
-    return thisState;
+    return state;
   }
 };

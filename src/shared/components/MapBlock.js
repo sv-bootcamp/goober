@@ -1,13 +1,12 @@
 import React, {PropTypes, Component} from 'react';
 import controllable from 'react-controllables';
-
 import GoogleMap from 'google-map-react';
 import Marker from './Marker.js';
+import CategorizedCardList from '../containers/CategorizedCardList'
 
 class MapBlock extends Component {
   constructor(props) {
     super(props);
-
     this.onBoundsChange = this.onBoundsChange.bind(this);
     this.onChildClick = this.onChildClick.bind(this);
   }
@@ -20,7 +19,7 @@ class MapBlock extends Component {
   onChildClick(key, childProps) {
     this.props.onCenterChange([childProps.lat, childProps.lng]);
   }
-
+  
   render() {
     const markers = this.props.markers
     .map(marker => {
@@ -42,9 +41,11 @@ class MapBlock extends Component {
           zoom={this.props.zoom}
           onBoundsChange={this.onBoundsChange}
           onChildClick={this.onChildClick}
-          hoverDistance={20}>
+          hoverDistance={20}
+          >
         {markers}
       </GoogleMap>
+      <CategorizedCardList />
       </section>
     );
   }
@@ -73,4 +74,4 @@ MapBlock.defaultProps = {
 
 MapBlock = controllable(MapBlock, ['center', 'zoom', 'markers']);
 
-export default MapBlock;
+export default MapBlock
