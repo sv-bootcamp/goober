@@ -46,6 +46,8 @@ export function addMapMarker(data) {
   };
 }
 
+/*
+>>>>>>> f76e7c5... make independent list container and corresponding componen, action, reducer
 let nextCardId = 0;
 export const addCard = () => {
   nextCardId = nextCardId + 1;
@@ -54,3 +56,4 @@ export const addCard = () => {
     id: nextCardId
   });
 };
+*/

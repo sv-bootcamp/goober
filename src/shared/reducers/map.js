@@ -45,20 +45,3 @@ export default (state = initialState, action) => {
     return state;
   }
 };
-
-
-// Below actions can represent action of one card.
-// Purpose is to separate "cardList-actions" and "card-actions".
-/*
-const card = (state = {}, action) => {
-  switch(action.type) {
-    case ADD_CARD:
-      return {
-        id: action.id,
-        text: action.text
-      }
-    default:
-      return state
-  }
-}
-*/

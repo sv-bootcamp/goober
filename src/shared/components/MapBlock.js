@@ -1,13 +1,8 @@
 import React, {PropTypes, Component} from 'react';
-import { connect } from 'react-redux';
 import controllable from 'react-controllables';
-
 import GoogleMap from 'google-map-react';
 import Marker from './Marker.js';
-import CardList from './CardList.js';
-
-
-import { addCard } from '../actions/map';
+import CategorizedCardList from '../containers/CategorizedCardList'
 
 class MapBlock extends Component {
   constructor(props) {
@@ -26,18 +21,7 @@ class MapBlock extends Component {
 
     this.props.onSelectMarker(key, childProps);
   }
-
-/*
-  cardClick(i) {
-    console.log(i);
-    this.setState({
-      cards: update(this.state.cards,
-        { $splice: [[i, 1]]}
-      )
-    });
-  }
-*/
-
+  
   render() {
     const markers = this.props.markers
     .map(marker => {
@@ -60,13 +44,10 @@ class MapBlock extends Component {
           onBoundsChange={this.onBoundsChange}
           onChildClick={this.onChildClick}
           hoverDistance={20}
-          onClick = {() => {
-            this.props.mapClick();
-          }}>
+          >
         {markers}
       </GoogleMap>
-      <CardList
-        cards = {this.props.cards}/>
+      <CategorizedCardList />
       </section>
     );
   }
@@ -80,13 +61,8 @@ MapBlock.propTypes = {
   onChildClick: PropTypes.func,
   center: PropTypes.any,
   zoom: PropTypes.number,
-  markers: PropTypes.any,
   onSelectMarker: PropTypes.func,
-  cards: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number,
-    text: PropTypes.string
-  })),
-  mapClick: PropTypes.func
+  markers: PropTypes.any
 };
 
 MapBlock.defaultProps = {
@@ -99,20 +75,6 @@ MapBlock.defaultProps = {
   ]
 };
 
-const mapStateToProps = (state) => {
-  return {
-    cards: state.map.cards
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    mapClick: () => {
-      dispatch(addCard());
-    }
-  };
-};
-
 MapBlock = controllable(MapBlock, ['center', 'zoom', 'markers']);
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapBlock);
+export default MapBlock
