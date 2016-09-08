@@ -11,7 +11,7 @@ export default {
     }).on('error', (err) => {
       if (err.notFound) {
         res.status(200);
-        res.send({items: items});
+        res.send({items});
         return cb();
       }
       res.status(500);
@@ -22,7 +22,7 @@ export default {
     })
     .on('close', () => {
       if (items.length !== 0) {
-        res.send({items: items});
+        res.send({items});
         cb();
       }
     });
