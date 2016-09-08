@@ -12,13 +12,13 @@
   "scripts": {
     "build-test": "gulp build:test",
     "build-cover": "npm run build-test -- --cover",
-    "test": "export BABEL_ENV=test export NODE_ENV=test && gulp test",
-    "fast-test": "export NODE_ENV=test gulp run:test",
-    "cover": "export NODE_ENV=test npm run build-cover && gulp test",
+    "test": "BABEL_ENV=test NODE_ENV=test gulp test",
+    "fast-test": "NODE_ENV=test gulp run:test",
+    "cover": "NODE_ENV=test npm run build-cover && NODE_ENV=test gulp test",
     "lint": "gulp lint",
     "watch": "gulp watch",
     "build": "gulp build",
-    "build-production": "export NODE_ENV=production npm run build",
+    "build-production": "NODE_ENV=production npm run build",
     "server": "gulp server"
   },
   "pre-commit": [
