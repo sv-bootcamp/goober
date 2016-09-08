@@ -1,11 +1,17 @@
-import React, {PropTypes} from 'react';
+import React, {PropTypes, Component} from 'react';
 
-const Card = ({text, onClick}) => (
-  <li
-  	onClick={onClick}>
-    {text}
-  </li>
-);
+class Card extends Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return (
+			<li>
+				{this.props.text}
+			</li>
+		);
+  }
+}
 
 Card.propTypes = {
   id: PropTypes.number,

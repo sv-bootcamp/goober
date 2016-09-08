@@ -2,7 +2,7 @@ import React, {PropTypes, Component} from 'react';
 import controllable from 'react-controllables';
 import GoogleMap from 'google-map-react';
 import Marker from './Marker.js';
-import CategorizedCardList from '../containers/CategorizedCardList'
+import CategorizedCardList from '../containers/CategorizedCardList';
 
 class MapBlock extends Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class MapBlock extends Component {
   onChildClick(key, childProps) {
     this.props.onCenterChange([childProps.lat, childProps.lng]);
   }
-  
+
   render() {
     const markers = this.props.markers
     .map(marker => {
@@ -74,4 +74,4 @@ MapBlock.defaultProps = {
 
 MapBlock = controllable(MapBlock, ['center', 'zoom', 'markers']);
 
-export default MapBlock
+export default MapBlock;
