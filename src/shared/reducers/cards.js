@@ -2,11 +2,7 @@ import { ADD_CARD } from '../actions/ActionTypes';
 import update from 'react-addons-update';
 
 const initialState = {
-  cards: [
-    {id: 0, text: 'card0'},
-    {id: 1, text: 'card1'},
-    {id: 2, text: 'card2'}
-  ]
+  cards: []
 };
 
 const card = (state = initialState, action) => {

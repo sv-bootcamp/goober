@@ -1,8 +1,8 @@
 import { ADD_CARD } from './ActionTypes';
+import { uuid } from 'uuid4';
 
-let nextCardId = 3;
 export const addCard = (text) => {
-  nextCardId = nextCardId + 1;
+  let nextCardId = uuid();
   return ({
     type: ADD_CARD,
     id: nextCardId,
