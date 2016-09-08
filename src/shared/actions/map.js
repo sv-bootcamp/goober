@@ -2,7 +2,8 @@ import {
 	// GET_MAP_MARKERS,
 	GET_MAP_MARKERS_SUCCESS,
 	GET_MAP_MARKERS_FAILURE,
-  SELECT_MAP_MARKER
+  SELECT_MAP_MARKER,
+  ADD_MAP_MARKER
 } from './ActionTypes';
 import axios from 'axios';
 
@@ -24,7 +25,7 @@ export function getMapMarkers() {
   return (dispatch) => {
     return axios.get('/api/map/getmarkers')
     .then((response) => {
-      dispatch(getMapMarkersSuccess(response));
+      dispatch(getMapMarkersSuccess(response.data));
     }).catch((error) => {
       dispatch(getMapMarkersFailure(error));
     });
@@ -38,4 +39,9 @@ export function selectMapMarker(data) {
   };
 }
 
-
+export function addMapMarker(data) {
+  return {
+    type: ADD_MAP_MARKER,
+    data
+  };
+}

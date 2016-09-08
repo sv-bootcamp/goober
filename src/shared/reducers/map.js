@@ -1,4 +1,4 @@
-import {GET_MAP_MARKERS_SUCCESS, SELECT_MAP_MARKER} from '../actions/ActionTypes';
+import {GET_MAP_MARKERS_SUCCESS, SELECT_MAP_MARKER, ADD_MAP_MARKER} from '../actions/ActionTypes';
 import update from 'react-addons-update';
 
 const initialState = {
@@ -27,6 +27,12 @@ export default (state, action) => {
     return update(thisState, {
       select: {
         data: { $set: action.data }
+      }
+    });
+  case ADD_MAP_MARKER:       
+    return update(thisState, {
+      get: {        
+        markers: { $push: action.data }
       }
     });
   default:

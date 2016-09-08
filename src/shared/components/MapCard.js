@@ -26,8 +26,8 @@ class MapCard extends Component {
 				<section key={1} className='mapcard'					
 					onClick={this.handleMove}>				
 					<h3>{this.props.thisData.title}</h3>
-					<h5>14 Mission St.Palo Alto, CA</h5>
-					<h5>11:00 am - 4:00 pm</h5>
+					<h5>{this.props.thisData.address}</h5>
+					<h5>{this.props.thisData.eventtime}</h5>
 					<div className='footer'>
 						<div className='leftFooter'>
 							<div className='numPhotos'>18</div>							
