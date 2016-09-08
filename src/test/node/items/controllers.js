@@ -21,7 +21,6 @@ const itemAlaska = {
   modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
   category: 'default'
 };
- 
 test('get all items from database', t => {
   const ops = [
     { type: 'put', key: 'item1', value: itemRedSelo },

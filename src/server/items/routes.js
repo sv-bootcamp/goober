@@ -29,7 +29,6 @@ const router = express.Router();
  *          }
  *        ]
  *     }
- * 
  * @apiError (Error 500) DatabaseError Internal error occured in the database.
  *
  * @apiErrorExample {json} Database-Error-Response:
@@ -88,7 +87,6 @@ router.delete('/', (req, res, next) => {
  *     {
  *       error: "Item was not found."
  *     }
- * 
  * @apiError (Error 500) DatabaseError Internal error occured in the database.
  *
  * @apiErrorExample {json} Database-Error-Response:

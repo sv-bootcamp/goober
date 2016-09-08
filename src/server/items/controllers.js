@@ -11,8 +11,8 @@ export default {
     }).on('error', (err) => {
       if (err.notFound) {
         res.status(200);
-        res.send({items:items});
-        return cb({items:items});
+        res.send({items: items});
+        return cb({items: items});
       }
       res.status(500);
       res.send({
@@ -21,8 +21,8 @@ export default {
       return cb(err);
     })
     .on('close', () => {
-      if (items.length !== 0 ) {
-        res.send({items:items});
+      if ( items.length !== 0 ) {
+        res.send({items: items});
         cb();
       }
     });
@@ -42,7 +42,7 @@ export default {
         res.status(500);
         res.send({
           error: 'database error'
-        })
+        });
         return cb(err);
       }
       res.status(200);
