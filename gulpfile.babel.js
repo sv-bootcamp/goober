@@ -67,7 +67,7 @@ gulp.task('apidoc', ['clean:apidoc'], function(done){
   apidoc( apidocConfig ,done);
 });
 
-gulp.task('run:eslint', () => gulp.src('src/**/*.js')
+gulp.task('run:eslint', () => gulp.src(['src/**/*.js', '!src/__tests__/browser/components/*.js'])
   .pipe(eslint())
   .pipe(eslint.format())
   .pipe(eslint.results(lintReporter))
@@ -80,9 +80,8 @@ gulp.task('run:jsonlint', () => gulp.src(['**/*.json', '!node_modules/**'])
   .pipe(jsonlint.failAfterError())
 );
 
-gulp.task('run:test', ['build:test'], () => {
+gulp.task('run:test', ['build:test', 'jest'], () => {
   const output = unitest({
-    //browser: 'dist-test/test/browser/index.js',
     node: 'dist-test/test/node/index.js',
     report: ['text']
   }, (exitCode) => {
