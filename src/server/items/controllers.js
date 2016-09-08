@@ -21,7 +21,7 @@ export default {
       return cb(err);
     })
     .on('close', () => {
-      if ( items.length !== 0 ) {
+      if (items.length !== 0) {
         res.send({items: items});
         cb();
       }
