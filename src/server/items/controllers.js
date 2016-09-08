@@ -12,13 +12,13 @@ export default {
       if (err.notFound) {
         res.status(200);
         res.send({items: items});
-        return cb({items: items});
+        return cb();
       }
       res.status(500);
       res.send({
         error: 'database error'
       });
-      return cb(err);
+      return cb();
     })
     .on('close', () => {
       if (items.length !== 0) {
@@ -37,13 +37,13 @@ export default {
           res.send({
             error: 'Item was not found.'
           });
-          return cb(err);
+          return cb();
         }
         res.status(500);
         res.send({
           error: 'database error'
         });
-        return cb(err);
+        return cb();
       }
       res.status(200);
       res.send(value);
