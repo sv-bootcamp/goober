@@ -3,7 +3,7 @@
  */
 import React, {Component} from 'react';
 
-let divStyle = {
+const divStyle = {
   color: 'yellow',
   backgroundColor: 'blue',
   height: '200px',
