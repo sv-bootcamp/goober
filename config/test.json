@@ -1,1 +1,5 @@
-{}
+{
+  "name": "goober test",
+  "port": 5000,
+  "database": "test-db"
+}
