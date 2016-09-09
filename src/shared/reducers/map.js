@@ -9,7 +9,7 @@ const initialState = {
   }
 };
 
-export default (state, action) => {
+export default (state = initialState, action) => {
   const thisState = state || initialState;
 
   switch (action.type) {
@@ -21,6 +21,6 @@ export default (state, action) => {
       }
     });
   default:
-    return thisState;
+    return state;
   }
 };

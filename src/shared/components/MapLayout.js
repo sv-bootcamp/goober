@@ -1,6 +1,5 @@
 import React, {PropTypes, Component} from 'react';
 import { connect } from 'react-redux';
-
 import { getMapMarkers } from '../actions/map';
 import MapBlock from './MapBlock.js';
 
