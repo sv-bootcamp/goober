@@ -12,9 +12,9 @@
   "scripts": {
     "build-test": "gulp build:test",
     "build-cover": "npm run build-test -- --cover",
-    "test": "BABEL_ENV=test NODE_ENV=test && gulp test",
+    "test": "BABEL_ENV=test NODE_ENV=test gulp test",
     "fast-test": "NODE_ENV=test gulp run:test",
-    "cover": "NODE_ENV=test npm run build-cover && gulp test",
+    "cover": "NODE_ENV=test npm run build-cover && NODE_ENV=test gulp test",
     "lint": "gulp lint",
     "watch": "gulp watch",
     "build": "gulp build",
