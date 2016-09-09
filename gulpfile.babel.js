@@ -16,7 +16,7 @@ import source from 'vinyl-source-stream';
 import sourcemaps from 'gulp-sourcemaps';
 import unitest from 'unitest';
 import apidoc from 'gulp-apidoc';
-
+import jest from 'gulp-jest';
 
 //Default task. This will be run when no task is passed in arguments to gulp
 gulp.task('default', ['watch']);
@@ -34,7 +34,7 @@ gulp.task('build:server', ['clean:server'], () => compileNodeJS('src/{server,sha
 
 gulp.task('build', ['build:client', 'build:server', 'build:static']);
 
-gulp.task('build:test-client', ['clean:test'], () => compileClientJS(['./src/test/browser/index.js'], 'index.js', './dist-test/test/browser'));
+//gulp.task('build:test-client', ['clean:test'], () => compileClientJS(['./src/__tests__/browser/index.js'], 'index.js', './dist-test/test/browser'));
 
 gulp.task('build:test-server', ['clean:test'], () => compileNodeJS(['src/!(client)/!(browser)/**/*.js', 'src/!(client)/*.js'], './dist-test'));
 
@@ -43,7 +43,7 @@ gulp.task('build:test-json', ['clean:test'], () => gulp.src('src/**/*.json')
   .pipe(gulp.dest('./dist-test/'))
 );
 
-gulp.task('build:test', ['build:test-client', 'build:test-server', 'build:test-json']);
+gulp.task('build:test', ['build:test-server', 'build:test-json']);
 
 gulp.task('clean:test', () => rimraf.sync('./dist-test'));
 
@@ -72,9 +72,16 @@ gulp.task('run:jsonlint', () => gulp.src(['**/*.json', '!node_modules/**'])
   .pipe(jsonlint.failAfterError())
 );
 
-gulp.task('run:test', ['build:test'], () => {
+gulp.task('jest', function() {
+  return gulp.src('src/**/__tests__/browser').pipe(jest({
+    rootDir: 'src',
+    scriptPreprocessor: '../node_modules/6to5-jest',
+    unmockedModulePathPatterns: [ 'react' ]
+  }));
+});
+
+gulp.task('run:test', ['build:test', 'jest'], () => {
   const output = unitest({
-    browser: 'dist-test/test/browser/index.js',
     node: 'dist-test/test/node/index.js',
     report: ['text']
   }, (exitCode) => {
