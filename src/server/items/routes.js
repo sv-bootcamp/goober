@@ -116,9 +116,7 @@ router.delete('/', ItemContollers.removeAll);
  *       error: "database error"
  *     }
  */
-router.get('/:id', (req, res, next) => {
-  next();
-});
+router.get('/:id', ItemContollers.getById);
 
 router.put('/:id', (req, res, next) => {
   next();
