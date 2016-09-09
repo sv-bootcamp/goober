@@ -95,7 +95,6 @@ export default {
     });
   },
   add: (req, res, cb) => {
-    let increment;
     db.get('itemIncrement', (getErr, value) => {
       if (getErr) {
         res.status(500);
@@ -104,7 +103,7 @@ export default {
         });
         cb();
       } else {
-        increment = value + 1;
+        const increment = value + 1;
         db.put('itemIncrement', increment, (putIncErr) => {
           if (putIncErr) {
             res.status(500);
