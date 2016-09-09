@@ -93,5 +93,81 @@ export default {
       }
       return cb();
     });
+  },
+  add: (req, res, cb) => {
+    let increment;
+    db.get('itemIncrement', (getErr, value) => {
+      if (getErr) {
+        res.status(500);
+        res.send({
+          error: getErr
+        });
+        cb();
+      } else {
+        increment = value + 1;
+        db.put('itemIncrement', increment, (putIncErr) => {
+          if (putIncErr) {
+            res.status(500);
+            res.send({
+              error: putIncErr
+            });
+            cb();
+          } else {
+            db.put('item' + increment, req.body, (itemErr) => {
+              if (itemErr) {
+                res.status(500);
+                res.send({
+                  error: itemErr
+                });
+                cb();
+              } else {
+                res.status(200);
+                res.send({
+                  message: 'success'
+                });
+                cb('item' + increment);
+              }
+            });
+          }
+        });
+      }
+    });
+  },
+  modify: (req, res, cb) => {
+    const {id} = req.params;
+    const key = `item${id}`;
+    db.get(key, (getErr) => {
+      if (getErr) {
+        if (getErr.notFound) {
+          res.status(400);
+          res.send({
+            error: getErr.notFound
+          });
+          cb();
+        } else {
+          res.status(500);
+          res.send({
+            error: getErr
+          });
+          cb();
+        }
+      } else {
+        db.put(key, req.body, (itemErr) => {
+          if (itemErr) {
+            res.status(500);
+            res.send({
+              error: itemErr
+            });
+            cb();
+          } else {
+            res.status(200);
+            res.send({
+              message: 'success'
+            });
+            cb(req.body.address);
+          }
+        });
+      }
+    });
   }
 };
