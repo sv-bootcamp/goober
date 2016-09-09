@@ -2,10 +2,6 @@ import React, {PropTypes, Component} from 'react';
 import Card from './Card';
 
 class CardList extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <div>
