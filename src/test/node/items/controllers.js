@@ -82,6 +82,75 @@ test('get a item from database', t => {
     t.end();
   });
 });
+test('add an item to database', t => {
+  const expected = {
+    status: 200,
+    message: 'success',
+    valueDesc: itemRedSelo.description
+  };
+
+  const req = httpMocks.createRequest({
+    method: 'POST',
+    url: '/items',
+    body: itemRedSelo
+  });
+
+  const res = httpMocks.createResponse();
+
+  ItemController.add(req, res, (key) => {
+    const status = res.statusCode;
+    const message = res._getData().message;
+    testDB.get(key, (error, value) => {
+      t.equal(status, expected.status,
+        'should be same status');
+      t.equal(message, expected.message,
+        'should be same message');
+      t.equal(value.description, expected.valueDesc,
+        'should be same description');
+      t.end();
+    });
+  });
+});
+test('modify an item in database', t => {
+  let itemModified = itemAlaska;
+  itemModified.address = 'Alaska Modified';
+
+  const expected = {
+    status: 200,
+    message: 'success',
+    modifiedAddr: itemModified.address
+  };
+
+  const req = httpMocks.createRequest({
+    method: 'PUT',
+    url: '/items/2',
+    params: {
+      id: 2
+    },
+    body: itemModified
+  });
+
+  const res = httpMocks.createResponse();
+
+  testDB.put('item2', itemAlaska, (err) => {
+    if (err) {
+      t.fail('Test fails while putting a mock data');
+      t.end();
+    }
+
+    ItemController.modify(req, res, (modifiedAddr) => {
+      const status = res.statusCode;
+      const message = res._getData().message;
+      t.equal(status, expected.status,
+        'should be same status');
+      t.equal(message, expected.message,
+        'should be same message');
+      t.equal(modifiedAddr, expected.modifiedAddr,
+        'should be same address');
+      t.end();
+    });
+  });
+});
 test('delete an item from database', t => {
   const ops = [
     { type: 'put', key: 'item1', value: itemRedSelo }
@@ -166,72 +235,4 @@ test('delete all item from database', t => {
     });
   });
 });
-test('add an item to database', t => {
-  const expected = {
-    status: 200,
-    message: 'success',
-    valueDesc: itemRedSelo.description
-  };
 
-  const req = httpMocks.createRequest({
-    method: 'POST',
-    url: '/items',
-    body: itemRedSelo
-  });
-
-  const res = httpMocks.createResponse();
-
-  ItemController.add(req, res, (key) => {
-    const status = res.statusCode;
-    const message = res._getData().message;
-    testDB.get(key, (error, value) => {
-      t.equal(status, expected.status,
-        'should be same status');
-      t.equal(message, expected.message,
-        'should be same message');
-      t.equal(value.description, expected.valueDesc,
-        'should be same description');
-      t.end();
-    });
-  });
-});
-test('modify an item in database', t => {
-  let itemModified = itemAlaska;
-  itemModified.address = 'Alaska Modified';
-
-  const expected = {
-    status: 200,
-    message: 'success',
-    modifiedAddr: itemModified.address
-  };
-
-  const req = httpMocks.createRequest({
-    method: 'PUT',
-    url: '/items/2',
-    params: {
-      id: 2
-    },
-    body: itemModified
-  });
-
-  const res = httpMocks.createResponse();
-
-  testDB.put('item2', itemAlaska, (err) => {
-    if (err) {
-      t.fail('Test fails while putting a mock data');
-      t.end();
-    }
-
-    ItemController.modify(req, res, (modifiedAddr) => {
-      const status = res.statusCode;
-      const message = res._getData().message;
-      t.equal(status, expected.status,
-        'should be same status');
-      t.equal(message, expected.message,
-        'should be same message');
-      t.equal(modifiedAddr, expected.modifiedAddr,
-        'should be same address');
-      t.end();
-    });
-  });
-});
