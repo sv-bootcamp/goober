@@ -29,9 +29,9 @@ export default (state, action) => {
         data: { $set: action.data }
       }
     });
-  case ADD_MAP_MARKER:       
+  case ADD_MAP_MARKER:
     return update(thisState, {
-      get: {        
+      get: {
         markers: { $push: action.data }
       }
     });

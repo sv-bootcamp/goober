@@ -7,7 +7,7 @@ const App = ({children}) => {
       <div className="container">
         {children}
       </div>
-      <script src={'/javascripts/main.js'}/>      
+      <script src={'/javascripts/main.js'}/>
     </div>
   );
 };

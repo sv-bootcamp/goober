@@ -6,7 +6,7 @@ import Marker from './Marker.js';
 
 class MapBlock extends Component {
   constructor(props) {
-    super(props);    
+    super(props);
 
     this.onBoundsChange = this.onBoundsChange.bind(this);
     this.onChildClick = this.onChildClick.bind(this);
@@ -34,7 +34,7 @@ class MapBlock extends Component {
         text={id}
         {...coords} />
       );
-    });       
+    });
 
     return (
       <section style={{ width: '100%', height: '500px' }}>

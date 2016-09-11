@@ -13,30 +13,29 @@ class MapLayout extends Component {
   }
 
   componentDidMount() {
-    this.props.getMapMarkers().then(
+    let props = this.props;
+
+    props.getMapMarkers().then(
       () => {
         // console.log('dd:' + this.props.status + '/' + JSON.stringify(this.props.markers.data));
 
       }
     );
 
-    let that = this;
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition(function(position) {
-        
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
         const data = [{
-          id: "Current Location",
+          id: 'Current Location',
           lat: position.coords.latitude,
-          lng: position.coords.longitude          
-        }];      
-
-        that.props.addMapMarker(data);        
+          lng: position.coords.longitude
+        }];
+        props.addMapMarker(data);
       });
     }
   }
 
   handleSelectMarker(id, data) {
-    console.log(id+"/"+JSON.stringify(data));
+    // console.log(id+"/"+JSON.stringify(data));
     this.props.selectMapMarker(data);
   }
 
@@ -57,7 +56,7 @@ MapLayout.propTypes = {
   getMapMarkers: PropTypes.func,
   selectedData: PropTypes.object,
   selectMapMarker: PropTypes.func,
-  addMapMarker: PropTypes.func  
+  addMapMarker: PropTypes.func
 };
 
 MapLayout.defaultProps = {
