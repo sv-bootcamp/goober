@@ -12,7 +12,7 @@
   "scripts": {
     "build-test": "gulp build:test",
     "build-cover": "npm run build-test -- --cover",
-    "test": "lab src/test/.setup.js src/test/browser/components/*.js --leaks",
+    "test": "BABEL_ENV=test NODE_ENV=test gulp test",
     "fast-test": "NODE_ENV=test gulp run:test",
     "cover": "NODE_ENV=test npm run build-cover && gulp test",
     "lint": "gulp lint",
