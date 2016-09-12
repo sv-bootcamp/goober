@@ -2,6 +2,7 @@ import test from 'tape';
 import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import testDB from '../../../server/database';
+import uuid from 'uuid4';
 
 const itemRedSelo = {
   description: 'This is Red Selo',
@@ -83,8 +84,9 @@ test('get a item from database', t => {
   });
 });
 test('delete an item from database', t => {
+  const key = `item-${uuid()}`;
   const ops = [
-    { type: 'put', key: 'item1', value: itemRedSelo }
+    { type: 'put', key: key, value: itemRedSelo }
   ];
 
   testDB.batch(ops, (err) => {
@@ -99,7 +101,7 @@ test('delete an item from database', t => {
 
     const req = httpMocks.createRequest({
       method: 'DELETE',
-      url: '/items/1',
+      url: `/items/${key}`,
       params: {
         id: 1
       }
@@ -118,11 +120,12 @@ test('delete an item from database', t => {
     });
   });
 });
-
 test('delete all item from database', t => {
+  const redSeloKey = `item-${uuid()}`;
+  const alaskaKey = `item-${uuid()}`;
   const ops = [
-    { type: 'put', key: 'item1', value: itemRedSelo },
-    { type: 'put', key: 'item2', value: itemAlaska }
+    { type: 'put', key: redSeloKey, value: itemRedSelo },
+    { type: 'put', key: alaskaKey, value: itemAlaska }
   ];
 
   testDB.batch(ops, (err) => {
@@ -145,9 +148,9 @@ test('delete all item from database', t => {
     ItemController.removeAll(req, res, () => {
       const status = res.statusCode;
       const message = res._getData().message;
-      testDB.get('item1', (err1) => {
+      testDB.get(redSeloKey, (err1) => {
         if (err1 && err1.notFound) {
-          testDB.get('item2', (err2) => {
+          testDB.get(alaskaKey, (err2) => {
             if (err2 && err2.notFound) {
               t.equal(status, expected.status,
                 'should be same status');
@@ -156,12 +159,12 @@ test('delete all item from database', t => {
               t.end();
               return;
             }
-            t.fail('item2 is not removed');
+            t.fail('alaska is not removed');
             t.end();
           });
           return;
         }
-        t.fail('item1 is not removed');
+        t.fail('redSelo is not removed');
         t.end();
       });
     });
