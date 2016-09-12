@@ -1,15 +1,14 @@
 import React from 'react';
 import Code from 'code';
 import Lab from 'lab';
-const lab = exports.lab = Lab.script();
-
 import { shallow } from 'enzyme';
+import Marker from '../../../shared/components/Marker';
 
+const lab = exports.lab = Lab.script();
 const suite = lab.suite;
 const test = lab.test;
 const expect = Code.expect;
 
-import Marker from '../../../shared/components/Marker';
 
 suite('Map Component', () => {
   test('check marker exist', (done) => {
