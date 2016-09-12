@@ -24,4 +24,8 @@ CardList.propTypes = {
   onCardClick: PropTypes.func
 };
 
+CardList.defaultProps = {
+  cards: []
+};
+
 export default CardList;

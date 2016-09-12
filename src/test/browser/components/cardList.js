@@ -2,16 +2,16 @@ import React from 'react';
 import Code from 'code';
 import Lab from 'lab';
 import { shallow } from 'enzyme';
-import Index from '../../../shared/components/index';
+import CardList from '../../../shared/components/CardList';
 
 const lab = exports.lab = Lab.script();
 const suite = lab.suite;
 const test = lab.test;
 const expect = Code.expect;
 
-suite('Index Component', () => {
+suite('CardList Component', () => {
   test('.. does not throw error without props', (done) => {
-    const wrapper = shallow(<Index />);
+    const wrapper = shallow(<CardList />);
     expect(wrapper).to.exist();
     done();
   });

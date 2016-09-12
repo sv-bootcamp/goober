@@ -16,6 +16,7 @@ import source from 'vinyl-source-stream';
 import sourcemaps from 'gulp-sourcemaps';
 import unitest from 'unitest';
 import apidoc from 'gulp-apidoc';
+import shell from 'gulp-shell';
 
 
 //Default task. This will be run when no task is passed in arguments to gulp
@@ -43,7 +44,7 @@ gulp.task('build:test-json', ['clean:test'], () => gulp.src('src/**/*.json')
   .pipe(gulp.dest('./dist-test/'))
 );
 
-gulp.task('build:test', ['build:test-client', 'build:test-server', 'build:test-json']);
+gulp.task('build:test', ['build:test-server', 'build:test-json']);
 
 gulp.task('clean:test', () => rimraf.sync('./dist-test'));
 
@@ -72,9 +73,13 @@ gulp.task('run:jsonlint', () => gulp.src(['**/*.json', '!node_modules/**'])
   .pipe(jsonlint.failAfterError())
 );
 
-gulp.task('run:test', ['build:test'], () => {
+gulp.task('lab', shell.task([
+  'lab ./src/test/.setup.js ./src/test/browser/components/*.js --leaks'
+]))
+
+gulp.task('run:test', ['build:test', 'lab'], () => {
   const output = unitest({
-    browser: 'dist-test/test/browser/index.js',
+    //browser: 'dist-test/test/browser/index.js',
     node: 'dist-test/test/node/index.js',
     report: ['text']
   }, (exitCode) => {
