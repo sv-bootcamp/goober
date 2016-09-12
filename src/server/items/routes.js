@@ -67,7 +67,7 @@ router.put('/', (req, res, next) => {
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 500 Internal Server Error
  *     {
- *       error: ['item1', 'item2', ..]
+ *       error: ['item-1', 'item-2', ..]
  *     }
  */
 router.delete('/', ItemContollers.removeAll);
@@ -129,7 +129,7 @@ router.put('/:id', (req, res, next) => {
  * @apiName removeAnItem
  * @apiGroup Item
  *
- * @apiParam {Number} id Item's own id
+ * @apiParam {String} id Item's own id
  *
  * @apiSuccess {String} message success
  *
