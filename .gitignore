@@ -46,3 +46,10 @@ dist-test
 .idea/
 example-project.iml
 /config/local.json
+
+# apidoc
+doc
+
+# database
+test-db
+goober-db

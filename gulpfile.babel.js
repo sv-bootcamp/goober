@@ -16,6 +16,8 @@ import source from 'vinyl-source-stream';
 import sourcemaps from 'gulp-sourcemaps';
 import unitest from 'unitest';
 import lab from 'gulp-lab';
+import apidoc from 'gulp-apidoc';
+
 
 //Default task. This will be run when no task is passed in arguments to gulp
 gulp.task('default', ['watch']);
@@ -57,6 +59,12 @@ gulp.task('clean:server', () => rimraf.sync('./dist-server'));
 
 gulp.task('clean', ['clean:test', 'clean:server', 'clean:client']);
 
+gulp.task('clean:apidoc', () => rimraf.sync('./doc'));
+
+gulp.task('apidoc', ['clean:apidoc'], function(done){
+  apidoc( apidocConfig ,done);
+});
+
 gulp.task('run:eslint', () => gulp.src('src/**/*.js')
   .pipe(eslint())
   .pipe(eslint.format())
@@ -86,7 +94,7 @@ gulp.task('run:test', ['build:test'], () => {
 gulp.task('lint', ['run:eslint', 'run:jsonlint']);
 gulp.task('test', ['lint', 'run:test']);
 
-gulp.task('watch', ['build'], () => {
+gulp.task('watch', ['build', 'apidoc'], () => {
   nodemon({
     script: 'server.js',
     watch: 'src',
@@ -145,4 +153,12 @@ const lintReporter = (results) => {
   gutil.log('Total Results: ' + results.length);
   gutil.log('Total Warnings: ' + results.warningCount);
   gutil.log(logColor('Total Errors: ' + results.errorCount));
+};
+
+
+const apidocConfig = {
+  src: ['./src/server/routes', './src/server/items'],
+  dest: 'doc/',
+  debug: true,
+  config: './'
 };
