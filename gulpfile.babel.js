@@ -15,6 +15,7 @@ import rimraf from 'rimraf';
 import source from 'vinyl-source-stream';
 import sourcemaps from 'gulp-sourcemaps';
 import unitest from 'unitest';
+import lab from 'gulp-lab';
 
 //Default task. This will be run when no task is passed in arguments to gulp
 gulp.task('default', ['watch']);
@@ -33,7 +34,11 @@ gulp.task('build:server', ['clean:server'], () => compileNodeJS('src/{server,sha
 
 gulp.task('build', ['build:client', 'build:clientcss', 'build:server', 'build:static']);
 
-gulp.task('build:test-client', ['clean:test'], () => compileClientJS(['./src/test/browser/index.js'], 'index.js', './dist-test/test/browser'));
+// gulp.task('build:test-client', ['clean:test'], () => compileClientJS(['./src/test/browser/components/map.js'], 'index.js', './dist-test/test/browser'));
+
+gulp.task('build:test-client', ['clean:test'], () => gulp.src(['src/test/.setup.js', 'src/test/browser/components/map.js'])  
+  .pipe(lab())
+);
 
 gulp.task('build:test-server', ['clean:test'], () => compileNodeJS(['src/!(client)/!(browser)/**/*.js', 'src/!(client)/*.js'], './dist-test'));
 
@@ -66,8 +71,7 @@ gulp.task('run:jsonlint', () => gulp.src(['**/*.json', '!node_modules/**'])
 );
 
 gulp.task('run:test', ['build:test'], () => {
-  const output = unitest({
-    browser: 'dist-test/test/browser/index.js',
+  const output = unitest({            
     node: 'dist-test/test/node/index.js',
     report: ['text']
   }, (exitCode) => {

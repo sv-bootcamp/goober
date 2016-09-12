@@ -2,8 +2,8 @@ import React, {PropTypes, Component} from 'react';
 import { connect } from 'react-redux';
 
 import { getMapMarkers, selectMapMarker, addMapMarker } from '../actions/map';
-import MapBlock from './MapBlock.js';
 import MapCard from './MapCard.js';
+import MapBlock from './MapBlock.js';
 
 class MapLayout extends Component {
 
