@@ -51,7 +51,7 @@ router.get('/', ItemContollers.getAll);
  * @apiParam {String} createdDate createdDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
  * @apiParam {String} modifiedDate modifiedDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
  * @apiParam {String} category category
- *
+ * 
  * @apiSuccess {String} message success
  *
  * @apiSuccessExample Success-Response:
@@ -158,7 +158,7 @@ router.get('/:id', (req, res, next) => {
  * @apiParam {String} createdDate createdDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
  * @apiParam {String} modifiedDate modifiedDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
  * @apiParam {String} category category
- *
+ * 
  * @apiSuccess {String} message success
  *
  * @apiSuccessExample Success-Response:
@@ -174,7 +174,7 @@ router.get('/:id', (req, res, next) => {
  *     {
  *       error: "error message..."
  *     }
- *
+ * 
  * @apiErrorExample {json} Database-Error-Response:
  *     HTTP/1.1 500 Internal Server Error
  *     {

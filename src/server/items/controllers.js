@@ -1,5 +1,4 @@
 import db from '../database';
-import uuid from 'uuid4';
 
 export default {
   getAll: (req, res, cb) => {
@@ -11,10 +10,14 @@ export default {
       items.push(data.value);
     }).on('error', (err) => {
       if (err.notFound) {
-        res.status(200).send({items});
+        res.status(200);
+        res.send({items});
         return cb();
       }
-      res.status(500).send({error: 'database error'});
+      res.status(500);
+      res.send({
+        error: 'database error'
+      });
       return cb();
     })
     .on('close', () => {
@@ -30,13 +33,20 @@ export default {
     db.get(key, (err, value) => {
       if (err) {
         if (err.notFound) {
-          res.status(400).send({error: 'Item was not found.'});
+          res.status(400);
+          res.send({
+            error: 'Item was not found.'
+          });
           return cb();
         }
-        res.status(500).send({error: 'database error'});
+        res.status(500);
+        res.send({
+          error: 'database error'
+        });
         return cb();
       }
-      res.status(200).send(value);
+      res.status(200);
+      res.send(value);
       return cb();
     });
   },
@@ -44,13 +54,20 @@ export default {
     const key = 'item' + req.params.id;
     db.del(key, (err) => {
       if (err) {
-        res.status(400).send({message: err});
+        res.status(400);
+        res.send({
+          message: err
+        });
       } else {
-        res.status(200).send({message: 'success'});
+        res.status(200);
+        res.send({
+          message: 'success'
+        });
       }
       cb();
     });
   },
+
   removeAll: (req, res, cb) => {
     const errorList = [];
     db.createReadStream({
@@ -64,45 +81,92 @@ export default {
       });
     }).on('close', () => {
       if (errorList.length > 0) {
-        res.status(500).send({error: errorList});
+        res.status(500);
+        res.send({
+          error: errorList
+        });
       } else {
-        res.status(200).send({message: 'success'});
+        res.status(200);
+        res.send({
+          message: 'success'
+        });
       }
       return cb();
     });
   },
   add: (req, res, cb) => {
-    const itemId = 'item-' + uuid();
-    db.put(itemId, req.body, (itemErr) => {
-      if (itemErr) {
-        res.status(500).send({error: itemErr});
-        return cb();
+    db.get('itemIncrement', (getErr, value) => {
+      if (getErr) {
+        res.status(500);
+        res.send({
+          error: getErr
+        });
+        cb();
+      } else {
+        const increment = value + 1;
+        db.put('itemIncrement', increment, (putIncErr) => {
+          if (putIncErr) {
+            res.status(500);
+            res.send({
+              error: putIncErr
+            });
+            cb();
+          } else {
+            db.put('item' + increment, req.body, (itemErr) => {
+              if (itemErr) {
+                res.status(500);
+                res.send({
+                  error: itemErr
+                });
+                cb();
+              } else {
+                res.status(200);
+                res.send({
+                  message: 'success'
+                });
+                cb('item' + increment);
+              }
+            });
+          }
+        });
       }
-      res.status(200).send({message: 'success'});
-      return cb(itemId);
     });
   },
   modify: (req, res, cb) => {
-    const key = req.params.id;
+    const {id} = req.params;
+    const key = `item${id}`;
     db.get(key, (getErr) => {
       if (getErr) {
         if (getErr.notFound) {
-          res.status(400).send({error: getErr.notFound});
-          return cb();
+          res.status(400);
+          res.send({
+            error: getErr.notFound
+          });
+          cb();
+        } else {
+          res.status(500);
+          res.send({
+            error: getErr
+          });
+          cb();
         }
-        res.status(500).send({error: getErr});
-        return cb();
+      } else {
+        db.put(key, req.body, (itemErr) => {
+          if (itemErr) {
+            res.status(500);
+            res.send({
+              error: itemErr
+            });
+            cb();
+          } else {
+            res.status(200);
+            res.send({
+              message: 'success'
+            });
+            cb(req.body.address);
+          }
+        });
       }
-      return db.put(key, req.body, (itemErr) => {
-        if (itemErr) {
-          res.status(500).send({error: itemErr});
-          return cb();
-        }
-        res.status(200).send({message: 'success'});
-        return cb(req.body.address);
-      });
     });
   }
 };
-
-
