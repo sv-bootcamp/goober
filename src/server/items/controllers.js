@@ -4,8 +4,8 @@ export default {
   getAll: (req, res, cb) => {
     const items = [];
     db.createReadStream({
-      start: 'item1',
-      end: 'item' + '\xFF'
+      start: 'item-',
+      end: 'item-' + '\xFF'
     }).on('data', (data) => {
       items.push(data.value);
     }).on('error', (err) => {
@@ -28,8 +28,7 @@ export default {
     });
   },
   getById: (req, res, cb) => {
-    const {id} = req.params;
-    const key = `item${id}`;
+    const key = req.params.id;
     db.get(key, (err, value) => {
       if (err) {
         if (err.notFound) {
