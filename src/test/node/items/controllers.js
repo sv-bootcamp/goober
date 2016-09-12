@@ -2,7 +2,7 @@ import test from 'tape';
 import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import testDB from '../../../server/database';
-import uuid from 'node-uuid';
+import uuid from 'uuid4';
 
 const itemRedSelo = {
   description: 'This is Red Selo',
@@ -84,7 +84,7 @@ test('get a item from database', t => {
   });
 });
 test('delete an item from database', t => {
-  const key = 'item-' + uuid.v1();
+  const key = `item-${uuid()}`;
   const ops = [
     { type: 'put', key: key, value: itemRedSelo }
   ];
@@ -101,7 +101,7 @@ test('delete an item from database', t => {
 
     const req = httpMocks.createRequest({
       method: 'DELETE',
-      url: '/items/' + key,
+      url: `/items/${key}`,
       params: {
         id: 1
       }
@@ -121,8 +121,8 @@ test('delete an item from database', t => {
   });
 });
 test('delete all item from database', t => {
-  const redSeloKey = 'item-' + uuid.v1();
-  const alaskaKey = 'item-' + uuid.v1();
+  const redSeloKey = `item-${uuid()}`;
+  const alaskaKey = `item-${uuid()}`;
   const ops = [
     { type: 'put', key: redSeloKey, value: itemRedSelo },
     { type: 'put', key: alaskaKey, value: itemAlaska }

@@ -69,7 +69,7 @@ export default {
     const errorList = [];
     db.createReadStream({
       start: 'item-',
-      end: 'item-' + '\xFF'
+      end: 'item-\xFF'
     }).on('data', (data) => {
       db.del(data.key, (err) => {
         if (err) {
