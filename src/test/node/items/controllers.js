@@ -2,6 +2,7 @@ import test from 'tape';
 import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import testDB from '../../../server/database';
+import uuid from 'uuid4';
 
 const itemRedSelo = {
   description: 'This is Red Selo',
@@ -97,46 +98,50 @@ test('add an item to database', t => {
 
   const res = httpMocks.createResponse();
 
-  ItemController.add(req, res, (key) => {
-    const status = res.statusCode;
-    const message = res._getData().message;
-    testDB.get(key, (error, value) => {
+  ItemController.add(req, res, (ItemId) => {
+    testDB.get(ItemId, (err, val) => {
+      const status = res.statusCode;
+      const message = res._getData().message;
       t.equal(status, expected.status,
-        'should be same status');
+      'should be same status');
       t.equal(message, expected.message,
-        'should be same message');
-      t.equal(value.description, expected.valueDesc,
-        'should be same description');
+      'should be same message');
+      t.equal(val.description, expected.valueDesc,
+      'should be same description');
       t.end();
     });
   });
 });
 test('modify an item in database', t => {
-  let itemModified = itemAlaska;
-  itemModified.address = 'Alaska Modified';
+  const key = `item-${uuid()}`;
+  const ops = [
+    { type: 'put', key: key, value: itemRedSelo }
+  ];
 
-  const expected = {
-    status: 200,
-    message: 'success',
-    modifiedAddr: itemModified.address
-  };
-
-  const req = httpMocks.createRequest({
-    method: 'PUT',
-    url: '/items/2',
-    params: {
-      id: 2
-    },
-    body: itemModified
-  });
-
-  const res = httpMocks.createResponse();
-
-  testDB.put('item2', itemAlaska, (err) => {
+  testDB.batch(ops, (err) => {
     if (err) {
-      t.fail('Test fails while putting a mock data');
-      t.end();
+      t.end(err);
     }
+
+    let itemModified = itemAlaska;
+    itemModified.address = 'Alaska Modified';
+
+    const expected = {
+      status: 200,
+      message: 'success',
+      modifiedAddr: itemModified.address
+    };
+
+    const req = httpMocks.createRequest({
+      method: 'PUT',
+      url: '/items/' + key,
+      params: {
+        id: key
+      },
+      body: itemModified
+    });
+
+    const res = httpMocks.createResponse();
 
     ItemController.modify(req, res, (modifiedAddr) => {
       const status = res.statusCode;
@@ -235,4 +240,3 @@ test('delete all item from database', t => {
     });
   });
 });
-
