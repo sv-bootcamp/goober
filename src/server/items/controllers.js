@@ -72,7 +72,7 @@ export default {
     });
   },
   add: (req, res, cb) => {
-    const itemId = 'item-' + uuid();
+    const itemId = `item-${uuid()}`;
     db.put(itemId, req.body, (itemErr) => {
       if (itemErr) {
         res.status(500).send({error: itemErr});
@@ -85,14 +85,14 @@ export default {
   modify: (req, res, cb) => {
     const key = req.params.id;
     db.get(key, (getErr) => {
-      if (getErr) { 
+      if (getErr) {
         if (getErr.notFound) {
           res.status(400).send({error: getErr.notFound});
           return cb();
         }
         res.status(500).send({error: getErr});
         return cb();
-      } 
+      }
       return db.put(key, req.body, (itemErr) => {
         if (itemErr) {
           res.status(500).send({error: itemErr});
