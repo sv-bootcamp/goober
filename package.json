@@ -50,7 +50,6 @@
     "moment": "^2.14.1",
     "morgan": "~1.7.0",
     "node-simple-logger": "0.0.1",
-    "node-uuid": "^1.4.7",
     "properties": "^1.2.1",
     "react": "^15.3.1",
     "react-addons-create-fragment": "^15.3.1",
@@ -72,6 +71,7 @@
     "uuid4": "^1.0.0",
     "source-map-support": "^0.4.2",
     "toml": "^2.3.0",
+    "uuid4": "^1.0.0",
     "x2js": "^2.0.1",
     "yaml": "^0.3.0"
   },

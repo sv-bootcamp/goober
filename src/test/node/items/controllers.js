@@ -174,7 +174,7 @@ test('delete an item from database', t => {
 
     const req = httpMocks.createRequest({
       method: 'DELETE',
-      url: '/items/' + key,
+      url: `/items/${key}`,
       params: {
         id: 1
       }
