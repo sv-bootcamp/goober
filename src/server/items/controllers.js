@@ -7,22 +7,21 @@ export default {
       start: 'item-',
       end: 'item-' + '\xFF'
     }).on('data', (data) => {
+      data.value.id = data.key;
       items.push(data.value);
     }).on('error', (err) => {
       if (err.notFound) {
-        res.status(200);
-        res.send({items});
+        res.status(200).send({items});
         return cb();
       }
-      res.status(500);
-      res.send({
+      res.status(500).send({
         error: 'database error'
       });
       return cb();
     })
     .on('close', () => {
       if (items.length !== 0) {
-        res.send({items});
+        res.status(200).send({items});
         cb();
       }
     });
@@ -32,20 +31,17 @@ export default {
     db.get(key, (err, value) => {
       if (err) {
         if (err.notFound) {
-          res.status(400);
-          res.send({
+          res.status(400).send({
             error: 'Item was not found.'
           });
           return cb();
         }
-        res.status(500);
-        res.send({
+        res.status(500).send({
           error: 'database error'
         });
         return cb();
       }
-      res.status(200);
-      res.send(value);
+      res.status(200).send(value);
       return cb();
     });
   },
