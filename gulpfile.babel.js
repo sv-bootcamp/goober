@@ -74,7 +74,7 @@ gulp.task('run:jsonlint', () => gulp.src(['**/*.json', '!node_modules/**'])
 
 gulp.task('jest', function() {
   return gulp.src('src/**/__tests__/browser').pipe(jest({
-    rootDir: 'src',
+    rootDir: 'src/test',
     scriptPreprocessor: '../node_modules/6to5-jest',
     unmockedModulePathPatterns: [ 'react' ]
   }));

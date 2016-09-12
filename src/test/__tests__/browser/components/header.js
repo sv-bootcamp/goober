@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
-import Header from '../../../shared/components/header';
+import Header from '../../../../shared/components/header';
 
 it('Check text message in the header', () => {
   const checkText = TestUtils.renderIntoDocument(
