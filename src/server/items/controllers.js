@@ -5,7 +5,7 @@ export default {
     const items = [];
     db.createReadStream({
       start: 'item-',
-      end: 'item-' + '\xFF'
+      end: 'item-\xFF'
     }).on('data', (data) => {
       data.value.id = data.key;
       items.push(data.value);
