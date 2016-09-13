@@ -22,56 +22,61 @@ const itemAlaska = {
   modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
   category: 'default'
 };
+
 test('get all items from database', t => {
-  const ops = [
-    { type: 'put', key: 'item1', value: itemRedSelo },
-    { type: 'put', key: 'item2', value: itemAlaska }
-  ];
-
-  testDB.batch(ops, (err) => {
-    if (err) {
-      t.end(err);
-    }
-
-    const expected = {
-      itemRedSelo,
-      itemAlaska
-    };
-
-    const req = httpMocks.createRequest();
-    const res = httpMocks.createResponse();
-
-    ItemController.getAll(req, res, () => {
-      const data = res._getData();
-      t.equal(data.items[0].description, expected.itemRedSelo.description,
-        'should be same description');
-      t.equal(data.items[1].description, expected.itemAlaska.description,
-        'should be same description');
-
-      /*
-      leveldown.destroy(dbPath, (errr) => {
-        if(errr) { console.log('Ooops!', errr); }
-        console.log('clear db');
+  const key1 = `item-${uuid()}`;
+  const key2 = `item-${uuid()}`;
+  const expected = {
+    status: 200,
+    key1: itemRedSelo,
+    key2: itemAlaska
+  };
+  testDB.batch()
+    .put(key1, itemRedSelo)
+    .put(key2, itemAlaska)
+    .write((err) => {
+      if (err) {
+        t.end(err);
+      }
+      const req = httpMocks.createRequest();
+      const res = httpMocks.createResponse();
+      ItemController.getAll(req, res, () => {
+        const data = res._getData();
+        t.equal(res.statusCode, expected.status,
+          'should be same status');
+        t.equal(Object.keys(data).length, 2,
+          'should be same length');
+        t.equal(data[key1].description, expected.key1.description,
+          'should be same description');
+        t.equal(data[key2].description, expected.key2.description,
+          'should be same description');
+        testDB.batch()
+          .del(key1)
+          .del(key2)
+          .write((delErr) => {
+            if (delErr) {
+              t.end(delErr);
+            }
+            t.end();
+          });
       });
-      */
-      t.end();
     });
-  });
 });
 test('get a item from database', t => {
-  testDB.put('item1', itemRedSelo, (err) => {
+  const key = `item-${uuid()}`;
+  testDB.put(key, itemRedSelo, (err) => {
     if (err) {
       t.end(err);
     }
   });
 
   const expected = itemRedSelo;
-
+  expected.status = 200;
   const req = httpMocks.createRequest({
     method: 'GET',
-    url: '/items/1',
+    url: `/items/${key}`,
     params: {
-      id: 1
+      id: `${key}`
     }
   });
 
@@ -79,83 +84,19 @@ test('get a item from database', t => {
 
   ItemController.getById(req, res, () => {
     const data = res._getData();
-    t.equal(data.description, expected.description, 'should be same description');
-    t.end();
-  });
-});
-test('add an item to database', t => {
-  const expected = {
-    status: 200,
-    message: 'success',
-    valueDesc: itemRedSelo.description
-  };
-
-  const req = httpMocks.createRequest({
-    method: 'POST',
-    url: '/items',
-    body: itemRedSelo
-  });
-
-  const res = httpMocks.createResponse();
-
-  ItemController.add(req, res, (ItemId) => {
-    testDB.get(ItemId, (err, val) => {
-      const status = res.statusCode;
-      const message = res._getData().message;
-      t.equal(status, expected.status,
+    t.equal(res.statusCode, expected.status,
       'should be same status');
-      t.equal(message, expected.message,
-      'should be same message');
-      t.equal(val.description, expected.valueDesc,
+    t.equal(data.description, expected.description,
       'should be same description');
+    testDB.del(`${key}`, (err) => {
+      if (err) {
+        t.end(err);
+      }
       t.end();
     });
   });
 });
-test('modify an item in database', t => {
-  const key = `item-${uuid()}`;
-  const ops = [
-    { type: 'put', key: key, value: itemRedSelo }
-  ];
 
-  testDB.batch(ops, (err) => {
-    if (err) {
-      t.end(err);
-    }
-
-    let itemModified = itemAlaska;
-    itemModified.address = 'Alaska Modified';
-
-    const expected = {
-      status: 200,
-      message: 'success',
-      modifiedAddr: itemModified.address
-    };
-
-    const req = httpMocks.createRequest({
-      method: 'PUT',
-      url: '/items/' + key,
-      params: {
-        id: key
-      },
-      body: itemModified
-    });
-
-    const res = httpMocks.createResponse();
-
-    ItemController.modify(req, res, (modifiedAddr) => {
-      const status = res.statusCode;
-      const message = res._getData().message;
-      t.equal(status, expected.status,
-        'should be same status');
-      t.equal(message, expected.message,
-        'should be same message');
-      t.equal(modifiedAddr, expected.modifiedAddr,
-        'should be same address');
-      t.end();
-    });
-  });
-});
 test('delete an item from database', t => {
   const ops = [
     { type: 'put', key: 'item1', value: itemRedSelo }
@@ -192,6 +133,7 @@ test('delete an item from database', t => {
     });
   });
 });
+
 test('delete all item from database', t => {
   const ops = [
     { type: 'put', key: 'item1', value: itemRedSelo },
