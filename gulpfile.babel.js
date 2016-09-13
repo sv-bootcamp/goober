@@ -18,7 +18,6 @@ import unitest from 'unitest';
 import lab from 'gulp-lab';
 import apidoc from 'gulp-apidoc';
 
-
 //Default task. This will be run when no task is passed in arguments to gulp
 gulp.task('default', ['watch']);
 
@@ -38,7 +37,7 @@ gulp.task('build', ['build:client', 'build:clientcss', 'build:server', 'build:st
 
 // gulp.task('build:test-client', ['clean:test'], () => compileClientJS(['./src/test/browser/components/map.js'], 'index.js', './dist-test/test/browser'));
 
-gulp.task('build:test-client', ['clean:test'], () => gulp.src(['src/test/.setup.js', 'src/test/browser/components/*.js'])  
+gulp.task('build:test-client', ['clean:test'], () => gulp.src(['src/test/.setup.js', 'src/test/browser/components/*.js'])
   .pipe(lab())
 );
 
@@ -49,7 +48,7 @@ gulp.task('build:test-json', ['clean:test'], () => gulp.src('src/**/*.json')
   .pipe(gulp.dest('./dist-test/'))
 );
 
-gulp.task('build:test', ['build:test-client', 'build:test-server', 'build:test-json']);
+gulp.task('build:test', ['build:test-server', 'build:test-client', 'build:test-json']);
 
 gulp.task('clean:test', () => rimraf.sync('./dist-test'));
 
@@ -79,7 +78,7 @@ gulp.task('run:jsonlint', () => gulp.src(['**/*.json', '!node_modules/**'])
 );
 
 gulp.task('run:test', ['build:test'], () => {
-  const output = unitest({            
+  const output = unitest({
     node: 'dist-test/test/node/index.js',
     report: ['text']
   }, (exitCode) => {
