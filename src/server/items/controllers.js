@@ -47,21 +47,25 @@ export default {
     });
   },
   remove: (req, res, cb) => {
-    const key = 'item' + req.params.id;
+    const key = req.params.id;
     db.del(key, (err) => {
       if (err) {
-        res.status(400).send({message: err});
-      } else {
-        res.status(200).send({message: 'success'});
+        res.status(400).send({
+          message: err
+        });
+        return cb();
       }
-      cb();
+      res.status(200).send({
+        message: 'success'
+      });
+      return cb();
     });
   },
   removeAll: (req, res, cb) => {
     const errorList = [];
     db.createReadStream({
-      start: 'item1',
-      end: 'item' + '\xFF'
+      start: 'item-',
+      end: 'item-\xFF'
     }).on('data', (data) => {
       db.del(data.key, (err) => {
         if (err) {
@@ -70,10 +74,14 @@ export default {
       });
     }).on('close', () => {
       if (errorList.length > 0) {
-        res.status(500).send({error: errorList});
-      } else {
-        res.status(200).send({message: 'success'});
+        res.status(500).send({
+          error: errorList
+        });
+        return cb();
       }
+      res.status(200).send({
+        message: 'success'
+      });
       return cb();
     });
   },
