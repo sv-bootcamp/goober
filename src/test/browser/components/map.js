@@ -9,17 +9,16 @@ const suite = lab.suite;
 const test = lab.test;
 const expect = Code.expect;
 
-
 suite('Map Component', () => {
   test('check marker exist', (done) => {
-    const wrapper = shallow( <Marker key="test" text="test" /> );
+    const wrapper = shallow(<Marker key="test" text="test" />);
     expect(wrapper).to.exist();
     done();
   });
 
   test('check content on marker', (done) => {
-  	const wrapper = shallow( <Marker key="test" text="test" /> );
-  	expect(wrapper.text()).to.equal("test");
-  	done();
+    const wrapper = shallow(<Marker key="test" text="test" />);
+    expect(wrapper.text()).to.equal('test');
+    done();
   });
 });
