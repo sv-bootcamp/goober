@@ -18,6 +18,8 @@ class MapBlock extends Component {
 
   onChildClick(key, childProps) {
     this.props.onCenterChange([childProps.lat, childProps.lng]);
+
+    this.props.onSelectMarker(key, childProps);
   }
 
   render() {
@@ -59,7 +61,8 @@ MapBlock.propTypes = {
   onChildClick: PropTypes.func,
   center: PropTypes.any,
   zoom: PropTypes.number,
-  markers: PropTypes.any
+  markers: PropTypes.any,
+  onSelectMarker: PropTypes.func
 };
 
 MapBlock.defaultProps = {

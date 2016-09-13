@@ -9,8 +9,8 @@ router.get('/getmarkers', (req, res) => {
       lat: 37.563398,
       lng: 126.9907941,
       title: 'KRASNOYE SELO CIRCLE',
-      description: 'circle',
-      address: 'circle',
+      eventtime: '11:00 am - 4:00 pm',
+      address: '14 Mission St.Palo Alto, CA',
       type: 0
     },
     {
@@ -18,8 +18,8 @@ router.get('/getmarkers', (req, res) => {
       lat: 37.565398,
       lng: 126.9907941,
       title: 'ALASKA',
-      description: 'alaska',
-      address: 'alaska',
+      eventtime: '09:00 am - 2:00 pm',
+      address: '광화문 명당',
       type: 0
     }
   ];

@@ -7,6 +7,7 @@ export default (html, initialState) => {
   <head>
     <link rel="shortcut icon" href="/static/favicon.ico">
     <title>${config.name}</title>
+    <link rel='stylesheet' type='text/css' href='/stylesheets/style.css' />
   </head>
   <body>
     <div id="app-container">${html}</div>
