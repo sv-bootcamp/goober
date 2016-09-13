@@ -12,7 +12,7 @@ const expect = Code.expect;
 suite('Header Component', () => {
   test('check header text', (done) => {
     const wrapper = shallow(<Header/>);
-    expect(wrapper.text()).to.equal('asdf');
+    expect(wrapper.text()).to.equal('WHAT A GREAT HEADER');
     done();
   });
 });
