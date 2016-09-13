@@ -39,9 +39,35 @@ const router = express.Router();
  */
 router.get('/', ItemContollers.getAll);
 
-router.post('/', (req, res, next) => {
-  next();
-});
+/**
+ * @api {add} /items Add an item
+ * @apiName addAnItem
+ * @apiGroup Item
+ *
+ * @apiParam {String} description description
+ * @apiParam {Number} lat lat(e.g. 37.565398)
+ * @apiParam {Number} lng lng(e.g. 126.9907941)
+ * @apiParam {String} address address
+ * @apiParam {String} createdDate createdDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
+ * @apiParam {String} modifiedDate modifiedDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
+ * @apiParam {String} category category
+ *
+ * @apiSuccess {String} message success
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       message: "success"
+ *     }
+ *
+ * @apiError (Error 500) error The id of the error occured while putting an Item in DB
+ * @apiErrorExample {json} Database-Error-Response:
+ *     HTTP/1.1 500 Internal Server Error
+ *     {
+ *       error: "error message..."
+ *     }
+ */
+router.post('/', ItemContollers.add);
 
 router.put('/', (req, res, next) => {
   next();
@@ -120,9 +146,42 @@ router.get('/:id', (req, res, next) => {
   next();
 });
 
-router.put('/:id', (req, res, next) => {
-  next();
-});
+/**
+ * @api {modify} /items/:id Modify an item
+ * @apiName modifyAnItem
+ * @apiGroup Item
+ *
+ * @apiParam {String} description description
+ * @apiParam {Number} lat lat(e.g. 37.565398)
+ * @apiParam {Number} lng lng(e.g. 126.9907941)
+ * @apiParam {String} address address
+ * @apiParam {String} createdDate createdDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
+ * @apiParam {String} modifiedDate modifiedDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
+ * @apiParam {String} category category
+ *
+ * @apiSuccess {String} message success
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       message: "success"
+ *     }
+ *
+ * @apiError (Error 400) ItemNotFound The id of the Item was not found.
+ * @apiError (Error 500) error The id of the error occured while putting an Item in DB
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       error: "error message..."
+ *     }
+ *
+ * @apiErrorExample {json} Database-Error-Response:
+ *     HTTP/1.1 500 Internal Server Error
+ *     {
+ *       error: "error message..."
+ *     }
+ */
+router.put('/:id', ItemContollers.modify);
 
 /**
  * @api {delete} /items/:id Remove an item

@@ -68,6 +68,7 @@
     "request": "^2.74.0",
     "serve-favicon": "~2.3.0",
     "sinon": "^1.17.5",
+    "uuid4": "^1.0.0",
     "source-map-support": "^0.4.2",
     "toml": "^2.3.0",
     "x2js": "^2.0.1",
