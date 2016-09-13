@@ -17,6 +17,7 @@ import sourcemaps from 'gulp-sourcemaps';
 import unitest from 'unitest';
 import lab from 'gulp-lab';
 import apidoc from 'gulp-apidoc';
+import shell from 'gulp-shell';
 
 
 //Default task. This will be run when no task is passed in arguments to gulp
@@ -49,7 +50,7 @@ gulp.task('build:test-json', ['clean:test'], () => gulp.src('src/**/*.json')
   .pipe(gulp.dest('./dist-test/'))
 );
 
-gulp.task('build:test', ['build:test-client', 'build:test-server', 'build:test-json']);
+gulp.task('build:test', ['build:test-server', 'build:test-json']);
 
 gulp.task('clean:test', () => rimraf.sync('./dist-test'));
 
