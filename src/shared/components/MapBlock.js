@@ -39,6 +39,9 @@ class MapBlock extends Component {
       <section style={{ width: '100%', height: '500px' }}>
         <h4>coords: {this.props.center}</h4>
         <GoogleMap
+          bootstrapURLKeys={{
+            key: "AIzaSyB3F0XVwKCQbQbTdcV1RitQtW1aGYn-dkE"
+          }}
           center={this.props.center}
           zoom={this.props.zoom}
           onBoundsChange={this.onBoundsChange}
