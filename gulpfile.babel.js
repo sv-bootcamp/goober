@@ -104,7 +104,7 @@ gulp.task('watch', ['build', 'apidoc'], () => {
   gulp.watch('./src/client/stylesheets/*.css', ['build:clientcss']);
 });
 
-gulp.task('server', ['build'], () => {
+gulp.task('server', ['apidoc','build'], () => {
   nodemon({
     script: 'server.js',
     watch: false,
