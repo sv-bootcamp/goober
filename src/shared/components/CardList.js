@@ -19,9 +19,8 @@ class CardList extends Component {
 CardList.propTypes = {
   cards: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
-    text: PropTypes.string
-  })),
-  onCardClick: PropTypes.func
+    thisData: PropTypes.object
+  }))
 };
 
 CardList.defaultProps = {

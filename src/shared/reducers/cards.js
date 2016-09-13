@@ -8,9 +8,12 @@ const initialState = {
 const card = (state = initialState, action) => {
   switch (action.type) {
   case ADD_CARD:
+    let thisData = {
+      title: action.title
+    };
     return {
       id: action.id,
-      text: action.text
+      thisData: thisData
     };
   default:
     return state;

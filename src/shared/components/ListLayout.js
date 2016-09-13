@@ -6,8 +6,8 @@ class ListLayout extends Component {
   render() {
     return (
 			<div>
-				<CategorizedCardList />
 				<AddCard />
+				<CategorizedCardList />
 			</div>
 		);
   }
