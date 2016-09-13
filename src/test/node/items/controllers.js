@@ -22,7 +22,6 @@ const itemAlaska = {
   modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
   category: 'default'
 };
-
 test('get all items from database', t => {
   const key1 = `item-${uuid()}`;
   const key2 = `item-${uuid()}`;
@@ -96,7 +95,79 @@ test('get a item from database', t => {
     });
   });
 });
+test('add an item to database', t => {
+  const expected = {
+    status: 200,
+    message: 'success',
+    valueDesc: itemRedSelo.description
+  };
 
+  const req = httpMocks.createRequest({
+    method: 'POST',
+    url: '/items',
+    body: itemRedSelo
+  });
+
+  const res = httpMocks.createResponse();
+
+  ItemController.add(req, res, (ItemId) => {
+    testDB.get(ItemId, (err, val) => {
+      const status = res.statusCode;
+      const message = res._getData().message;
+      t.equal(status, expected.status,
+      'should be same status');
+      t.equal(message, expected.message,
+      'should be same message');
+      t.equal(val.description, expected.valueDesc,
+      'should be same description');
+      t.end();
+    });
+  });
+});
+test('modify an item in database', t => {
+  const key = `item-${uuid()}`;
+  const ops = [
+    { type: 'put', key: key, value: itemRedSelo }
+  ];
+
+  testDB.batch(ops, (err) => {
+    if (err) {
+      t.end(err);
+    }
+
+    let itemModified = itemAlaska;
+    itemModified.address = 'Alaska Modified';
+
+    const expected = {
+      status: 200,
+      message: 'success',
+      modifiedAddr: itemModified.address
+    };
+
+    const req = httpMocks.createRequest({
+      method: 'PUT',
+      url: '/items/' + key,
+      params: {
+        id: key
+      },
+      body: itemModified
+    });
+
+    const res = httpMocks.createResponse();
+
+    ItemController.modify(req, res, (modifiedAddr) => {
+      const status = res.statusCode;
+      const message = res._getData().message;
+      t.equal(status, expected.status,
+        'should be same status');
+      t.equal(message, expected.message,
+        'should be same message');
+      t.equal(modifiedAddr, expected.modifiedAddr,
+        'should be same address');
+      t.end();
+    });
+  });
+});
 test('delete an item from database', t => {
   const ops = [
     { type: 'put', key: 'item1', value: itemRedSelo }
@@ -133,7 +204,6 @@ test('delete an item from database', t => {
     });
   });
 });
-
 test('delete all item from database', t => {
   const ops = [
     { type: 'put', key: 'item1', value: itemRedSelo },
