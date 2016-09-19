@@ -14,7 +14,7 @@ const initialState = {
   cards: []
 };
 
-export default (state = initialState, action) => {
+export default (state, action) => {
   const thisState = state || initialState;
 
   switch (action.type) {
@@ -42,6 +42,6 @@ export default (state = initialState, action) => {
       cards: { $push: [{ id: action.id, text: 'card' + action.id }]}
     });
   default:
-    return state;
+    return thisState;
   }
 };
