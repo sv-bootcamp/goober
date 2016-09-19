@@ -16,25 +16,25 @@ const router = express.Router();
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *        item1: {
- *          id : item1,
- *          description: 'textDescription',
- *          lat: 30.565398,
- *          lng: 126.9907941,
- *          address: 'testAddress',
- *          createdDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *          modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *          category: 'default'
+ *        "item1": {
+ *          "id"          : "item1",
+ *          "description" : 'textDescription',
+ *          "lat"         : 30.565398,
+ *          "lng"         : 126.9907941,
+ *          "address"     : 'testAddress',
+ *          "createdDate" : 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
+ *          "modifiedDate": 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
+ *          "category"    : 'default'
  *        },
- *        item2: {
- *          id : item2,
- *          description: 'textDescription2',
- *          lat: 32.565398,
- *          lng: 153.9907941,
- *          address: 'testAddress2',
- *          createdDate: 'Wed Mar 26 2015 09:00:00 GMT+0900 (KST)',
- *          modifiedDate: 'Wed Mar 26 2015 09:00:00 GMT+0900 (KST)',
- *          category: 'default'
+ *        "item2": {
+ *          "id"          : item2,
+ *          "description" : 'textDescription2',
+ *          "lat"         : 32.565398,
+ *          "lng"         : 153.9907941,
+ *          "address"     : 'testAddress2',
+ *          "createdDate" : 'Wed Mar 26 2015 09:00:00 GMT+0900 (KST)',
+ *          "modifiedDate": 'Wed Mar 26 2015 09:00:00 GMT+0900 (KST)',
+ *          "category"    : 'default'
  *        }
  *     }
  * @apiError (Error 500) DatabaseError Internal error occured in the database.
@@ -125,14 +125,14 @@ router.delete('/', ItemContollers.removeAll);
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *        id : item1,
- *        description: 'textDescription',
- *        lat: 30.565398,
- *        lng: 126.9907941,
- *        address: 'testAddress',
- *        createdDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *        modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *        category: 'default'
+ *        "id"          : "item1",
+ *        "description" : 'textDescription',
+ *        "lat"         : 30.565398,
+ *        "lng"         : 126.9907941,
+ *        "address"     : 'testAddress',
+ *        "createdDate" : 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
+ *        "modifiedDate": 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
+ *        "category"    : 'default'
  *     }
  *
  * @apiError (Error 400) ItemNotFound The id of the Item was not found.
