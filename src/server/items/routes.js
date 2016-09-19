@@ -27,7 +27,7 @@ const router = express.Router();
  *          "category"    : 'default'
  *        },
  *        "item2": {
- *          "id"          : item2,
+ *          "id"          : "item2",
  *          "description" : 'textDescription2',
  *          "lat"         : 32.565398,
  *          "lng"         : 153.9907941,
