@@ -9,7 +9,6 @@ const suite = lab.suite;
 const test = lab.test;
 const expect = Code.expect;
 
-
 suite('Map Component', () => {
   test('check marker exist', (done) => {
     const wrapper = shallow( <Marker key="test" text="test" /> );
