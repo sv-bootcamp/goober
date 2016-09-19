@@ -3,5 +3,5 @@
   "version": "1.0.0",
   "description": "Goober API DOC",
   "title": "Goober",
-  "url" : "http://localhost:5000"
+  "url" : "http://localhost:5000/api"
 }
