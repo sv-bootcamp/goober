@@ -41,6 +41,7 @@
     "fb": "^1.1.1",
     "google-map-react": "^0.18.3",
     "gulp": "^3.9.1",
+    "gulp-jest": "^0.5.2",
     "hjson": "^2.0.5",
     "iced-coffee-script": "^108.0.11",
     "leveldown": "^1.4.6",
@@ -77,6 +78,7 @@
   "devDependencies": {
     "babel-cli": "^6.11.4",
     "babel-core": "^6.13.2",
+    "babel-jest": "^15.0.0",
     "babel-plugin-__coverage__": "^11.0.0",
     "babel-plugin-transform-object-assign": "^6.8.0",
     "babel-preset-es2015": "^6.14.0",
