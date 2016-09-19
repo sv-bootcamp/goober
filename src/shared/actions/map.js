@@ -31,6 +31,7 @@ export function getMapMarkers() {
     });
   };
 }
+
 export function selectMapMarker(data) {
   return {
     type: SELECT_MAP_MARKER,

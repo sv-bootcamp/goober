@@ -17,7 +17,6 @@ import sourcemaps from 'gulp-sourcemaps';
 import unitest from 'unitest';
 import lab from 'gulp-lab';
 import apidoc from 'gulp-apidoc';
-import shell from 'gulp-shell';
 
 //Default task. This will be run when no task is passed in arguments to gulp
 gulp.task('default', ['watch']);
@@ -79,11 +78,7 @@ gulp.task('run:jsonlint', () => gulp.src(['**/*.json', '!node_modules/**'])
   .pipe(jsonlint.failAfterError())
 );
 
-gulp.task('lab', shell.task([
-  'lab ./src/test/.setup.js ./src/test/browser/components/*.js --leaks'
-]))
-
-gulp.task('run:test', ['build:test', 'lab'], () => {
+gulp.task('run:test', ['build:test'], () => {
   const output = unitest({
     node: 'dist-test/test/node/index.js',
     report: ['text']
