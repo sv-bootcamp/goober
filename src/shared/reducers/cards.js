@@ -8,7 +8,7 @@ const initialState = {
 const card = (state = initialState, action) => {
   switch (action.type) {
   case ADD_CARD:
-    let thisData = {
+    const thisData = {
       title: action.title
     };
     return {
