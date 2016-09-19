@@ -18,7 +18,6 @@ class MapLayout extends Component {
     props.getMapMarkers().then(
       () => {
         // console.log('dd:' + this.props.status + '/' + JSON.stringify(this.props.markers.data));
-
       }
     );
 
