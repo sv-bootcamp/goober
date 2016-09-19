@@ -36,7 +36,7 @@ gulp.task('build:server', ['clean:server'], () => compileNodeJS('src/{server,sha
 
 gulp.task('build', ['build:client', 'build:clientcss', 'build:server', 'build:static']);
 
-// gulp.task('build:test-client', ['clean:test'], () => compileClientJS(['./src/test/browser/components/map.js'], 'index.js', './dist-test/test/browser'));
+// gulp.task('build:test-client', ['clean:test'], () => compileClientJS(['src/test/.setup.js', './src/test/browser/index.js'], 'index.js', './dist-test/test/browser').pipe(lab()));
 
 gulp.task('build:test-client', ['clean:test'], () => gulp.src(['src/test/.setup.js', 'src/test/browser/components/*.js'])  
   .pipe(lab())
