@@ -1,8 +1,7 @@
 import React, {PropTypes, Component} from 'react';
 import { connect } from 'react-redux';
-
 import { getMapMarkers, selectMapMarker, addMapMarker } from '../actions/map';
-import MapCard from './MapCard.js';
+import Card from './Card.js';
 import MapBlock from './MapBlock.js';
 
 class MapLayout extends Component {
@@ -17,8 +16,6 @@ class MapLayout extends Component {
 
     props.getMapMarkers().then(
       () => {
-        // console.log('dd:' + this.props.status + '/' + JSON.stringify(this.props.markers.data));
-
       }
     );
 
@@ -35,7 +32,6 @@ class MapLayout extends Component {
   }
 
   handleSelectMarker(id, data) {
-    // console.log(id+"/"+JSON.stringify(data));
     this.props.selectMapMarker(data);
   }
 
@@ -44,7 +40,7 @@ class MapLayout extends Component {
       <section>
         <h2>test map</h2>
         <MapBlock markers={this.props.markers} onSelectMarker={this.handleSelectMarker} />
-        <MapCard thisData={this.props.selectedData} />
+        <Card thisData={this.props.selectedData} />
       </section>
     );
   }
