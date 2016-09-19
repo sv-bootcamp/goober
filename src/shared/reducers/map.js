@@ -1,4 +1,5 @@
-import {GET_MAP_MARKERS_SUCCESS, SELECT_MAP_MARKER, ADD_MAP_MARKER, ADD_CARD} from '../actions/ActionTypes';
+import {GET_MAP_MARKERS_SUCCESS, SELECT_MAP_MARKER, ADD_MAP_MARKER, 
+        ADD_CARD} from '../actions/ActionTypes';
 import update from 'react-addons-update';
 
 const initialState = {
