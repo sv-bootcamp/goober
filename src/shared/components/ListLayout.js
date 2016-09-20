@@ -5,11 +5,11 @@ import AddCard from '../containers/AddCard';
 class ListLayout extends Component {
   render() {
     return (
-			<div>
-				<AddCard />
-				<CategorizedCardList />
-			</div>
-		);
+      <div>
+        <AddCard />
+        <CategorizedCardList />
+      </div>
+    );
   }
 }
 
