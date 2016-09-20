@@ -4,6 +4,7 @@ import uuid from 'uuid4';
 export default {
   getAll: (req, res, cb) => {
     const items = [];
+    let error;
     db.createReadStream({
       start: 'item-',
       end: 'item-\xFF'
@@ -11,20 +12,15 @@ export default {
       data.value.id = data.key;
       items.push(data.value);
     }).on('error', (err) => {
-      if (err.notFound) {
-        res.status(200).send({items});
-        return cb();
-      }
+      error = err;
       res.status(500).send({
         error: 'database error'
       });
-      return cb();
-    })
-    .on('close', () => {
-      if (items.length !== 0) {
+    }).on('close', () => {
+      if (!error) {
         res.status(200).send({items});
-        cb();
       }
+      return cb();
     });
   },
   getById: (req, res, cb) => {
