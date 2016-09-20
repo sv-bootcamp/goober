@@ -24,14 +24,14 @@ class MapBlock extends Component {
 
   render() {
     const markers = this.props.markers
-    .map(marker => {
-      console.log("d:"+JSON.stringify(marker));
+    .map(marker => {      
+      console.log(JSON.stringify(marker));
       const {id, description, ...coords} = marker;
 
       return (
         <Marker
         key={id}
-        text={description}
+        description={description}
         {...coords} />
       );
     });
