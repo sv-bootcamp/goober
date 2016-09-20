@@ -22,7 +22,7 @@ class MapCard extends Component {
 		transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={300}>
 			<section key={1} className='mapcard'
 				onClick={this.handleMove}>
-				<h3>{this.props.thisData.title}</h3>
+				<h3>{this.props.thisData.description}</h3>
 				<h5>{this.props.thisData.address}</h5>
 				<h5>{this.props.thisData.eventtime}</h5>
 				<div className='footer'>
