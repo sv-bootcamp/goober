@@ -1,1 +1,1 @@
-web: npm run server
+web: npm install --only=dev && gulp apidoc && npm run server
