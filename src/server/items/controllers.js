@@ -3,28 +3,24 @@ import uuid from 'uuid4';
 
 export default {
   getAll: (req, res, cb) => {
-    const items = {};
+    const items = [];
+    let error;
     db.createReadStream({
       start: 'item-',
       end: 'item-\xFF'
     }).on('data', (data) => {
       data.value.id = data.key;
-      items[data.key] = data.value;
+      items.push(data.value);
     }).on('error', (err) => {
-      if (err.notFound) {
-        res.status(200).send(items);
-        return cb();
-      }
+      error = err;
       res.status(500).send({
         error: 'database error'
       });
-      return cb();
-    })
-    .on('close', () => {
-      if (items.length !== 0) {
-        res.status(200).send(items);
-        cb();
+    }).on('close', () => {
+      if (!error) {
+        res.status(200).send({items});
       }
+      return cb();
     });
   },
   getById: (req, res, cb) => {
@@ -42,6 +38,7 @@ export default {
         });
         return cb();
       }
+      value.id = key;
       res.status(200).send(value);
       return cb();
     });
