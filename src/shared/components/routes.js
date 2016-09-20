@@ -8,9 +8,7 @@ import ListLayout from '../components/ListLayout';
 export default (
   <Route path="/" component={AppContainer}>
     <IndexRoute component={IndexContainer}/>
-    <Route path="map" component={AppContainer}>
-      <IndexRoute component={MapLayout}/>
-    </Route>
+    <Route path="map" component={MapLayout}/>
     <Route path="list" component={ListLayout}/>
   </Route>
 );
