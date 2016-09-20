@@ -1,5 +1,6 @@
 import db from '../database';
 import uuid from 'uuid4';
+import {APIError} from '../ErrorHandler';
 
 export default {
   getAll: (req, res, cb) => {
@@ -13,14 +14,13 @@ export default {
       items.push(data.value);
     }).on('error', (err) => {
       error = err;
-      res.status(500).send({
-        error: 'database error'
-      });
-    }).on('close', () => {
+      return cb(new APIError(err));
+    })
+    .on('close', () => {
       if (!error) {
         res.status(200).send({items});
+        cb();
       }
-      return cb();
     });
   },
   getById: (req, res, cb) => {
@@ -47,10 +47,16 @@ export default {
     const key = req.params.id;
     db.del(key, (err) => {
       if (err) {
-        res.status(400).send({
-          message: err
-        });
-        return cb();
+        if(err.notFound){
+          return cb(new APIError(err, {
+            statusCode: 400,
+            message: 'Bad Request, No data'
+          }));
+        }
+        return cb(new APIError(err, {
+          statusCode: 500,
+          message: 'Internal Database Error'
+        }));
       }
       res.status(200).send({
         message: 'success'
@@ -66,15 +72,15 @@ export default {
     }).on('data', (data) => {
       db.del(data.key, (err) => {
         if (err) {
-          errorList.push(data.key);
+          errorList.push(err);
         }
       });
     }).on('close', () => {
       if (errorList.length > 0) {
-        res.status(500).send({
-          error: errorList
-        });
-        return cb();
+        return cb(new APIError(errorList[0], {
+          statusCode: 500,
+          message: 'Internal Database Error'
+        }));
       }
       res.status(200).send({
         message: 'success'
@@ -86,11 +92,13 @@ export default {
     const itemId = `item-${uuid()}`;
     db.put(itemId, req.body, (itemErr) => {
       if (itemErr) {
-        res.status(500).send({error: itemErr});
-        return cb();
+        return cb(new APIError(itemErr));
       }
-      res.status(200).send({message: 'success'});
-      return cb(itemId);
+      res.status(200).send({
+        message: 'success',
+        data: itemId
+      });
+      return cb();
     });
   },
   modify: (req, res, cb) => {
@@ -98,19 +106,23 @@ export default {
     db.get(key, (getErr) => {
       if (getErr) {
         if (getErr.notFound) {
-          res.status(400).send({error: getErr.notFound});
-          return cb();
+          return cb(new APIError(getErr, {
+            statusCode: 400,
+            message: getErr
+          }));
         }
-        res.status(500).send({error: getErr});
-        return cb();
+        return cb(new APIError(getErr));
       }
-      return db.put(key, req.body, (itemErr) => {
+      const value = req.body;
+      return db.put(key, value, (itemErr) => {
         if (itemErr) {
-          res.status(500).send({error: itemErr});
-          return cb();
+          return cb(new APIError(itemErr));
         }
-        res.status(200).send({message: 'success'});
-        return cb(req.body.address);
+        res.status(200).send({
+          message: 'success',
+          data: value
+        });
+        return cb();
       });
     });
   }

@@ -26,14 +26,14 @@ test('get all items from database', t => {
   let key1 = `item-${uuid()}`;
   let key2 = `item-${uuid()}`;
   
-  // https://github.com/Level/levelup#introduction 
+  // https://github.com/Level/levelup#introduction
   // LevelDB stores entries sorted lexicographically by keys.
   if ( key2 < key1 ) {
     const temp = key2;
     key2 = key1;
     key1 = temp;
-  } 
-  
+  }
+
   const expected = {
     status: 200,
     items : [
@@ -41,36 +41,48 @@ test('get all items from database', t => {
       itemAlaska
     ]
   };
-  testDB.batch()
-    .put(key1, itemRedSelo)
-    .put(key2, itemAlaska)
-    .write((err) => {
+  testDB.createReadStream({
+    start: 'item-',
+    end: 'item-\xFF'
+  }).on('data', (data) => {
+    testDB.del(data.key, (err) => {
       if (err) {
-        t.end(err);
+        t.fail('database fault');
       }
-      const req = httpMocks.createRequest();
-      const res = httpMocks.createResponse();
-      ItemController.getAll(req, res, () => {
-        const data = res._getData();
-        t.equal(res.statusCode, expected.status,
-          'should be same status');
-        t.equal(data.items.length, 2,
-          'should be same length');
-        t.equal(data.items[0].description, expected.items[0].description,
-          'should be same description');
-        t.equal(data.items[1].description, expected.items[1].description,
-          'should be same description');
-        testDB.batch()
-          .del(key1)
-          .del(key2)
-          .write((delErr) => {
-            if (delErr) {
-              t.end(delErr);
-            }
-            t.end();
-          });
-      });
     });
+  }).on('close', () => {
+    testDB.batch()
+      .put(key1, itemRedSelo)
+      .put(key2, itemAlaska)
+      .write((err) => {
+        if (err) {
+          t.end(err);
+        }
+        const req = httpMocks.createRequest();
+        const res = httpMocks.createResponse();
+        ItemController.getAll(req, res, () => {
+          const data = res._getData();
+          t.equal(res.statusCode, expected.status,
+            'should be same status');
+          t.equal(data.items.length, 2,
+            'should be same length');
+          t.equal(data.items[0].description, expected.items[0].description,
+            'should be same description');
+          t.equal(data.items[1].description, expected.items[1].description,
+            'should be same description');
+          t.end();
+          /*testDB.batch()
+            .del(key1)
+            .del(key2)
+            .write((delErr) => {
+              if (delErr) {
+                t.end(delErr);
+              }
+              t.end();
+            });*/
+        });
+      });
+  });
 });
 test('get a item from database', t => {
   const key = `item-${uuid()}`;
@@ -121,8 +133,9 @@ test('add an item to database', t => {
 
   const res = httpMocks.createResponse();
 
-  ItemController.add(req, res, (ItemId) => {
-    testDB.get(ItemId, (err, val) => {
+  ItemController.add(req, res, () => {
+    const itemID = res._getData().data;
+    testDB.get(itemID, (err, val) => {
       const status = res.statusCode;
       const message = res._getData().message;
       t.equal(status, expected.status,
@@ -146,7 +159,7 @@ test('modify an item in database', t => {
       t.end(err);
     }
 
-    let itemModified = itemAlaska;
+    const itemModified = itemAlaska;
     itemModified.address = 'Alaska Modified';
 
     const expected = {
@@ -166,9 +179,10 @@ test('modify an item in database', t => {
 
     const res = httpMocks.createResponse();
 
-    ItemController.modify(req, res, (modifiedAddr) => {
+    ItemController.modify(req, res, () => {
       const status = res.statusCode;
       const message = res._getData().message;
+      const modifiedAddr = res._getData().data.address;
       t.equal(status, expected.status,
         'should be same status');
       t.equal(message, expected.message,
