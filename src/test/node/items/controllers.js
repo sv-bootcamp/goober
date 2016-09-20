@@ -23,12 +23,23 @@ const itemAlaska = {
   category: 'default'
 };
 test('get all items from database', t => {
-  const key1 = `item-${uuid()}`;
-  const key2 = `item-${uuid()}`;
+  let key1 = `item-${uuid()}`;
+  let key2 = `item-${uuid()}`;
+  
+  // https://github.com/Level/levelup#introduction 
+  // LevelDB stores entries sorted lexicographically by keys.
+  if ( key2 < key1 ) {
+    const temp = key2;
+    key2 = key1;
+    key1 = temp;
+  } 
+  
   const expected = {
     status: 200,
-    key1: itemRedSelo,
-    key2: itemAlaska
+    items : [
+      itemRedSelo,
+      itemAlaska
+    ]
   };
   testDB.batch()
     .put(key1, itemRedSelo)
@@ -43,11 +54,11 @@ test('get all items from database', t => {
         const data = res._getData();
         t.equal(res.statusCode, expected.status,
           'should be same status');
-        t.equal(Object.keys(data).length, 2,
+        t.equal(data.items.length, 2,
           'should be same length');
-        t.equal(data[key1].description, expected.key1.description,
+        t.equal(data.items[0].description, expected.items[0].description,
           'should be same description');
-        t.equal(data[key2].description, expected.key2.description,
+        t.equal(data.items[1].description, expected.items[1].description,
           'should be same description');
         testDB.batch()
           .del(key1)
