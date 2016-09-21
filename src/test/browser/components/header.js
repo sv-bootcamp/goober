@@ -10,9 +10,9 @@ const test = lab.test;
 const expect = Code.expect;
 
 suite('Header Component', () => {
-  test('check header text', (done) => {
+  test('.. does not throw error without props', (done) => {
     const wrapper = shallow(<Header/>);
-    expect(wrapper.text()).to.equal('WHAT A GREAT HEADER');
+    expect(wrapper).to.exist();
     done();
   });
 });

@@ -40,7 +40,7 @@ class MapBlock extends Component {
         <h4>coords: {this.props.center}</h4>
         <GoogleMap
           bootstrapURLKeys={{
-            key: "AIzaSyDjOUM158Gk2APJ7zfGaRMxgVJ5iMs7M-Q"
+            key: 'AIzaSyDjOUM158Gk2APJ7zfGaRMxgVJ5iMs7M-Q'
           }}
           center={this.props.center}
           zoom={this.props.zoom}
