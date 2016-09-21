@@ -9,6 +9,9 @@ class MapBlock extends Component {
     super(props);
     this.onBoundsChange = this.onBoundsChange.bind(this);
     this.onChildClick = this.onChildClick.bind(this);
+    this.onChildMouseEnter = this.onChildMouseEnter.bind(this);
+    this.onChildMouseLeave = this.onChildMouseLeave.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
   onBoundsChange(center, zoom) {
@@ -16,10 +19,28 @@ class MapBlock extends Component {
     this.props.onZoomChange(zoom);
   }
 
+  // onChange(center, zoom, bounds) {
+    // this.props.setMapProps(center, zoom, bounds);
+  // }
+
   onChildClick(key, childProps) {
     this.props.onCenterChange([childProps.lat, childProps.lng]);
 
     this.props.onSelectMarker(key, childProps);
+  }
+
+  onChildMouseEnter(key, childProps) {
+    const markerId = childProps.id;
+    const index = this.props.markers.findIndex(marker => marker.id === markerId);
+    if(this.props.onMarkerHover) {
+      this.props.onMarkerHover(index);
+    }
+  }
+
+  onChildMouseLeave() {
+    if(this.props.onMarkerHover) {
+      this.props.onMarkerHover(-1);
+    }
   }
 
   render() {
@@ -40,12 +61,15 @@ class MapBlock extends Component {
         <h4>coords: {this.props.center}</h4>
         <GoogleMap
           bootstrapURLKeys={{
-            key: "AIzaSyDjOUM158Gk2APJ7zfGaRMxgVJ5iMs7M-Q"
+            key: "AIzaSyAIuVNkpDRHj480nQcjkWsBSj_kHmW2AZU"
           }}
           center={this.props.center}
           zoom={this.props.zoom}
           onBoundsChange={this.onBoundsChange}
+          onChange={this.onChange}
           onChildClick={this.onChildClick}
+          onChildMouseEnter={this.onChildMouseEnter}
+          onChildMouseLeave={this.onChildMouseLeave}
           hoverDistance={20}
           >
         {markers}
@@ -62,9 +86,10 @@ MapBlock.propTypes = {
   onBoundsChange: PropTypes.func,
   onMarkerHover: PropTypes.func,
   onChildClick: PropTypes.func,
+  onChange: PropTypes.func,
   center: PropTypes.any,
   zoom: PropTypes.number,
-  onSelectMarker: PropTypes.func,
+  onSelectMarker: PropTypes.func,  
   markers: PropTypes.any
 };
 
