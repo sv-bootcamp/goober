@@ -7,7 +7,7 @@ class Marker extends Component {
 
     return (
       <div className="" style={style}>
-        <div>{this.props.text}</div>
+        <div>{this.props.description}</div>
       </div>
     );
   }
@@ -15,7 +15,7 @@ class Marker extends Component {
 
 Marker.propTypes = {
   $hover: PropTypes.bool,
-  text: PropTypes.string
+  description: PropTypes.string
 };
 
 Marker.defaultProps = {};

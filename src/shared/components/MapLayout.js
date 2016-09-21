@@ -16,13 +16,14 @@ class MapLayout extends Component {
 
     props.getMapMarkers().then(
       () => {
+
       }
     );
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
         const data = [{
-          id: 'Current Location',
+          description: 'Current Location',
           lat: position.coords.latitude,
           lng: position.coords.longitude
         }];
