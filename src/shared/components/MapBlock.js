@@ -10,8 +10,7 @@ class MapBlock extends Component {
     this.onBoundsChange = this.onBoundsChange.bind(this);
     this.onChildClick = this.onChildClick.bind(this);
     this.onChildMouseEnter = this.onChildMouseEnter.bind(this);
-    this.onChildMouseLeave = this.onChildMouseLeave.bind(this);
-    this.onChange = this.onChange.bind(this);
+    this.onChildMouseLeave = this.onChildMouseLeave.bind(this);    
   }
 
   onBoundsChange(center, zoom) {
@@ -86,7 +85,6 @@ MapBlock.propTypes = {
   onBoundsChange: PropTypes.func,
   onMarkerHover: PropTypes.func,
   onChildClick: PropTypes.func,
-  onChange: PropTypes.func,
   center: PropTypes.any,
   zoom: PropTypes.number,
   onSelectMarker: PropTypes.func,  
