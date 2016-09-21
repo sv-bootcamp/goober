@@ -25,10 +25,10 @@ const itemAlaska = {
 test('get all items from database', t => {
   let key1 = `item-${uuid()}`;
   let key2 = `item-${uuid()}`;
-  
+
   // https://github.com/Level/levelup#introduction
   // LevelDB stores entries sorted lexicographically by keys.
-  if ( key2 < key1 ) {
+  if (key2 < key1) {
     const temp = key2;
     key2 = key1;
     key1 = temp;
@@ -36,7 +36,7 @@ test('get all items from database', t => {
 
   const expected = {
     status: 200,
-    items : [
+    items: [
       itemRedSelo,
       itemAlaska
     ]
@@ -70,8 +70,7 @@ test('get all items from database', t => {
             'should be same description');
           t.equal(data.items[1].description, expected.items[1].description,
             'should be same description');
-          t.end();
-          /*testDB.batch()
+          testDB.batch()
             .del(key1)
             .del(key2)
             .write((delErr) => {
@@ -79,7 +78,7 @@ test('get all items from database', t => {
                 t.end(delErr);
               }
               t.end();
-            });*/
+            });
         });
       });
   });
@@ -213,7 +212,7 @@ test('delete an item from database', t => {
       method: 'DELETE',
       url: `/items/${key}`,
       params: {
-        id: 1
+        id: key
       }
     });
 

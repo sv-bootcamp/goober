@@ -28,15 +28,12 @@ export default {
     db.get(key, (err, value) => {
       if (err) {
         if (err.notFound) {
-          res.status(400).send({
-            error: 'Item was not found.'
-          });
-          return cb();
+          return cb(new APIError(err, {
+            statusCode: 400,
+            message: 'Item was not found'
+          }));
         }
-        res.status(500).send({
-          error: 'database error'
-        });
-        return cb();
+        return cb(new APIError(err));
       }
       value.id = key;
       res.status(200).send(value);
@@ -45,23 +42,25 @@ export default {
   },
   remove: (req, res, cb) => {
     const key = req.params.id;
-    db.del(key, (err) => {
+    db.get(key, (err) => {
       if (err) {
-        if(err.notFound){
+        if (err.notFound) {
           return cb(new APIError(err, {
             statusCode: 400,
             message: 'Bad Request, No data'
           }));
         }
-        return cb(new APIError(err, {
-          statusCode: 500,
-          message: 'Internal Database Error'
-        }));
+        return cb(new APIError(err));
       }
-      res.status(200).send({
-        message: 'success'
+      return db.del(key, (errDel) => {
+        if (errDel) {
+          return cb(new APIError(errDel));
+        }
+        res.status(200).send({
+          message: 'success'
+        });
+        return cb();
       });
-      return cb();
     });
   },
   removeAll: (req, res, cb) => {

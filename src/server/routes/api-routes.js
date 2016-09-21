@@ -12,10 +12,11 @@ router.use('/*', (req, res) => {
   res.status(404).send('API Request > 404 - Page Not Found');
 });
 
-router.use((errHandler, req, res) => {
+router.use((errHandler, req, res, next) => {
   res.status(errHandler.statusCode).send({
     error: errHandler.message
   });
+  next(errHandler.error);
 });
 
 /*
