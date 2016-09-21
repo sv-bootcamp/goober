@@ -35,7 +35,7 @@ export default (state, action) => {
       get: {
         markers: { $push: action.data }
       }
-    }); 
+    });
   default:
     return thisState;
   }

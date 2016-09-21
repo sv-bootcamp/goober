@@ -24,9 +24,9 @@ export function getMapMarkersFailure(error) {
 export function getMapMarkers() {
   return (dispatch) => {
     return axios.get('/api/items')
-    .then((response) => {      
+    .then((response) => {
       const jsondata = JSON.parse(JSON.stringify(response.data.items));
-      dispatch(getMapMarkersSuccess(jsondata));      
+      dispatch(getMapMarkersSuccess(jsondata));
     }).catch((error) => {
       dispatch(getMapMarkersFailure(error));
     });

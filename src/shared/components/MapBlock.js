@@ -25,7 +25,6 @@ class MapBlock extends Component {
   render() {
     const markers = this.props.markers
     .map(marker => {      
-      console.log(JSON.stringify(marker));
       const {id, description, ...coords} = marker;
 
       return (

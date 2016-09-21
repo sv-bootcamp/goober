@@ -16,6 +16,7 @@ class MapLayout extends Component {
 
     props.getMapMarkers().then(
       () => {
+
       }
     );
 
@@ -36,7 +37,6 @@ class MapLayout extends Component {
   }
 
   render() {
-    console.log("<<<"+JSON.stringify(this.props.selectedData));
     return (
       <section>
         <h2>test map</h2>
