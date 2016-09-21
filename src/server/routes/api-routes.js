@@ -1,9 +1,10 @@
 import express from 'express';
 import items from '../items/routes';
+import validator from '../items/validator';
 
 const router = express.Router();
 
-router.use('/items', items);
+router.use('/items', validator, items);
 
 router.use('/*', (req, res) => {
   if (res.statusCode === 200 || res.statusCode === 304) {
