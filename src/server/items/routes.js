@@ -3,7 +3,6 @@ import ItemContollers from './controllers';
 
 const router = express.Router();
 
-
 /**
  * @api {get} /items Get All items
  * @apiName getAllItem

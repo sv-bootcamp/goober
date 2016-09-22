@@ -1,5 +1,5 @@
 {
-  "name": "example-project",
+  "name": "project-goober",
   "version": "0.0.0",
   "private": true,
   "main": "server.js",
@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:sv-bootcamp/example-project.git"
+    "url": "git@github.com:sv-bootcamp/goober.git"
   },
   "scripts": {
     "build-test": "gulp build:test",
@@ -72,6 +72,7 @@
     "source-map-support": "^0.4.2",
     "toml": "^2.3.0",
     "uuid4": "^1.0.0",
+    "validator": "^5.7.0",
     "x2js": "^2.0.1",
     "yaml": "^0.3.0"
   },
