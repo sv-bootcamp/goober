@@ -3,7 +3,6 @@ import ItemContollers from './controllers';
 
 const router = express.Router();
 
-
 /**
  * @api {get} /items Get All items
  * @apiName getAllItem
@@ -16,26 +15,28 @@ const router = express.Router();
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *        "item1": {
- *          "id"          : "item1",
- *          "description" : 'textDescription',
- *          "lat"         : 30.565398,
- *          "lng"         : 126.9907941,
- *          "address"     : 'testAddress',
- *          "createdDate" : 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *          "modifiedDate": 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *          "category"    : 'default'
- *        },
- *        "item2": {
- *          "id"          : "item2",
- *          "description" : 'textDescription2',
- *          "lat"         : 32.565398,
- *          "lng"         : 153.9907941,
- *          "address"     : 'testAddress2',
- *          "createdDate" : 'Wed Mar 26 2015 09:00:00 GMT+0900 (KST)',
- *          "modifiedDate": 'Wed Mar 26 2015 09:00:00 GMT+0900 (KST)',
- *          "category"    : 'default'
- *        }
+ *        "items":[
+ *          {
+ *            "id"          : "item1",
+ *            "description" : 'textDescription',
+ *            "lat"         : 30.565398,
+ *            "lng"         : 126.9907941,
+ *            "address"     : 'testAddress',
+ *            "createdDate" : 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
+ *            "modifiedDate": 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
+ *            "category"    : 'default'
+ *          },
+ *          {
+ *            "id"          : "item2",
+ *            "description" : 'textDescription2',
+ *            "lat"         : 32.565398,
+ *            "lng"         : 153.9907941,
+ *            "address"     : 'testAddress2',
+ *            "createdDate" : 'Wed Mar 26 2015 09:00:00 GMT+0900 (KST)',
+ *            "modifiedDate": 'Wed Mar 26 2015 09:00:00 GMT+0900 (KST)',
+ *            "category"    : 'default'
+ *          }
+ *        ]
  *     }
  * @apiError (Error 500) DatabaseError Internal error occured in the database.
  *
@@ -60,19 +61,31 @@ router.get('/', ItemContollers.getAll);
  * @apiParam {String} modifiedDate modifiedDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
  * @apiParam {String} category category
  *
+ * @apiParamExample {json} Request-Example:
+ *      {
+ *          "description" : "textDescription",
+ *          "lat"         : 30.565398,
+ *          "lng"         : 126.9907941,
+ *          "address"     : "testAddress",
+ *          "createdDate" : "Wed Mar 25 2015 09:00:00 GMT+0900 (KST)",
+ *          "modifiedDate": "Wed Mar 25 2015 09:00:00 GMT+0900 (KST)",
+ *          "category"    : "default"
+ *      }
+ *
  * @apiSuccess {String} message success
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       message: "success"
+ *       "message": "success",
+ *       "data"   : "item-2cf9a312-4c1a-4ac3-aff2-21021f6f2067"
  *     }
  *
  * @apiError (Error 500) error The id of the error occured while putting an Item in DB
  * @apiErrorExample {json} Database-Error-Response:
  *     HTTP/1.1 500 Internal Server Error
  *     {
- *       error: "error message..."
+ *       error: "error message ..."
  *     }
  */
 router.post('/', ItemContollers.add);
@@ -97,11 +110,10 @@ router.put('/', (req, res, next) => {
  *     }
  *
  * @apiError (Error 500) Internal server error
- *
- * @apiErrorExample Error-Response:
+ * @apiErrorExample {json} Internal Server Error Response:
  *     HTTP/1.1 500 Internal Server Error
  *     {
- *       error: ['item-1', 'item-2', ..]
+ *       error: "error message..."
  *     }
  */
 router.delete('/', ItemContollers.removeAll);
@@ -165,6 +177,19 @@ router.get('/:id', ItemContollers.getById);
  * @apiParam {String} modifiedDate modifiedDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
  * @apiParam {String} category category
  *
+ *
+ * @apiParamExample {json} Request-Example:
+ *      {
+ *          "description" : "textDescription",
+ *          "lat"         : 30.565398,
+ *          "lng"         : 126.9907941,
+ *          "address"     : "testAddress",
+ *          "createdDate" : "Wed Mar 25 2015 09:00:00 GMT+0900 (KST)",
+ *          "modifiedDate": "Wed Mar 25 2015 09:00:00 GMT+0900 (KST)",
+ *          "category"    : "default"
+ *      }
+ *
+ *
  * @apiSuccess {String} message success
  *
  * @apiSuccessExample Success-Response:
@@ -175,13 +200,12 @@ router.get('/:id', ItemContollers.getById);
  *
  * @apiError (Error 400) ItemNotFound The id of the Item was not found.
  * @apiError (Error 500) error The id of the error occured while putting an Item in DB
- * @apiErrorExample Error-Response:
+ * @apiErrorExample Bad Request Response:
  *     HTTP/1.1 400 Bad Request
  *     {
  *       error: "error message..."
  *     }
- *
- * @apiErrorExample {json} Database-Error-Response:
+ * @apiErrorExample {json} Internal Server Error Response:
  *     HTTP/1.1 500 Internal Server Error
  *     {
  *       error: "error message..."
@@ -205,11 +229,17 @@ router.put('/:id', ItemContollers.modify);
  *     }
  *
  * @apiError (Error 400) ItemNotFound The id of the Item was not found.
+ * @apiError (Error 500) Internal Server Error
  *
- * @apiErrorExample Error-Response:
+ * @apiErrorExample Bad Request Response:
  *     HTTP/1.1 400 Bad Request
  *     {
- *       message: "error message..."
+ *       error: "error message..."
+ *     }
+ * @apiErrorExample {json} Internal Server Error Response:
+ *     HTTP/1.1 500 Internal Server Error
+ *     {
+ *       error: "error message..."
  *     }
  */
 router.delete('/:id', ItemContollers.remove);
