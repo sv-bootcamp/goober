@@ -1,6 +1,4 @@
 import React, {PropTypes, Component} from 'react';
-import { connect } from 'react-redux';
-import { getMapMarkers, selectMapMarker, addMapMarker } from '../actions/map';
 import Card from './Card.js';
 import MapBlock from './MapBlock.js';
 
@@ -60,28 +58,4 @@ MapLayout.defaultProps = {
 
 };
 
-const mapStateToProps = (state) => {
-  return {
-    status: state.map.get.status,
-    markers: state.map.get.markers,
-    selectedData: state.map.select.data
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getMapMarkers: () => {
-      return dispatch(getMapMarkers());
-    },
-
-    selectMapMarker: (data) => {
-      return dispatch(selectMapMarker(data));
-    },
-
-    addMapMarker: (data) => {
-      return dispatch(addMapMarker(data));
-    }
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MapLayout);
+export default MapLayout;

@@ -17,9 +17,9 @@ class Marker extends Component {
       <Motion defaultStyle={initMotionStyle} style={motionStyle}>
         {
           ({ scale }) => (
-            <div className="marker" style=
+            <div className="clusterm" style=
               {{transform: `translate3D(0,0,0) scale(${scale}, ${scale})`}}>
-              <div>{this.props.description}</div>
+              <div>{this.props.text}</div>
             </div>
           )
         }
@@ -33,14 +33,15 @@ Marker.propTypes = {
   $prerender: PropTypes.bool,
   initialScale: PropTypes.number,
   defaultScale: PropTypes.number,
-  hoveredScale: PropTypes.number,
-  description: PropTypes.string
+  hoveredScale: PropTypes.number,  
+  text: PropTypes.string
 };
 
 Marker.defaultProps = {
   initialScale: 0.4,
   defaultScale: 0.9,
-  hoveredScale: 1.1
+  hoveredScale: 1.1,
+  text: '0'
 };
 
 export default Marker;
