@@ -7,6 +7,11 @@ import CategorizedCardList from '../containers/CategorizedCardList';
 class MapBlock extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      mapProps: null
+    };
+
     this.onBoundsChange = this.onBoundsChange.bind(this);
     this.onChildClick = this.onChildClick.bind(this);
     this.onChildMouseEnter = this.onChildMouseEnter.bind(this);
@@ -15,12 +20,8 @@ class MapBlock extends Component {
 
   onBoundsChange(center, zoom) {
     this.props.onCenterChange(center);
-    this.props.onZoomChange(zoom);
-  }
-
-  // onChange(center, zoom, bounds) {
-    // this.props.setMapProps(center, zoom, bounds);
-  // }
+    this.props.onZoomChange(zoom);    
+  }  
 
   onChildClick(key, childProps) {
     this.props.onCenterChange([childProps.lat, childProps.lng]);
@@ -42,7 +43,27 @@ class MapBlock extends Component {
     }
   }
 
-  render() {
+  render() {    
+    // const clusters = supercluster(this.props.markers, 
+    //{minZoom: 3, maxZoom:15, radius: this.props.clusterRadius});    
+    // let rc = [];
+    // if(this.state.mapProps){
+    //   console.log("sd:"+this.state.mapProps); 
+    //   rc = clusters(this.state.mapProps);
+    //   rc.map(({wx, wy, numPoints, points}) => {
+    //     const {lat,lng,text} = {wy, wx, numPoints};
+    //     const id = `${numPoints}_${points[0].id}`;
+
+    //     return (
+    //       <Marker
+    //       key={id}
+    //       description={text}
+    //       lat={lat}
+    //       lng={lng}/>
+    //     );
+    //   });  
+    // }
+    
     const markers = this.props.markers
     .map(marker => {      
       const {id, description, ...coords} = marker;
@@ -64,8 +85,7 @@ class MapBlock extends Component {
           }}
           center={this.props.center}
           zoom={this.props.zoom}
-          onBoundsChange={this.onBoundsChange}
-          onChange={this.onChange}
+          onBoundsChange={this.onBoundsChange}          
           onChildClick={this.onChildClick}
           onChildMouseEnter={this.onChildMouseEnter}
           onChildMouseLeave={this.onChildMouseLeave}
@@ -86,9 +106,11 @@ MapBlock.propTypes = {
   onMarkerHover: PropTypes.func,
   onChildClick: PropTypes.func,
   center: PropTypes.any,
-  zoom: PropTypes.number,
+  zoom: PropTypes.number,  
   onSelectMarker: PropTypes.func,  
-  markers: PropTypes.any
+  markers: PropTypes.any,
+  clusterRadius: PropTypes.number,
+  mapProps: PropTypes.object
 };
 
 MapBlock.defaultProps = {
@@ -98,7 +120,8 @@ MapBlock.defaultProps = {
     {id: 'A', lat: 37.563398, lng: 126.9907941},
     {id: 'B', lat: 37.565398, lng: 126.9907941},
     {id: 'C', lat: 37.565398, lng: 126.9987941}
-  ]
+  ],
+  clusterRadius: 60
 };
 
 MapBlock = controllable(MapBlock, ['center', 'zoom', 'markers']);
