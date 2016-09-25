@@ -1,6 +1,7 @@
 import db from '../database';
 import uuid from 'uuid4';
 import {APIError} from '../ErrorHandler';
+import geohash from 'ngeohash';
 
 export default {
   getAll: (req, res, cb) => {
@@ -38,6 +39,33 @@ export default {
       value.id = key;
       res.status(200).send(value);
       return cb();
+    });
+  },
+  getByMapInfo: (req, res, cb) =>{
+    const lat = req.query.lat;
+    const lng = req.query.lng;
+    const zoom = req.query.zoom;
+    const precision = Math.floor((zoom % 3 >= 1) ? zoom / 3 + 1 : zoom / 3) + 1;
+    const center = geohash.encode(lat, lng, precision);
+    const neighbors = geohash.neighbors(center);
+    neighbors.push(center);
+    const items = [];
+    let error;
+    neighbors.forEach((gh, i, array) => {
+      db.createReadStream({
+        start: 'item-' + gh,
+        end: 'item-' + gh + '\xFF'
+      }).on('data', (data) => {
+        data.value.id = data.key;
+        items.push(data.value);
+      }).on('error', (err) => {
+        error = err;
+        return cb(new APIError(err));
+      }).on('close', () => {
+        if (!error && i === array.length - 1) {
+          res.status(200).send({items});
+        }
+      });
     });
   },
   remove: (req, res, cb) => {
@@ -88,7 +116,9 @@ export default {
     });
   },
   add: (req, res, cb) => {
-    const itemId = `item-${uuid()}`;
+    const DEFAULT_PRECCISION = 7;
+    const geoHashKey = geohash.encode(req.body.lat, req.body.lng, DEFAULT_PRECCISION);
+    const itemId = `item-${geoHashKey}-${uuid()}`;
     db.put(itemId, req.body, (itemErr) => {
       if (itemErr) {
         return cb(new APIError(itemErr));
