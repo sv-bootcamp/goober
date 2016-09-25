@@ -116,8 +116,8 @@ export default {
     });
   },
   add: (req, res, cb) => {
-    const DEFAULT_PRECCISION = 7;
-    const geoHashKey = geohash.encode(req.body.lat, req.body.lng, DEFAULT_PRECCISION);
+    const DEFAULT_PRECISION = 7;
+    const geoHashKey = geohash.encode(req.body.lat, req.body.lng, DEFAULT_PRECISION);
     const itemId = `item-${geoHashKey}-${uuid()}`;
     db.put(itemId, req.body, (itemErr) => {
       if (itemErr) {
