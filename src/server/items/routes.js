@@ -117,7 +117,7 @@ router.put('/', (req, res, next) => {
  *     }
  */
 router.delete('/', ItemContollers.removeAll);
-
+router.get('/mapInfo', ItemContollers.getByMapInfo);
 /**
  * @api {get} /items/:id Get an item by id
  * @apiName getItem
