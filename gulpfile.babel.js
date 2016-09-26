@@ -21,24 +21,26 @@ import apidoc from 'gulp-apidoc';
 //Default task. This will be run when no task is passed in arguments to gulp
 gulp.task('default', ['watch']);
 
-gulp.task('build:static', ['clean:client'], () =>
+gulp.task('build:static', ['clean:static'], () =>
   gulp.src('./src/client/static/**/*')
     .pipe(gulp.dest('./dist-client/static'))
 );
 
 //Convert ES6 code in all js files in src/js folder and copy to
 //build folder as bundle.js
-gulp.task('build:client', ['clean:client'], () => compileClientJS(['./src/client/javascripts/main.js'], 'main.js', './dist-client/javascripts'));
-gulp.task('build:clientcss', [], () => compileClientCSS('./src/client/stylesheets/style.css', './dist-client/stylesheets'));
+gulp.task('build:client', ['build:clientjs', 'build:clientcss', 'build:static']);
+
+gulp.task('build:clientjs', ['clean:clientjs'], () => compileClientJS(['./src/client/javascripts/main.js'], 'main.js', './dist-client/javascripts'));
+
+gulp.task('build:clientcss', ['clean:clientcss'], () => compileClientCSS('./src/client/stylesheets/**/*.css', './dist-client/stylesheets'));
 
 gulp.task('build:server', ['clean:server'], () => compileNodeJS('src/{server,shared}/**/*.js', './dist-server'));
 
-gulp.task('build', ['build:client', 'build:clientcss', 'build:server', 'build:static']);
+gulp.task('build', ['build:client', 'build:server']);
 
 // gulp.task('build:test-client', ['clean:test'], () => compileClientJS(['src/test/.setup.js', './src/test/browser/index.js'], 'index.js', './dist-test/test/browser').pipe(lab()));
 
-gulp.task('build:test-client', ['clean:test'], () => gulp.src(['src/test/.setup.js', 'src/test/browser/components/*.js'])  
-
+gulp.task('build:test-client', ['clean:test'], () => gulp.src(['src/test/.setup.js', 'src/test/browser/components/*.js'])
   .pipe(lab())
 );
 
@@ -55,9 +57,15 @@ gulp.task('clean:test', () => rimraf.sync('./dist-test'));
 
 gulp.task('clean:client', () => rimraf.sync('./dist-client'));
 
+gulp.task('clean:clientjs', () => rimraf.sync('./dist-client/javascripts'));
+
+gulp.task('clean:clientcss', () => rimraf.sync('./dist-client/stylesheets'));
+
+gulp.task('clean:static', () => rimraf.sync('./dist-client/static'));
+
 gulp.task('clean:server', () => rimraf.sync('./dist-server'));
 
-gulp.task('clean', ['clean:test', 'clean:server', 'clean:client']);
+gulp.task('clean', ['clean:test', 'clean:server', 'clean:client', 'clean:apidoc']);
 
 gulp.task('clean:apidoc', () => rimraf.sync('./doc'));
 
@@ -97,11 +105,11 @@ gulp.task('test', ['lint', 'run:test']);
 gulp.task('watch', ['build', 'apidoc'], () => {
   nodemon({
     script: 'server.js',
-    watch: 'src',
+    watch: ['src'],
     tasks: ['build'],
     env: {'NODE_ENV': 'development'}
   });
-  gulp.watch('./src/client/stylesheets/*.css', ['build:clientcss']);
+  gulp.watch('./src/client/stylesheets/**/*.css', ['build:clientcss']);
 });
 
 gulp.task('server', ['build'], () => {
