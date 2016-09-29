@@ -1,24 +1,9 @@
 import levelup from 'levelup';
+import leveldown from 'leveldown';
 import config from 'config';
 
-const db = levelup(config.database, {valueEncoding: 'json'});
-export default db;
+export default levelup(config.database, {valueEncoding: 'json'});
 
-export const clearDB = (cb) => {
-  const errorList = [];
-  db.createReadStream({
-    start: '0',
-    end: '\xFF'
-  }).on('data', (data) => {
-    db.del(data.key, (err) => {
-      if (err) {
-        errorList.push(err);
-      }
-    });
-  }).on('close', () => {
-    if (errorList.length > 0) {
-      return cb(errorList);
-    }
-    return cb();
-  });
+export const clearDB = (cb)=>{
+  leveldown.destroy(config.database, cb);
 };
