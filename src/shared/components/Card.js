@@ -13,7 +13,7 @@ class Card extends Component {
   handleStar() {
   }
 
-  render() {    
+  render() {
     return (
       <ReactCSSTransitionGroup transitionName="animstart" transitionAppear={true}
       transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={300}>

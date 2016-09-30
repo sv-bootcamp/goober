@@ -15,13 +15,13 @@ class MapBlock extends Component {
     this.onBoundsChange = this.onBoundsChange.bind(this);
     this.onChildClick = this.onChildClick.bind(this);
     this.onChildMouseEnter = this.onChildMouseEnter.bind(this);
-    this.onChildMouseLeave = this.onChildMouseLeave.bind(this);    
+    this.onChildMouseLeave = this.onChildMouseLeave.bind(this);
   }
 
   onBoundsChange(center, zoom) {
     this.props.onCenterChange(center);
-    this.props.onZoomChange(zoom);    
-  }  
+    this.props.onZoomChange(zoom);
+  }
 
   onChildClick(key, childProps) {
     this.props.onCenterChange([childProps.lat, childProps.lng]);
@@ -32,23 +32,23 @@ class MapBlock extends Component {
   onChildMouseEnter(key, childProps) {
     const markerId = childProps.id;
     const index = this.props.markers.findIndex(marker => marker.id === markerId);
-    if(this.props.onMarkerHover) {
+    if (this.props.onMarkerHover) {
       this.props.onMarkerHover(index);
     }
   }
 
   onChildMouseLeave() {
-    if(this.props.onMarkerHover) {
+    if (this.props.onMarkerHover) {
       this.props.onMarkerHover(-1);
     }
   }
 
-  render() {    
-    // const clusters = supercluster(this.props.markers, 
-    //{minZoom: 3, maxZoom:15, radius: this.props.clusterRadius});    
+  render() {
+    // const clusters = supercluster(this.props.markers,
+    // {minZoom: 3, maxZoom:15, radius: this.props.clusterRadius});
     // let rc = [];
     // if(this.state.mapProps){
-    //   console.log("sd:"+this.state.mapProps); 
+    //   console.log("sd:"+this.state.mapProps);
     //   rc = clusters(this.state.mapProps);
     //   rc.map(({wx, wy, numPoints, points}) => {
     //     const {lat,lng,text} = {wy, wx, numPoints};
@@ -61,11 +61,10 @@ class MapBlock extends Component {
     //       lat={lat}
     //       lng={lng}/>
     //     );
-    //   });  
+    //   });
     // }
-    
     const markers = this.props.markers
-    .map(marker => {      
+    .map(marker => {
       const {id, description, ...coords} = marker;
 
       return (
@@ -81,11 +80,11 @@ class MapBlock extends Component {
         <h4>coords: {this.props.center}</h4>
         <GoogleMap
           bootstrapURLKeys={{
-            key: "AIzaSyAIuVNkpDRHj480nQcjkWsBSj_kHmW2AZU"
+            key: 'AIzaSyAIuVNkpDRHj480nQcjkWsBSj_kHmW2AZU'
           }}
           center={this.props.center}
           zoom={this.props.zoom}
-          onBoundsChange={this.onBoundsChange}          
+          onBoundsChange={this.onBoundsChange}
           onChildClick={this.onChildClick}
           onChildMouseEnter={this.onChildMouseEnter}
           onChildMouseLeave={this.onChildMouseLeave}
@@ -106,8 +105,8 @@ MapBlock.propTypes = {
   onMarkerHover: PropTypes.func,
   onChildClick: PropTypes.func,
   center: PropTypes.any,
-  zoom: PropTypes.number,  
-  onSelectMarker: PropTypes.func,  
+  zoom: PropTypes.number,
+  onSelectMarker: PropTypes.func,
   markers: PropTypes.any,
   clusterRadius: PropTypes.number,
   mapProps: PropTypes.object

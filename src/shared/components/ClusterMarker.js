@@ -2,7 +2,7 @@ import React, {PropTypes, Component} from 'react';
 import { Motion, spring } from 'react-motion';
 
 class Marker extends Component {
-  render() {    
+  render() {
     const initMotionStyle = {
       scale: this.props.$prerender ? this.props.defaultScale : this.props.initialScale
     };
@@ -11,7 +11,7 @@ class Marker extends Component {
       scale: spring(
         this.props.$hover ? this.props.hoveredScale : this.props.defaultScale, 320, 7, 0.001
       )
-    };    
+    };
 
     return (
       <Motion defaultStyle={initMotionStyle} style={motionStyle}>
@@ -33,7 +33,7 @@ Marker.propTypes = {
   $prerender: PropTypes.bool,
   initialScale: PropTypes.number,
   defaultScale: PropTypes.number,
-  hoveredScale: PropTypes.number,  
+  hoveredScale: PropTypes.number,
   text: PropTypes.string
 };
 
