@@ -5,3 +5,4 @@ require('source-map-support').install();
 
 import './server';
 import './items/controllers';
+import './database';
