@@ -1,7 +1,9 @@
 import test from 'tape';
 import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
+import geohash from 'ngeohash';
 import testDB, {clearDB} from '../../../server/database';
+import {DEFAULT_PRECISON, ALIVE} from '../../../server/items/models';
 import uuid from 'uuid4';
 
 const itemRedSelo = {
@@ -9,8 +11,6 @@ const itemRedSelo = {
   lat: 30.565398,
   lng: 126.9907941,
   address: 'Red Selo',
-  createdDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
-  modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
   category: 'warning'
 };
 const itemAlaska = {
@@ -18,8 +18,6 @@ const itemAlaska = {
   lat: 37.565398,
   lng: 126.9907941,
   address: 'Alaska',
-  createdDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
-  modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
   category: 'warning'
 };
 test('get all items from database', t => {
@@ -118,11 +116,22 @@ test('get a item from database', t => {
   });
 });
 test('add an item to database', t => {
+  const geo = geohash.encode(itemRedSelo.lat, itemRedSelo.lng, DEFAULT_PRECISON);
   const expected = {
     status: 200,
     message: 'success',
-    indexingItemCnt: 8,
-    geohash: 'wv6mcsrb'
+    keys: [
+      `item-${geo}-`,
+      `item-${ALIVE}-${geo.substring(0,1)}-`,
+      `item-${ALIVE}-${geo.substring(0,2)}-`,
+      `item-${ALIVE}-${geo.substring(0,3)}-`,
+      `item-${ALIVE}-${geo.substring(0,4)}-`,
+      `item-${ALIVE}-${geo.substring(0,5)}-`,
+      `item-${ALIVE}-${geo.substring(0,6)}-`,
+      `item-${ALIVE}-${geo.substring(0,7)}-`,
+      `item-${ALIVE}-${geo}-`
+    ],
+    address: itemRedSelo.address
   };
 
   const req = httpMocks.createRequest({
@@ -136,45 +145,52 @@ test('add an item to database', t => {
     ItemController.add(req, res, () => {
       const status = res.statusCode;
       const message = res._getData().message;
-      const itemId = res._getData().data;
-      //  Compare status, message of respone.
+      const key = res._getData().data;
       t.equal(status, expected.status, 'should be same status');
       t.equal(message, expected.message, 'should be same message');
-      const indexingItems = [];
-      let postedItem;
+
       let error;
-      //  Get all items
+      let refs = [];
+      let ref;
+
       testDB.createReadStream({
-        start: '0',
+        start: '\x00',
         end: '\xFF'
       }).on('data', (data) => {
-        data.value.id = data.key;
-        //  Cases of indexing items.
-        if (data.value.ref) {
-          const indexingItemCnt = indexingItems.length;
-          t.equal(data.value.ref, itemId
-          , `should be same id[${indexingItemCnt}]`);
-          const dataGeohash = data.value.id.split('-')[2];
-          //  Compare indexing item's geohash.
-          t.equal(dataGeohash, expected.geohash.substr(0, indexingItemCnt + 1)
-          , `should be same indexing geohash[${indexingItemCnt}]`);
-          indexingItems.push(data.value);
-        } else {
-          postedItem = data.value;
+        if (!data.value.ref) {
+          t.equal(key, data.key,
+            'should have same key');
+          t.equal(true, data.key.includes(expected.keys[0]),
+            'should have same key prefix');
+          t.equal(expected.address, data.value.address,
+            'should be same address');
+          ref = data.key;
+          return;
         }
+        let exist = false;
+        for (let i = 1; i <= DEFAULT_PRECISON; i = i + 1) {
+          if (data.key.includes(expected.keys[i])) {
+            exist = true;
+          }
+        }
+        t.equal(true, exist, 'should have same key prefix');
+        refs.push(data.value.ref);
       }).on('error', (err) => {
         error = err;
-        t.end(error);
       }).on('close', () => {
-        if (!error) {
-          t.equal(indexingItems.length, expected.indexingItemCnt,
-          'should be same indexing item counts');
-          t.equal(postedItem.id.split('-')[1], expected.geohash, 
-          'should be same geohash');
+        if (error) {
+          t.fail('database error');
           t.end();
-        } else {
-          t.end(error);
+          return;
         }
+        for (let i = 0; i < DEFAULT_PRECISON; i = i + 1) {
+          if (refs[i] !== ref) {
+            t.fail('should have same ref');
+            break;
+          }
+        }
+        t.end();
+        return;
       });
     });
   });
