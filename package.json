@@ -49,6 +49,7 @@
     "memory-cache": "^0.1.6",
     "moment": "^2.14.1",
     "morgan": "~1.7.0",
+    "ngeohash": "^0.6.0",
     "node-simple-logger": "0.0.1",
     "points-cluster": "^0.1.4",
     "properties": "^1.2.1",
