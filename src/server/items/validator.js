@@ -8,7 +8,7 @@ export default (req, res, next) => {
   const MAX_LAT = 90;
   const MIN_LNG = -180;
   const MAX_LNG = 180;
-  const CATEGORIES = ['Warning', 'Events', 'Facilitates'];
+  const CATEGORIES = ['warning', 'event', 'facility'];
   const key = req.params.id;
   if (key && !(key.startsWith('item-')
       && validator.isUUID(key.substr(5, key.length)))) {

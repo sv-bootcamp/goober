@@ -22,9 +22,9 @@ const router = express.Router();
  *            "lat"         : 30.565398,
  *            "lng"         : 126.9907941,
  *            "address"     : 'testAddress',
- *            "createdDate" : 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *            "modifiedDate": 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *            "category"    : 'default'
+ *            "createdDate" : '2016-10-04T04:00:00.578Z',
+ *            "modifiedDate": '2016-10-04T04:00:00.578Z',
+ *            "category"    : 'warning', 'event', 'facility'
  *          },
  *          {
  *            "id"          : "item2",
@@ -32,9 +32,9 @@ const router = express.Router();
  *            "lat"         : 32.565398,
  *            "lng"         : 153.9907941,
  *            "address"     : 'testAddress2',
- *            "createdDate" : 'Wed Mar 26 2015 09:00:00 GMT+0900 (KST)',
- *            "modifiedDate": 'Wed Mar 26 2015 09:00:00 GMT+0900 (KST)',
- *            "category"    : 'default'
+ *            "createdDate" : '2016-10-04T04:00:00.578Z',
+ *            "modifiedDate": '2016-10-04T04:00:00.578Z',
+ *            "category"    : 'warning', 'event', 'facility'
  *          }
  *        ]
  *     }
@@ -57,8 +57,6 @@ router.get('/', ItemContollers.getAll);
  * @apiParam {Number} lat lat(e.g. 37.565398)
  * @apiParam {Number} lng lng(e.g. 126.9907941)
  * @apiParam {String} address address
- * @apiParam {String} createdDate createdDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
- * @apiParam {String} modifiedDate modifiedDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
  * @apiParam {String} category category
  *
  * @apiParamExample {json} Request-Example:
@@ -67,9 +65,7 @@ router.get('/', ItemContollers.getAll);
  *          "lat"         : 30.565398,
  *          "lng"         : 126.9907941,
  *          "address"     : "testAddress",
- *          "createdDate" : "Wed Mar 25 2015 09:00:00 GMT+0900 (KST)",
- *          "modifiedDate": "Wed Mar 25 2015 09:00:00 GMT+0900 (KST)",
- *          "category"    : "default"
+ *          "category"    : 'warning', 'event', 'facility'
  *      }
  *
  * @apiSuccess {String} message success
@@ -78,7 +74,7 @@ router.get('/', ItemContollers.getAll);
  *     HTTP/1.1 200 OK
  *     {
  *       "message": "success",
- *       "data"   : "item-2cf9a312-4c1a-4ac3-aff2-21021f6f2067"
+ *       "data"   : "item-wv6mcsrb-5795ef07-d25c-42b2-8797-c242acaa5a9a"
  *     }
  *
  * @apiError (Error 500) error The id of the error occured while putting an Item in DB
@@ -142,9 +138,9 @@ router.delete('/', ItemContollers.removeAll);
  *        "lat"         : 30.565398,
  *        "lng"         : 126.9907941,
  *        "address"     : 'testAddress',
- *        "createdDate" : 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *        "modifiedDate": 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *        "category"    : 'default'
+ *        "createdDate" : '2016-10-04T04:00:00.578Z',
+ *        "modifiedDate": '2016-10-04T04:00:00.578Z',
+ *        "category"    : 'warning', 'event', 'facility'
  *     }
  *
  * @apiError (Error 400) ItemNotFound The id of the Item was not found.
@@ -173,8 +169,6 @@ router.get('/:id', ItemContollers.getById);
  * @apiParam {Number} lat lat(e.g. 37.565398)
  * @apiParam {Number} lng lng(e.g. 126.9907941)
  * @apiParam {String} address address
- * @apiParam {String} createdDate createdDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
- * @apiParam {String} modifiedDate modifiedDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
  * @apiParam {String} category category
  *
  *
@@ -184,9 +178,7 @@ router.get('/:id', ItemContollers.getById);
  *          "lat"         : 30.565398,
  *          "lng"         : 126.9907941,
  *          "address"     : "testAddress",
- *          "createdDate" : "Wed Mar 25 2015 09:00:00 GMT+0900 (KST)",
- *          "modifiedDate": "Wed Mar 25 2015 09:00:00 GMT+0900 (KST)",
- *          "category"    : "default"
+ *          "category"    : 'warning', 'event', 'facility'
  *      }
  *
  *

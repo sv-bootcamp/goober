@@ -89,6 +89,8 @@ export default {
   },
   add: (req, res, cb) => {
     const currentTime = new Date();
+    req.body.createdDate = currentTime.toISOString();
+    req.body.modifiedDate = currentTime.toISOString();
     const keyStream = new KeyMaker(req.body.lat, req.body.lng, currentTime).getKeyStream();
     const ops = [{
       type: 'put',
@@ -115,7 +117,7 @@ export default {
   },
   modify: (req, res, cb) => {
     const key = req.params.id;
-    db.get(key, (getErr) => {
+    db.get(key, (getErr, value) => {
       if (getErr) {
         if (getErr.notFound) {
           return cb(new APIError(getErr, {
@@ -125,14 +127,16 @@ export default {
         }
         return cb(new APIError(getErr));
       }
-      const value = req.body;
-      return db.put(key, value, (itemErr) => {
+      req.body.createdDate = value.createdDate;
+      req.body.modifiedDate = new Date().toISOString();
+      const newValue = req.body;
+      return db.put(key, newValue, (itemErr) => {
         if (itemErr) {
           return cb(new APIError(itemErr));
         }
         res.status(200).send({
           message: 'success',
-          data: value
+          data: newValue
         });
         return cb();
       });
