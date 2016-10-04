@@ -1,6 +1,11 @@
 import db from '../database';
 import uuid from 'uuid4';
 import {APIError} from '../ErrorHandler';
+import geohash from 'ngeohash';
+
+const VALID_ITEM_CODE = 1;
+const GEOHASH_LENGTH = 8;
+const MAX_TIMESTAMP = 10000000000000;
 
 export default {
   getAll: (req, res, cb) => {
@@ -88,8 +93,19 @@ export default {
     });
   },
   add: (req, res, cb) => {
-    const itemId = `item-${uuid()}`;
-    db.put(itemId, req.body, (itemErr) => {
+    const geoHashKey = geohash.encode(req.body.lat, req.body.lng, GEOHASH_LENGTH);
+    const uuidKey = uuid();
+    const itemId = `item-${geoHashKey}-${uuidKey}`;
+    const oppositeTimeStamp = MAX_TIMESTAMP - Number(new Date());
+    const ops = [
+      { type: 'put', key: itemId, value: req.body}
+    ];
+    for (let i = 0; i < GEOHASH_LENGTH; i = i + 1) {
+      const ghSubstr = geoHashKey.substr(0, i + 1);
+      const itemIndexingId = `item-${VALID_ITEM_CODE}-${ghSubstr}-${oppositeTimeStamp}-${uuidKey}`;
+      ops.push({type: 'put', key: itemIndexingId, value: {ref: itemId}});
+    }
+    db.batch(ops, (itemErr) => {
       if (itemErr) {
         return cb(new APIError(itemErr));
       }

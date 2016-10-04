@@ -1,7 +1,7 @@
 import test from 'tape';
 import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
-import testDB from '../../../server/database';
+import testDB, {clearDB} from '../../../server/database';
 import uuid from 'uuid4';
 
 const itemRedSelo = {
@@ -11,7 +11,7 @@ const itemRedSelo = {
   address: 'Red Selo',
   createdDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
   modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
-  category: 'default'
+  category: 'warning'
 };
 const itemAlaska = {
   description: 'This is Alaska',
@@ -20,7 +20,7 @@ const itemAlaska = {
   address: 'Alaska',
   createdDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
   modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
-  category: 'default'
+  category: 'warning'
 };
 test('get all items from database', t => {
   let key1 = `item-${uuid()}`;
@@ -121,7 +121,8 @@ test('add an item to database', t => {
   const expected = {
     status: 200,
     message: 'success',
-    valueDesc: itemRedSelo.description
+    indexingItemCnt: 8,
+    geohash: 'wv6mcsrb'
   };
 
   const req = httpMocks.createRequest({
@@ -130,20 +131,51 @@ test('add an item to database', t => {
     body: itemRedSelo
   });
 
-  const res = httpMocks.createResponse();
-
-  ItemController.add(req, res, () => {
-    const itemID = res._getData().data;
-    testDB.get(itemID, (err, val) => {
+  clearDB(()=>{
+    const res = httpMocks.createResponse();
+    ItemController.add(req, res, () => {
       const status = res.statusCode;
       const message = res._getData().message;
-      t.equal(status, expected.status,
-      'should be same status');
-      t.equal(message, expected.message,
-      'should be same message');
-      t.equal(val.description, expected.valueDesc,
-      'should be same description');
-      t.end();
+      const itemId = res._getData().data;
+      //  Compare status, message of respone.
+      t.equal(status, expected.status, 'should be same status');
+      t.equal(message, expected.message, 'should be same message');
+      const indexingItems = [];
+      let postedItem;
+      let error;
+      //  Get all items
+      testDB.createReadStream({
+        start: '0',
+        end: '\xFF'
+      }).on('data', (data) => {
+        data.value.id = data.key;
+        //  Cases of indexing items.
+        if (data.value.ref) {
+          const indexingItemCnt = indexingItems.length;
+          t.equal(data.value.ref, itemId
+          , `should be same id[${indexingItemCnt}]`);
+          const dataGeohash = data.value.id.split('-')[2];
+          //  Compare indexing item's geohash.
+          t.equal(dataGeohash, expected.geohash.substr(0, indexingItemCnt + 1)
+          , `should be same indexing geohash[${indexingItemCnt}]`);
+          indexingItems.push(data.value);
+        } else {
+          postedItem = data.value;
+        }
+      }).on('error', (err) => {
+        error = err;
+        t.end(error);
+      }).on('close', () => {
+        if (!error) {
+          t.equal(indexingItems.length, expected.indexingItemCnt,
+          'should be same indexing item counts');
+          t.equal(postedItem.id.split('-')[1], expected.geohash, 
+          'should be same geohash');
+          t.end();
+        } else {
+          t.end(error);
+        }
+      });
     });
   });
 });
