@@ -4,13 +4,14 @@ import httpMocks from 'node-mocks-http';
 import testDB, {clearDB} from '../../../server/database';
 import uuid from 'uuid4';
 
+const VALID_ITEM_CODE = '1';
+const DELETED_ITEM_CODE = '2';
+const GEOHASH_LENGTH = 8;
 const itemRedSelo = {
   description: 'This is Red Selo',
   lat: 30.565398,
   lng: 126.9907941,
   address: 'Red Selo',
-  createdDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
-  modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
   category: 'warning'
 };
 const itemAlaska = {
@@ -18,8 +19,6 @@ const itemAlaska = {
   lat: 37.565398,
   lng: 126.9907941,
   address: 'Alaska',
-  createdDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
-  modifiedDate: 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
   category: 'warning'
 };
 test('get all items from database', t => {
@@ -121,7 +120,7 @@ test('add an item to database', t => {
   const expected = {
     status: 200,
     message: 'success',
-    indexingItemCnt: 8,
+    indexingItemCnt: GEOHASH_LENGTH,
     geohash: 'wv6mcsrb'
   };
 
@@ -164,15 +163,17 @@ test('add an item to database', t => {
         }
       }).on('error', (err) => {
         error = err;
+        t.fail('Error while reading from DB');
         t.end(error);
       }).on('close', () => {
         if (!error) {
           t.equal(indexingItems.length, expected.indexingItemCnt,
           'should be same indexing item counts');
-          t.equal(postedItem.id.split('-')[1], expected.geohash, 
+          t.equal(postedItem.id.split('-')[1], expected.geohash,
           'should be same geohash');
           t.end();
         } else {
+          t.fail('Error while reading from DB');
           t.end(error);
         }
       });
@@ -184,7 +185,6 @@ test('modify an item in database', t => {
   const ops = [
     { type: 'put', key: key, value: itemRedSelo }
   ];
-
   testDB.batch(ops, (err) => {
     if (err) {
       t.end(err);
@@ -225,39 +225,96 @@ test('modify an item in database', t => {
   });
 });
 test('delete an item from database', t => {
-  const key = `item-${uuid()}`;
-  const ops = [
-    { type: 'put', key: key, value: itemRedSelo }
-  ];
+  const STATUS_CODE_POS = 5;
 
-  testDB.batch(ops, (err) => {
-    if (err) {
-      t.end(err);
-    }
-
-    const expected = {
-      status: 200,
-      message: 'success'
-    };
-
-    const req = httpMocks.createRequest({
-      method: 'DELETE',
-      url: `/items/${key}`,
-      params: {
-        id: key
-      }
+  const expected = {
+    status: 200,
+    message: 'success',
+    itemCnt: 1,
+    indexingItemCntBefore: GEOHASH_LENGTH,
+    statusCodeBefore: VALID_ITEM_CODE,
+    statusCodeAfter: DELETED_ITEM_CODE,
+    undeletedItemCnt: 1
+  };
+  clearDB(()=>{
+    const addReq = httpMocks.createRequest({
+      method: 'POST',
+      url: '/items',
+      body: itemRedSelo
     });
-
-    const res = httpMocks.createResponse();
-
-    ItemController.remove(req, res, () => {
-      const status = res.statusCode;
-      const message = res._getData().message;
-      t.equal(status, expected.status,
-        'should be same status');
-      t.equal(message, expected.message,
-        'should be same message');
-      t.end();
+    const addRes = httpMocks.createResponse();
+    ItemController.add(addReq, addRes, () => {
+      const key = addRes._getData().data;
+      let indexingItemsCnt = 0;
+      let itemCnt = 0;
+      let error;
+      let statusCode;
+      testDB.createReadStream({
+        start: '0',
+        end: '\xFF'
+      }).on('data', (data) => {
+        if (data.value.ref === key) {
+          indexingItemsCnt = indexingItemsCnt + 1;
+          statusCode = data.key.charAt(STATUS_CODE_POS);
+          t.equal(statusCode, expected.statusCodeBefore
+          , `should be same status code[${indexingItemsCnt}]`);
+        } else if (data.value.description === itemRedSelo.description) {
+          itemCnt = itemCnt + 1;       
+        }
+      }).on('error', (err) => {
+        error = err;
+        t.fail('Error while reading from DB');
+        t.end(error);
+      }).on('close', () => {
+        if (error) {
+          t.fail('Error while reading from DB');
+          t.end(error);
+        } else {
+          t.equal(indexingItemsCnt, expected.indexingItemCntBefore,
+          'should be same indexing item counts');
+          t.equal(itemCnt, expected.itemCnt,
+          'should be same item count before delete');
+          const req = httpMocks.createRequest({
+            method: 'DELETE',
+            url: `/items/${key}`,
+            params: {
+              id: key
+            }
+          });
+          const res = httpMocks.createResponse();
+          let undeletedItemCnt = 0;
+          ItemController.remove(req, res, () => {
+            const status = res.statusCode;
+            const message = res._getData().message;
+            t.equal(status, expected.status, 'should be same status');
+            t.equal(message, expected.message, 'should be same message');
+            testDB.createReadStream({
+              start: '0',
+              end: '\xFF'
+            }).on('data', (data) => {
+              if (data.value.ref === key) {
+                statusCode = data.key.charAt(STATUS_CODE_POS);
+                t.equal(statusCode, expected.statusCodeAfter
+            , 'should be same status code after delete');
+              } else if (data.value.description === itemRedSelo.description) {
+                undeletedItemCnt = undeletedItemCnt + 1;
+              }
+            }).on('error', (err) => {
+              error = err;
+              t.fail('Error while reading from DB');
+              t.end(error);
+            }).on('close', () => {
+              if (!error) {
+                t.equal(undeletedItemCnt, expected.undeletedItemCnt
+                , 'should be same undeleted item counts');
+                t.end();
+              } else {
+                t.end(error);
+              }
+            });
+          });
+        }
+      });
     });
   });
 });
