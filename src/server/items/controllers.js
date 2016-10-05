@@ -1,6 +1,6 @@
 import db from '../database';
 import {APIError} from '../ErrorHandler';
-import {KeyMaker, DEFAULT_PRECISON} from './models';
+import {KeyMaker, DEFAULT_PRECISON, MAX_TIME} from './models';
 
 
 export default {
@@ -59,9 +59,9 @@ export default {
         return cb(new APIError(getErr));
       }
       const item = value;
-      const itemTimeStamp = MAX_TIMESTAMP - Number(new Date(item.createdDate));
+      const itemTimeStamp = MAX_TIME - Number(new Date(item.createdDate));
       const ops = [];
-      for (let i = 0; i < GEOHASH_LENGTH; i = i + 1) {
+      for (let i = 0; i < DEFAULT_PRECISON; i = i + 1) {
         const ghSubstr = itemGeohash.substring(0, i + 1);
         const deletedItemId = `item-2-${ghSubstr}-${itemTimeStamp}-${itemUuid}`;
         ops.push({type: 'put', key: deletedItemId, value: {ref: key}});

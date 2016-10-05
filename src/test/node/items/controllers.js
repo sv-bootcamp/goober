@@ -3,12 +3,9 @@ import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import geohash from 'ngeohash';
 import testDB, {clearDB} from '../../../server/database';
-import {DEFAULT_PRECISON, ALIVE} from '../../../server/items/models';
+import {DEFAULT_PRECISON, ALIVE, REMOVED} from '../../../server/items/models';
 import uuid from 'uuid4';
 
-const VALID_ITEM_CODE = '1';
-const DELETED_ITEM_CODE = '2';
-const GEOHASH_LENGTH = 8;
 const itemRedSelo = {
   description: 'This is Red Selo',
   lat: 30.565398,
@@ -249,9 +246,9 @@ test('delete an item from database', t => {
     status: 200,
     message: 'success',
     itemCnt: 1,
-    indexingItemCntBefore: GEOHASH_LENGTH,
-    statusCodeBefore: VALID_ITEM_CODE,
-    statusCodeAfter: DELETED_ITEM_CODE,
+    indexingItemCntBefore: DEFAULT_PRECISON,
+    statusCodeBefore: ALIVE,
+    statusCodeAfter: REMOVED,
     undeletedItemCnt: 1
   };
   clearDB(()=>{

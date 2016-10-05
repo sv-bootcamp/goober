@@ -4,9 +4,9 @@ import uuid from 'uuid4';
 export const MAX_TIME = 10000000000000;
 
 export const DEFAULT_PRECISON = 8;
-export const ALIVE = 0;
-export const EXPIRED = 1;
-export const REMOVED = 2;
+export const ALIVE = '0';
+export const EXPIRED = '1';
+export const REMOVED = '2';
 
 export class KeyMaker {
   constructor(lat, lng, date, type = ALIVE, precision = 8) {
