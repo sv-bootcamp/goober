@@ -2,8 +2,8 @@ import validator from 'validator';
 import {APIError} from '../ErrorHandler';
 
 export default (req, res, next) => {
-  const MIN_DECSRIPSION_LENGTH = 0;
-  const MAX_DECSRIPSION_LENGTH = 200;
+  const MIN_TITLE_LENGTH = 0;
+  const MAX_TITLE_LENGTH = 200;
   const MIN_LAT = -90;
   const MAX_LAT = 90;
   const MIN_LNG = -180;
@@ -18,8 +18,8 @@ export default (req, res, next) => {
   }
   if (req.body.title && !(typeof req.body.title === 'string'
     && validator.isLength(req.body.title, {
-      min: MIN_DECSRIPSION_LENGTH,
-      max: MAX_DECSRIPSION_LENGTH
+      min: MIN_TITLE_LENGTH,
+      max: MAX_TITLE_LENGTH
     }))) {
     return next(new APIError(new Error(), {
       statusCode: 400,
