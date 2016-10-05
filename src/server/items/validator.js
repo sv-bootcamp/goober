@@ -17,8 +17,8 @@ export default (req, res, next) => {
       message: 'wrong item Id'
     }));
   }
-  if (req.body.description && !(typeof req.body.description === 'string'
-    && validator.isLength(req.body.description, {
+  if (req.body.title && !(typeof req.body.title === 'string'
+    && validator.isLength(req.body.title, {
       min: MIN_DECSRIPSION_LENGTH,
       max: MAX_DECSRIPSION_LENGTH
     }))) {
@@ -53,7 +53,6 @@ export default (req, res, next) => {
       message: 'wrong item address'
     }));
   }
-
   if (req.body.createdDate && !(typeof req.body.createdDate === 'string'
     && validator.isDate(req.body.createdDate))) {
     return next(new APIError(new Error(), {
@@ -73,6 +72,20 @@ export default (req, res, next) => {
     return next(new APIError(new Error(), {
       statusCode: 400,
       message: 'wrong item category'
+    }));
+  }
+  if (req.body.startTime && !(typeof req.body.startTime === 'string'
+    && validator.isDate(req.body.startTime))) {
+    return next(new APIError(new Error(), {
+      statusCode: 400,
+      message: 'wrong item createdDate'
+    }));
+  }
+  if (req.body.endTime && !(typeof req.body.endTime === 'string'
+    && validator.isDate(req.body.endTime))) {
+    return next(new APIError(new Error(), {
+      statusCode: 400,
+      message: 'wrong item modifiedDate'
     }));
   }
   return next();
