@@ -2,6 +2,7 @@ import db from '../database';
 import {APIError} from '../ErrorHandler';
 import {KeyMaker, DEFAULT_PRECISON} from './models';
 
+
 export default {
   getAll: (req, res, cb) => {
     const items = [];
@@ -41,20 +42,37 @@ export default {
     });
   },
   remove: (req, res, cb) => {
+    const GEOHASH_START_POS = 5;
+    const GEOHASH_END_POS = 12;
+    const UUID_START_POS = 14;
     const key = req.params.id;
-    db.get(key, (err) => {
-      if (err) {
-        if (err.notFound) {
-          return cb(new APIError(err, {
+    const itemGeohash = key.substring(GEOHASH_START_POS, GEOHASH_END_POS + 1);
+    const itemUuid = key.substring(UUID_START_POS, key.length);
+    db.get(key, (getErr, value) => {
+      if (getErr) {
+        if (getErr.notFound) {
+          return cb(new APIError(getErr, {
             statusCode: 400,
-            message: 'Bad Request, No data'
+            message: 'Item was not found'
           }));
         }
-        return cb(new APIError(err));
+        return cb(new APIError(getErr));
       }
-      return db.del(key, (errDel) => {
-        if (errDel) {
-          return cb(new APIError(errDel));
+      const item = value;
+      const itemTimeStamp = MAX_TIMESTAMP - Number(new Date(item.createdDate));
+      const ops = [];
+      for (let i = 0; i < GEOHASH_LENGTH; i = i + 1) {
+        const ghSubstr = itemGeohash.substring(0, i + 1);
+        const deletedItemId = `item-2-${ghSubstr}-${itemTimeStamp}-${itemUuid}`;
+        ops.push({type: 'put', key: deletedItemId, value: {ref: key}});
+        for (let j = 0; j < 2; j = j + 1) {
+          const itemIndexingId = `item-${j}-${ghSubstr}-${itemTimeStamp}-${itemUuid}`;
+          ops.push({type: 'del', key: itemIndexingId});
+        }
+      }
+      return db.batch(ops, (itemErr) => {
+        if (itemErr) {
+          return cb(new APIError(itemErr));
         }
         res.status(200).send({
           message: 'success'
