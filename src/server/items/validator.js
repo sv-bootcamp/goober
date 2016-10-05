@@ -10,8 +10,7 @@ export default (req, res, next) => {
   const MAX_LNG = 180;
   const CATEGORIES = ['warning', 'event', 'facility'];
   const key = req.params.id;
-  if (key && !(key.startsWith('item-')
-      && validator.isUUID(key.substr(5, key.length)))) {
+  if (key && !(key.startsWith('item-'))) {
     return next(new APIError(new Error(), {
       statusCode: 400,
       message: 'wrong item Id'
@@ -24,7 +23,7 @@ export default (req, res, next) => {
     }))) {
     return next(new APIError(new Error(), {
       statusCode: 400,
-      message: 'wrong item description'
+      message: 'wrong item title'
     }));
   }
   if (req.body.lat && !(typeof req.body.lat === 'number'
@@ -78,15 +77,19 @@ export default (req, res, next) => {
     && validator.isDate(req.body.startTime))) {
     return next(new APIError(new Error(), {
       statusCode: 400,
-      message: 'wrong item createdDate'
+      message: 'wrong item startTime'
     }));
   }
   if (req.body.endTime && !(typeof req.body.endTime === 'string'
     && validator.isDate(req.body.endTime))) {
     return next(new APIError(new Error(), {
       statusCode: 400,
-      message: 'wrong item modifiedDate'
+      message: 'wrong item endTime'
     }));
+  }
+
+  if (req.validatorTest) {
+    return next(req, res);
   }
   return next();
 };
