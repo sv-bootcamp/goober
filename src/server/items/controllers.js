@@ -5,24 +5,61 @@ import {KeyMaker, KeyUtils,Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHA
 
 export default {
   getAll: (req, res, cb) => {
-    const items = [];
-    let error;
-    db.createReadStream({
-      start: 'item-',
-      end: 'item-\xFF'
-    }).on('data', (data) => {
-      data.value.id = data.key;
-      items.push(data.value);
-    }).on('error', (err) => {
-      error = err;
-      return cb(new APIError(err));
-    })
-    .on('close', () => {
-      if (!error) {
-        res.status(200).send({items});
-        cb();
+    if (req.query.is_area_search === 'true') {
+      const {lat, lng, zoom} = req.query;
+      const precision = Math.floor((Number(zoom) + 1) / 3);
+      const keys = KeyUtils.getKeysByArea(lat, lng, precision);
+      const promises = [];
+      const items = [];
+      for (const key of keys) {
+        promises.push(new Promise((resolve, reject) => {
+          // @TODO we have to limit the number of items.
+          db.createReadStream({
+            start: `item-${ALIVE}-${key}-`,
+            end: `item-${ALIVE}-${key}-\xFF`
+          }).on('data', (data) => {
+            db.get(data.value.ref, (err, refData) => {
+              if (!err) {
+                refData.id = data.value.ref;
+                items.push(refData);
+              }
+            });
+          }).on('error', (err) => {
+            reject(err);
+          })
+          .on('close', () => {
+            resolve();
+          });
+        }));
       }
-    });
+      Promise.all(promises).then(() => {
+        res.status(200).send({
+          items
+        });
+        cb();
+      }).catch((err) => {
+        return cb(new APIError(err));
+      });
+    }else{
+      const items = [];
+      let error;
+      db.createReadStream({
+        start: 'item-',
+        end: 'item-\xFF'
+      }).on('data', (data) => {
+        data.value.id = data.key;
+        items.push(data.value);
+      }).on('error', (err) => {
+        error = err;
+        return cb(new APIError(err));
+      })
+      .on('close', () => {
+        if (!error) {
+          res.status(200).send({items});
+          cb();
+        }
+      });
+    }
   },
   getById: (req, res, cb) => {
     const key = req.params.id;
@@ -39,41 +76,6 @@ export default {
       value.id = key;
       res.status(200).send(value);
       return cb();
-    });
-  },
-  getByArea: (req, res, cb) => {
-    const {lat, lng, zoom} = req.query;
-    const precision = Math.floor((zoom + 1) / 3);
-    const keys = KeyUtils.getKeysByArea(lat, lng, precision);
-    const promises = [];
-    const items = [];
-    for (const key of keys) {
-      promises.push(new Promise((resolve, reject) => {
-        db.createReadStream({
-          start: `item-${ALIVE}-${key}-`,
-          end: `item-${ALIVE}-${key}-\xFF`
-        }).on('data', (data) => {
-          db.get(data.value.ref, (err, refData) => {
-            if (!err) {
-              refData.id = data.value.ref;
-              items.push(refData);
-            }
-          });
-        }).on('error', (err) => {
-          reject(err);
-        })
-        .on('close', () => {
-          resolve();
-        });
-      }));
-    }
-    Promise.all(promises).then(() => {
-      res.status(200).send({
-        items
-      });
-      cb();
-    }).catch((err) => {
-      return cb(new APIError(err));
     });
   },
   remove: (req, res, cb) => {
