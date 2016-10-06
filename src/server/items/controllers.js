@@ -40,7 +40,7 @@ export default {
       }).catch((err) => {
         return cb(new APIError(err));
       });
-    }else{
+    } else {
       const items = [];
       let error;
       db.createReadStream({

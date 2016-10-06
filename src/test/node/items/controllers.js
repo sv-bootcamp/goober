@@ -147,7 +147,6 @@ test('get by area from database', t => {
       tempValue.ref = expected.items[i].id;
       ops.push({ type: 'put', key: expected.items[i].id, value: tempValue });
     }
-    
     testDB.batch(ops, (err) => {
       if (err) {
         t.end(err);
@@ -160,12 +159,12 @@ test('get by area from database', t => {
         expected.items = expected.items.sort((a, b) => {
           return a.id > b.id;
         });
-        for (let j = 0; j < items.length; j += 1) {
+        for (let j = 0; j < items.length; j = j + 1) {
           t.equal(items[j].id, expected.items[j].id, 'should be same id');
         }
         t.end();
       });
-    });  
+    });
   });
 });
 test('add an item to database', t => {
