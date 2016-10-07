@@ -3,7 +3,7 @@ import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import geohash from 'ngeohash';
 import testDB, {clearDB} from '../../../server/database';
-import {DEFAULT_PRECISON, ALIVE, REMOVED} from '../../../server/items/models';
+import {DEFAULT_PRECISON, STATUS_CODE_POS, ALIVE, REMOVED} from '../../../server/items/models';
 import uuid from 'uuid4';
 
 const itemRedSelo = {
@@ -122,13 +122,13 @@ test('add an item to database', t => {
     message: 'success',
     keys: [
       `item-${geo}-`,
-      `item-${ALIVE}-${geo.substring(0,1)}-`,
-      `item-${ALIVE}-${geo.substring(0,2)}-`,
-      `item-${ALIVE}-${geo.substring(0,3)}-`,
-      `item-${ALIVE}-${geo.substring(0,4)}-`,
-      `item-${ALIVE}-${geo.substring(0,5)}-`,
-      `item-${ALIVE}-${geo.substring(0,6)}-`,
-      `item-${ALIVE}-${geo.substring(0,7)}-`,
+      `item-${ALIVE}-${geo.substring(0, 1)}-`,
+      `item-${ALIVE}-${geo.substring(0, 2)}-`,
+      `item-${ALIVE}-${geo.substring(0, 3)}-`,
+      `item-${ALIVE}-${geo.substring(0, 4)}-`,
+      `item-${ALIVE}-${geo.substring(0, 5)}-`,
+      `item-${ALIVE}-${geo.substring(0, 6)}-`,
+      `item-${ALIVE}-${geo.substring(0, 7)}-`,
       `item-${ALIVE}-${geo}-`
     ],
     address: itemRedSelo.address
@@ -240,16 +240,13 @@ test('modify an item in database', t => {
   });
 });
 test('delete an item from database', t => {
-  const STATUS_CODE_POS = 5;
-
   const expected = {
     status: 200,
     message: 'success',
     itemCnt: 1,
     indexingItemCntBefore: DEFAULT_PRECISON,
     statusCodeBefore: ALIVE,
-    statusCodeAfter: REMOVED,
-    undeletedItemCnt: 1
+    statusCodeAfter: REMOVED
   };
   clearDB(()=>{
     const addReq = httpMocks.createRequest({
@@ -265,7 +262,7 @@ test('delete an item from database', t => {
       let error;
       let statusCode;
       testDB.createReadStream({
-        start: '0',
+        start: '\x00',
         end: '\xFF'
       }).on('data', (data) => {
         if (data.value.ref === key) {
@@ -297,14 +294,14 @@ test('delete an item from database', t => {
             }
           });
           const res = httpMocks.createResponse();
-          let undeletedItemCnt = 0;
           ItemController.remove(req, res, () => {
             const status = res.statusCode;
             const message = res._getData().message;
             t.equal(status, expected.status, 'should be same status');
             t.equal(message, expected.message, 'should be same message');
+            itemCnt = 0;
             testDB.createReadStream({
-              start: '0',
+              start: '\x00',
               end: '\xFF'
             }).on('data', (data) => {
               if (data.value.ref === key) {
@@ -312,7 +309,7 @@ test('delete an item from database', t => {
                 t.equal(statusCode, expected.statusCodeAfter
             , 'should be same status code after delete');
               } else if (data.value.description === itemRedSelo.description) {
-                undeletedItemCnt = undeletedItemCnt + 1;
+                itemCnt = itemCnt + 1;
               }
             }).on('error', (err) => {
               error = err;
@@ -320,8 +317,8 @@ test('delete an item from database', t => {
               t.end(error);
             }).on('close', () => {
               if (!error) {
-                t.equal(undeletedItemCnt, expected.undeletedItemCnt
-                , 'should be same undeleted item counts');
+                t.equal(itemCnt, expected.itemCnt
+                , 'should be same item counts after delete');
                 t.end();
               } else {
                 t.end(error);
