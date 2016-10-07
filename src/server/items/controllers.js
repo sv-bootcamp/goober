@@ -5,9 +5,9 @@ import {KeyMaker, KeyUtils,Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHA
 
 export default {
   getAll: (req, res, cb) => {
-    if (req.query.is_area_search === 'true') {
-      const {lat, lng, zoom} = req.query;
-      const precision = Math.floor((Number(zoom) + 1) / 3);
+    const {lat, lng, zoom} = req.query;
+    if (lat && lng && zoom) {
+      const precision = KeyUtils.calcPrecisionByZoom(Number(zoom));
       const keys = KeyUtils.getKeysByArea(lat, lng, precision);
       const promises = [];
       const items = [];
@@ -40,26 +40,27 @@ export default {
       }).catch((err) => {
         return cb(new APIError(err));
       });
-    } else {
-      const items = [];
-      let error;
-      db.createReadStream({
-        start: 'item-',
-        end: 'item-\xFF'
-      }).on('data', (data) => {
-        data.value.id = data.key;
-        items.push(data.value);
-      }).on('error', (err) => {
-        error = err;
-        return cb(new APIError(err));
-      })
-      .on('close', () => {
-        if (!error) {
-          res.status(200).send({items});
-          cb();
-        }
-      });
+      return;
     }
+    const items = [];
+    let error;
+    db.createReadStream({
+      start: 'item-',
+      end: 'item-\xFF'
+    }).on('data', (data) => {
+      data.value.id = data.key;
+      items.push(data.value);
+    }).on('error', (err) => {
+      error = err;
+      return cb(new APIError(err));
+    })
+    .on('close', () => {
+      if (!error) {
+        res.status(200).send({items});
+        cb();
+      }
+    });
+    return;
   },
   getById: (req, res, cb) => {
     const key = req.params.id;

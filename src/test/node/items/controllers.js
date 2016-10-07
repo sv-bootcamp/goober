@@ -137,7 +137,7 @@ test('get by area from database', t => {
   };
   const req = httpMocks.createRequest({
     method: 'GET',
-    url: '/items?is_area_search=true&lat=30.565398&lng=126.9907941&zoom=21'
+    url: '/items?lat=30.565398&lng=126.9907941&zoom=21'
   });
   const res = httpMocks.createResponse();
   clearDB(() => {

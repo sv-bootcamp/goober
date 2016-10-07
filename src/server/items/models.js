@@ -46,5 +46,8 @@ export const KeyUtils = {
     const neighbors = geohash.neighbors(centerGeohash);
     neighbors.push(centerGeohash);
     return neighbors;
+  },
+  calcPrecisionByZoom: (zoom) => {
+    return Math.floor((zoom + 1) / 3);
   }
 };
