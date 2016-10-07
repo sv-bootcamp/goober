@@ -1,6 +1,7 @@
 import db from '../database';
 import {APIError} from '../ErrorHandler';
-import {KeyMaker, DEFAULT_PRECISON, MAX_TIME} from './models';
+import {KeyMaker, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
+        UUID_START_POS, ALIVE, EXPIRED, REMOVED} from './models';
 
 
 export default {
@@ -42,9 +43,6 @@ export default {
     });
   },
   remove: (req, res, cb) => {
-    const GEOHASH_START_POS = 5;
-    const GEOHASH_END_POS = 12;
-    const UUID_START_POS = 14;
     const key = req.params.id;
     const itemGeohash = key.substring(GEOHASH_START_POS, GEOHASH_END_POS + 1);
     const itemUuid = key.substring(UUID_START_POS, key.length);
@@ -59,16 +57,14 @@ export default {
         return cb(new APIError(getErr));
       }
       const item = value;
-      const itemTimeStamp = MAX_TIME - Number(new Date(item.createdDate));
+      const itemTimeStamp = new Timestamp(item.createdDate).getTimestamp();
       const ops = [];
       for (let i = 0; i < DEFAULT_PRECISON; i = i + 1) {
         const ghSubstr = itemGeohash.substring(0, i + 1);
-        const deletedItemId = `item-2-${ghSubstr}-${itemTimeStamp}-${itemUuid}`;
+        const deletedItemId = `item-${REMOVED}-${ghSubstr}-${itemTimeStamp}-${itemUuid}`;
         ops.push({type: 'put', key: deletedItemId, value: {ref: key}});
-        for (let j = 0; j < 2; j = j + 1) {
-          const itemIndexingId = `item-${j}-${ghSubstr}-${itemTimeStamp}-${itemUuid}`;
-          ops.push({type: 'del', key: itemIndexingId});
-        }
+        ops.push({type: 'del', key: `item-${ALIVE}-${ghSubstr}-${itemTimeStamp}-${itemUuid}`});
+        ops.push({type: 'del', key: `item-${EXPIRED}-${ghSubstr}-${itemTimeStamp}-${itemUuid}`});
       }
       return db.batch(ops, (itemErr) => {
         if (itemErr) {
