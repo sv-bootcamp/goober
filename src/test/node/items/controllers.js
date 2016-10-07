@@ -8,14 +8,14 @@ import {DEFAULT_PRECISON, STATUS_CODE_POS, ALIVE,
 import uuid from 'uuid4';
 
 const itemRedSelo = {
-  description: 'This is Red Selo',
+  title: 'This is Red Selo',
   lat: 30.565398,
   lng: 126.9907941,
   address: 'Red Selo',
   category: 'warning'
 };
 const itemAlaska = {
-  description: 'This is Alaska',
+  title: 'This is Alaska',
   lat: 37.565398,
   lng: 126.9907941,
   address: 'Alaska',
@@ -65,10 +65,10 @@ test('get all items from database', t => {
             'should be same status');
           t.equal(data.items.length, 2,
             'should be same length');
-          t.equal(data.items[0].description, expected.items[0].description,
-            'should be same description');
-          t.equal(data.items[1].description, expected.items[1].description,
-            'should be same description');
+          t.equal(data.items[0].title, expected.items[0].title,
+            'should be same title');
+          t.equal(data.items[1].title, expected.items[1].title,
+            'should be same title');
           testDB.batch()
             .del(key1)
             .del(key2)
@@ -106,8 +106,8 @@ test('get a item from database', t => {
     const data = res._getData();
     t.equal(res.statusCode, expected.status,
       'should be same status');
-    t.equal(data.description, expected.description,
-      'should be same description');
+    t.equal(data.title, expected.title,
+      'should be same title');
     testDB.del(`${key}`, (err) => {
       if (err) {
         t.end(err);

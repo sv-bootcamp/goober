@@ -39,10 +39,10 @@ export default {
         cb();
       }).catch((err) => {
         if (err.notFound) {
-          return cb(new APIError(err, {
-            statusCode: 400,
-            message: 'Item was not found'
-          }));
+          res.status(200).send({
+            items
+          });
+          return cb();
         }
         return cb(new APIError(err, {
             statusCode: 500,

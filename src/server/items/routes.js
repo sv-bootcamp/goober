@@ -17,8 +17,8 @@ const router = express.Router();
  *     {
  *        "items":[
  *          {
- *            "id"          : "item-wv6mcsrb-5795ef07-d25c-42b2-8797-c242acaa5a9a",
- *            "description" : 'textDescription',
+ *            "id"          : "item1",
+ *            "title" : 'textTitle',
  *            "lat"         : 30.565398,
  *            "lng"         : 126.9907941,
  *            "address"     : 'testAddress',
@@ -27,8 +27,8 @@ const router = express.Router();
  *            "category"    : 'warning', 'event', 'facility'
  *          },
  *          {
- *            "id"          : "item-wv6mcsrb-5795ef07-d25c-42b2-8797-c242acaa5a9b",
- *            "description" : 'textDescription2',
+ *            "id"          : "item2",
+ *            "title" : 'textTitle2',
  *            "lat"         : 32.565398,
  *            "lng"         : 153.9907941,
  *            "address"     : 'testAddress2',
@@ -53,7 +53,7 @@ router.get('/', ItemControllers.getAll);
  * @apiName addAnItem
  * @apiGroup Item
  *
- * @apiParam {String} description description
+ * @apiParam {String} title title
  * @apiParam {Number} lat lat(e.g. 37.565398)
  * @apiParam {Number} lng lng(e.g. 126.9907941)
  * @apiParam {String} address address
@@ -61,7 +61,7 @@ router.get('/', ItemControllers.getAll);
  *
  * @apiParamExample {json} Request-Example:
  *      {
- *          "description" : "textDescription",
+ *          "title" : "textTitle",
  *          "lat"         : 30.565398,
  *          "lng"         : 126.9907941,
  *          "address"     : "testAddress",
@@ -121,8 +121,8 @@ router.delete('/', ItemControllers.removeAll);
  *
  * @apiParam {String} id Unique id of the item.
  *
- * @apiSuccess {String} id Unique id of the item.
- * @apiSuccess {String} description description of the item.
+ * @apiSuccess {Number} id Unique id of the item.
+ * @apiSuccess {String} title title of the item.
  * @apiSuccess {Number} lat latitude of the item.
  * @apiSuccess {Number} lng longitude of the item.
  * @apiSuccess {String} address address of the item.
@@ -133,8 +133,8 @@ router.delete('/', ItemControllers.removeAll);
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *        "id"          : "item-wv6mcsrb-5795ef07-d25c-42b2-8797-c242acaa5a9a",
- *        "description" : 'textDescription',
+ *        "id"          : "item1",
+ *        "title" : 'textTitle',
  *        "lat"         : 30.565398,
  *        "lng"         : 126.9907941,
  *        "address"     : 'testAddress',
@@ -165,7 +165,7 @@ router.get('/:id', ItemControllers.getById);
  * @apiName modifyAnItem
  * @apiGroup Item
  *
- * @apiParam {String} description description
+ * @apiParam {String} title title
  * @apiParam {Number} lat lat(e.g. 37.565398)
  * @apiParam {Number} lng lng(e.g. 126.9907941)
  * @apiParam {String} address address
@@ -174,7 +174,7 @@ router.get('/:id', ItemControllers.getById);
  *
  * @apiParamExample {json} Request-Example:
  *      {
- *          "description" : "textDescription",
+ *          "title" : "texttitle",
  *          "lat"         : 30.565398,
  *          "lng"         : 126.9907941,
  *          "address"     : "testAddress",
