@@ -93,7 +93,7 @@ test('get a item from database', t => {
   expected.status = 200;
   const req = httpMocks.createRequest({
     method: 'GET',
-    url: '/items/:id',
+    url: `/items/${key}`,
     params: {
       id: `${key}`
     }
