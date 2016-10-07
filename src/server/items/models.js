@@ -11,7 +11,7 @@ export const STATUS_CODE_POS = 5;
 export const GEOHASH_START_POS = 5;
 export const GEOHASH_END_POS = GEOHASH_START_POS + DEFAULT_PRECISON - 1;
 export const UUID_START_POS = 14;
-
+export const REF_GEOHASH_START_POS = 7;
 
 export class Timestamp {
   constructor(date) {
