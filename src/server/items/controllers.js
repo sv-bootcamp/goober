@@ -1,11 +1,56 @@
 import db from '../database';
 import {APIError} from '../ErrorHandler';
-import {KeyMaker, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
+import {KeyMaker, KeyUtils,Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
         UUID_START_POS, ALIVE, EXPIRED, REMOVED} from './models';
-
 
 export default {
   getAll: (req, res, cb) => {
+    const {lat, lng, zoom} = req.query;
+    if (lat && lng && zoom) {
+      const precision = KeyUtils.calcPrecisionByZoom(Number(zoom));
+      const keys = KeyUtils.getKeysByArea(lat, lng, precision);
+      const promises = [];
+      const items = [];
+      for (const key of keys) {
+        promises.push(new Promise((resolve, reject) => {
+          // @TODO we have to limit the number of items.
+          db.createReadStream({
+            start: `item-${ALIVE}-${key}-`,
+            end: `item-${ALIVE}-${key}-\xFF`
+          }).on('data', (data) => {
+            db.get(data.value.ref, (err, refData) => {
+              if (!err) {
+                refData.id = data.value.ref;
+                items.push(refData);
+              }
+            });
+          }).on('error', (err) => {
+            reject(err);
+          })
+          .on('close', () => {
+            resolve();
+          });
+        }));
+      }
+      Promise.all(promises).then(() => {
+        res.status(200).send({
+          items
+        });
+        cb();
+      }).catch((err) => {
+        if (err.notFound) {
+          res.status(200).send({
+            items
+          });
+          return cb();
+        }
+        return cb(new APIError(err, {
+            statusCode: 500,
+            message: 'Internal Database Error'
+          }));
+      });
+      return;
+    }
     const items = [];
     let error;
     db.createReadStream({
@@ -24,6 +69,7 @@ export default {
         cb();
       }
     });
+    return;
   },
   getById: (req, res, cb) => {
     const key = req.params.id;
