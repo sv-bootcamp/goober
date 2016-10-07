@@ -7,7 +7,7 @@ const mockData = {
   lat: 37.565398,
   lng: 126.9907941,
   dateString: '2016-10-04T04:00:00.578Z',
-  dateObject: new Date();
+  dateObject: new Date(),
   precision: DEFAULT_PRECISON
 };
 
@@ -41,8 +41,8 @@ test('make alive key stream', t => {
 
 test('make timestamp using module', t => {
   const expected = {
-    stringResult: MAX_TIME - Number(new Date(mockData.date)),
-    dateResult: MAX_TIME - Number(mockData.dateObject))
+    stringResult: MAX_TIME - Number(new Date(mockData.dateString)),
+    dateResult: MAX_TIME - Number(mockData.dateObject)
   };
   const stringTS = new Timestamp(mockData.dateString).getTimestamp();
   t.equal(stringTS, expected.stringResult, 'should have same timeStamp(String use)');
