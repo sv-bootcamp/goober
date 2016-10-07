@@ -2,29 +2,28 @@ import validator from 'validator';
 import {APIError} from '../ErrorHandler';
 
 export default (req, res, next) => {
-  const MIN_DECSRIPSION_LENGTH = 0;
-  const MAX_DECSRIPSION_LENGTH = 200;
+  const MIN_TITLE_LENGTH = 0;
+  const MAX_TITLE_LENGTH = 200;
   const MIN_LAT = -90;
   const MAX_LAT = 90;
   const MIN_LNG = -180;
   const MAX_LNG = 180;
   const CATEGORIES = ['warning', 'event', 'facility'];
   const key = req.params.id;
-  if (key && !(key.startsWith('item-')
-      && validator.isUUID(key.substr(5, key.length)))) {
+  if (key && !(key.startsWith('item-'))) {
     return next(new APIError(new Error(), {
       statusCode: 400,
       message: 'wrong item Id'
     }));
   }
-  if (req.body.description && !(typeof req.body.description === 'string'
-    && validator.isLength(req.body.description, {
-      min: MIN_DECSRIPSION_LENGTH,
-      max: MAX_DECSRIPSION_LENGTH
+  if (req.body.title && !(typeof req.body.title === 'string'
+    && validator.isLength(req.body.title, {
+      min: MIN_TITLE_LENGTH,
+      max: MAX_TITLE_LENGTH
     }))) {
     return next(new APIError(new Error(), {
       statusCode: 400,
-      message: 'wrong item description'
+      message: 'wrong item title'
     }));
   }
   if (req.body.lat && !(typeof req.body.lat === 'number'
@@ -53,7 +52,6 @@ export default (req, res, next) => {
       message: 'wrong item address'
     }));
   }
-
   if (req.body.createdDate && !(typeof req.body.createdDate === 'string'
     && validator.isDate(req.body.createdDate))) {
     return next(new APIError(new Error(), {
@@ -74,6 +72,24 @@ export default (req, res, next) => {
       statusCode: 400,
       message: 'wrong item category'
     }));
+  }
+  if (req.body.startTime && !(typeof req.body.startTime === 'string'
+    && validator.isDate(req.body.startTime))) {
+    return next(new APIError(new Error(), {
+      statusCode: 400,
+      message: 'wrong item startTime'
+    }));
+  }
+  if (req.body.endTime && !(typeof req.body.endTime === 'string'
+    && validator.isDate(req.body.endTime))) {
+    return next(new APIError(new Error(), {
+      statusCode: 400,
+      message: 'wrong item endTime'
+    }));
+  }
+
+  if (req.validatorTest) {
+    return next(req, res);
   }
   return next();
 };
