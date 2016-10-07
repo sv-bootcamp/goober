@@ -1,6 +1,6 @@
 import test from 'tape';
 import geohash from 'ngeohash';
-import {KeyMaker, ALIVE, DEFAULT_PRECISON, MAX_TIME} from '../../../server/items/models';
+import {KeyMaker, ALIVE, DEFAULT_PRECISON, MAX_TIME, Timestamp} from '../../../server/items/models';
 
 const mockData = {
   lat: 37.565398,
@@ -31,5 +31,17 @@ test('make alive key stream', t => {
     t.equal(keyStream[i].includes(uuid), true, 'should have same uuid');
   }
 
+  t.end();
+});
+
+test('make timestamp using module', t => {
+  const expected = {
+    stringResult: MAX_TIME - Number(new Date(mockData.date)),
+    dateResult: MAX_TIME - Number(new Date())
+  };
+  let timestamp = new Timestamp(mockData.date).getTimestamp();
+  t.equal(timestamp, expected.stringResult, 'should have same timeStamp(String use)');
+  timestamp = new Timestamp(new Date()).getTimestamp();
+  t.equal(timestamp, expected.dateResult, 'should have same timeStamp(Date use)');
   t.end();
 });
