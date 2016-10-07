@@ -1,9 +1,56 @@
 import db from '../database';
-import uuid from 'uuid4';
 import {APIError} from '../ErrorHandler';
+import {KeyMaker, KeyUtils,Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
+        UUID_START_POS, ALIVE, EXPIRED, REMOVED} from './models';
 
 export default {
   getAll: (req, res, cb) => {
+    const {lat, lng, zoom} = req.query;
+    if (lat && lng && zoom) {
+      const precision = KeyUtils.calcPrecisionByZoom(Number(zoom));
+      const keys = KeyUtils.getKeysByArea(lat, lng, precision);
+      const promises = [];
+      const items = [];
+      for (const key of keys) {
+        promises.push(new Promise((resolve, reject) => {
+          // @TODO we have to limit the number of items.
+          db.createReadStream({
+            start: `item-${ALIVE}-${key}-`,
+            end: `item-${ALIVE}-${key}-\xFF`
+          }).on('data', (data) => {
+            db.get(data.value.ref, (err, refData) => {
+              if (!err) {
+                refData.id = data.value.ref;
+                items.push(refData);
+              }
+            });
+          }).on('error', (err) => {
+            reject(err);
+          })
+          .on('close', () => {
+            resolve();
+          });
+        }));
+      }
+      Promise.all(promises).then(() => {
+        res.status(200).send({
+          items
+        });
+        cb();
+      }).catch((err) => {
+        if (err.notFound) {
+          res.status(200).send({
+            items
+          });
+          return cb();
+        }
+        return cb(new APIError(err, {
+            statusCode: 500,
+            message: 'Internal Database Error'
+          }));
+      });
+      return;
+    }
     const items = [];
     let error;
     db.createReadStream({
@@ -22,6 +69,7 @@ export default {
         cb();
       }
     });
+    return;
   },
   getById: (req, res, cb) => {
     const key = req.params.id;
@@ -42,19 +90,31 @@ export default {
   },
   remove: (req, res, cb) => {
     const key = req.params.id;
-    db.get(key, (err) => {
-      if (err) {
-        if (err.notFound) {
-          return cb(new APIError(err, {
+    const itemGeohash = key.substring(GEOHASH_START_POS, GEOHASH_END_POS + 1);
+    const itemUuid = key.substring(UUID_START_POS, key.length);
+    db.get(key, (getErr, value) => {
+      if (getErr) {
+        if (getErr.notFound) {
+          return cb(new APIError(getErr, {
             statusCode: 400,
-            message: 'Bad Request, No data'
+            message: 'Item was not found'
           }));
         }
-        return cb(new APIError(err));
+        return cb(new APIError(getErr));
       }
-      return db.del(key, (errDel) => {
-        if (errDel) {
-          return cb(new APIError(errDel));
+      const item = value;
+      const itemTimeStamp = new Timestamp(item.createdDate).getTimestamp();
+      const ops = [];
+      for (let i = 0; i < DEFAULT_PRECISON; i = i + 1) {
+        const ghSubstr = itemGeohash.substring(0, i + 1);
+        const deletedItemId = `item-${REMOVED}-${ghSubstr}-${itemTimeStamp}-${itemUuid}`;
+        ops.push({type: 'put', key: deletedItemId, value: {ref: key}});
+        ops.push({type: 'del', key: `item-${ALIVE}-${ghSubstr}-${itemTimeStamp}-${itemUuid}`});
+        ops.push({type: 'del', key: `item-${EXPIRED}-${ghSubstr}-${itemTimeStamp}-${itemUuid}`});
+      }
+      return db.batch(ops, (itemErr) => {
+        if (itemErr) {
+          return cb(new APIError(itemErr));
         }
         res.status(200).send({
           message: 'success'
@@ -88,21 +148,36 @@ export default {
     });
   },
   add: (req, res, cb) => {
-    const itemId = `item-${uuid()}`;
-    db.put(itemId, req.body, (itemErr) => {
-      if (itemErr) {
-        return cb(new APIError(itemErr));
+    const currentTime = new Date();
+    req.body.createdDate = currentTime.toISOString();
+    req.body.modifiedDate = currentTime.toISOString();
+    const keyStream = new KeyMaker(req.body.lat, req.body.lng, currentTime).getKeyStream();
+    const ops = [{
+      type: 'put',
+      key: keyStream[0],
+      value: req.body
+    }];
+    for (let i = 1; i <= DEFAULT_PRECISON; i = i + 1) {
+      ops.push({
+        type: 'put',
+        key: keyStream[i],
+        value: {ref: keyStream[0]}
+      });
+    }
+    db.batch(ops, (err) => {
+      if (err) {
+        return cb(new APIError(err));
       }
       res.status(200).send({
         message: 'success',
-        data: itemId
+        data: keyStream[0]
       });
       return cb();
     });
   },
   modify: (req, res, cb) => {
     const key = req.params.id;
-    db.get(key, (getErr) => {
+    db.get(key, (getErr, value) => {
       if (getErr) {
         if (getErr.notFound) {
           return cb(new APIError(getErr, {
@@ -112,14 +187,16 @@ export default {
         }
         return cb(new APIError(getErr));
       }
-      const value = req.body;
-      return db.put(key, value, (itemErr) => {
+      req.body.createdDate = value.createdDate;
+      req.body.modifiedDate = new Date().toISOString();
+      const newValue = req.body;
+      return db.put(key, newValue, (itemErr) => {
         if (itemErr) {
           return cb(new APIError(itemErr));
         }
         res.status(200).send({
           message: 'success',
-          data: value
+          data: newValue
         });
         return cb();
       });

@@ -4,5 +4,7 @@ require('source-map-support').install();
 // Add more tests by importing them here.
 
 import './server';
+import './items/models';
+import './items/validator';
 import './items/controllers';
 import './database';

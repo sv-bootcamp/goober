@@ -1,10 +1,10 @@
 import express from 'express';
-import ItemContollers from './controllers';
+import ItemControllers from './controllers';
 
 const router = express.Router();
 
 /**
- * @api {get} /items Get All items
+ * @api {get} /items?lat=30.565398&lng=126.9907941&zoom=21 Get All items
  * @apiName getAllItem
  * @apiGroup Item
  *
@@ -18,23 +18,23 @@ const router = express.Router();
  *        "items":[
  *          {
  *            "id"          : "item1",
- *            "description" : 'textDescription',
+ *            "title" : 'textTitle',
  *            "lat"         : 30.565398,
  *            "lng"         : 126.9907941,
  *            "address"     : 'testAddress',
- *            "createdDate" : 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *            "modifiedDate": 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *            "category"    : 'default'
+ *            "createdDate" : '2016-10-04T04:00:00.578Z',
+ *            "modifiedDate": '2016-10-04T04:00:00.578Z',
+ *            "category"    : 'warning', 'event', 'facility'
  *          },
  *          {
  *            "id"          : "item2",
- *            "description" : 'textDescription2',
+ *            "title" : 'textTitle2',
  *            "lat"         : 32.565398,
  *            "lng"         : 153.9907941,
  *            "address"     : 'testAddress2',
- *            "createdDate" : 'Wed Mar 26 2015 09:00:00 GMT+0900 (KST)',
- *            "modifiedDate": 'Wed Mar 26 2015 09:00:00 GMT+0900 (KST)',
- *            "category"    : 'default'
+ *            "createdDate" : '2016-10-04T04:00:00.578Z',
+ *            "modifiedDate": '2016-10-04T04:00:00.578Z',
+ *            "category"    : 'warning', 'event', 'facility'
  *          }
  *        ]
  *     }
@@ -46,30 +46,26 @@ const router = express.Router();
  *       error: "database error"
  *     }
  */
-router.get('/', ItemContollers.getAll);
+router.get('/', ItemControllers.getAll);
 
 /**
  * @api {add} /items Add an item
  * @apiName addAnItem
  * @apiGroup Item
  *
- * @apiParam {String} description description
+ * @apiParam {String} title title
  * @apiParam {Number} lat lat(e.g. 37.565398)
  * @apiParam {Number} lng lng(e.g. 126.9907941)
  * @apiParam {String} address address
- * @apiParam {String} createdDate createdDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
- * @apiParam {String} modifiedDate modifiedDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
  * @apiParam {String} category category
  *
  * @apiParamExample {json} Request-Example:
  *      {
- *          "description" : "textDescription",
+ *          "title" : "textTitle",
  *          "lat"         : 30.565398,
  *          "lng"         : 126.9907941,
  *          "address"     : "testAddress",
- *          "createdDate" : "Wed Mar 25 2015 09:00:00 GMT+0900 (KST)",
- *          "modifiedDate": "Wed Mar 25 2015 09:00:00 GMT+0900 (KST)",
- *          "category"    : "default"
+ *          "category"    : 'warning', 'event', 'facility'
  *      }
  *
  * @apiSuccess {String} message success
@@ -78,7 +74,7 @@ router.get('/', ItemContollers.getAll);
  *     HTTP/1.1 200 OK
  *     {
  *       "message": "success",
- *       "data"   : "item-2cf9a312-4c1a-4ac3-aff2-21021f6f2067"
+ *       "data"   : "item-wv6mcsrb-5795ef07-d25c-42b2-8797-c242acaa5a9a"
  *     }
  *
  * @apiError (Error 500) error The id of the error occured while putting an Item in DB
@@ -88,7 +84,7 @@ router.get('/', ItemContollers.getAll);
  *       error: "error message ..."
  *     }
  */
-router.post('/', ItemContollers.add);
+router.post('/', ItemControllers.add);
 
 router.put('/', (req, res, next) => {
   next();
@@ -116,17 +112,17 @@ router.put('/', (req, res, next) => {
  *       error: "error message..."
  *     }
  */
-router.delete('/', ItemContollers.removeAll);
+router.delete('/', ItemControllers.removeAll);
 
 /**
  * @api {get} /items/:id Get an item by id
  * @apiName getItem
  * @apiGroup Item
  *
- * @apiParam {Number} id Unique id of the item.
+ * @apiParam {String} id Unique id of the item.
  *
  * @apiSuccess {Number} id Unique id of the item.
- * @apiSuccess {String} description description of the item.
+ * @apiSuccess {String} title title of the item.
  * @apiSuccess {Number} lat latitude of the item.
  * @apiSuccess {Number} lng longitude of the item.
  * @apiSuccess {String} address address of the item.
@@ -138,13 +134,13 @@ router.delete('/', ItemContollers.removeAll);
  *     HTTP/1.1 200 OK
  *     {
  *        "id"          : "item1",
- *        "description" : 'textDescription',
+ *        "title" : 'textTitle',
  *        "lat"         : 30.565398,
  *        "lng"         : 126.9907941,
  *        "address"     : 'testAddress',
- *        "createdDate" : 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *        "modifiedDate": 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)',
- *        "category"    : 'default'
+ *        "createdDate" : '2016-10-04T04:00:00.578Z',
+ *        "modifiedDate": '2016-10-04T04:00:00.578Z',
+ *        "category"    : 'warning', 'event', 'facility'
  *     }
  *
  * @apiError (Error 400) ItemNotFound The id of the Item was not found.
@@ -162,31 +158,27 @@ router.delete('/', ItemContollers.removeAll);
  *       error: "database error"
  *     }
  */
-router.get('/:id', ItemContollers.getById);
+router.get('/:id', ItemControllers.getById);
 
 /**
  * @api {modify} /items/:id Modify an item
  * @apiName modifyAnItem
  * @apiGroup Item
  *
- * @apiParam {String} description description
+ * @apiParam {String} title title
  * @apiParam {Number} lat lat(e.g. 37.565398)
  * @apiParam {Number} lng lng(e.g. 126.9907941)
  * @apiParam {String} address address
- * @apiParam {String} createdDate createdDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
- * @apiParam {String} modifiedDate modifiedDate(e.g. 'Wed Mar 25 2015 09:00:00 GMT+0900 (KST)')
  * @apiParam {String} category category
  *
  *
  * @apiParamExample {json} Request-Example:
  *      {
- *          "description" : "textDescription",
+ *          "title" : "texttitle",
  *          "lat"         : 30.565398,
  *          "lng"         : 126.9907941,
  *          "address"     : "testAddress",
- *          "createdDate" : "Wed Mar 25 2015 09:00:00 GMT+0900 (KST)",
- *          "modifiedDate": "Wed Mar 25 2015 09:00:00 GMT+0900 (KST)",
- *          "category"    : "default"
+ *          "category"    : 'warning', 'event', 'facility'
  *      }
  *
  *
@@ -211,7 +203,7 @@ router.get('/:id', ItemContollers.getById);
  *       error: "error message..."
  *     }
  */
-router.put('/:id', ItemContollers.modify);
+router.put('/:id', ItemControllers.modify);
 
 /**
  * @api {delete} /items/:id Remove an item
@@ -242,6 +234,6 @@ router.put('/:id', ItemContollers.modify);
  *       error: "error message..."
  *     }
  */
-router.delete('/:id', ItemContollers.remove);
+router.delete('/:id', ItemControllers.remove);
 
 export default router;
