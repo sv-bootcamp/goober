@@ -17,7 +17,7 @@ const router = express.Router();
  *     {
  *        "items":[
  *          {
- *            "id"          : "item1",
+ *            "id"          : "item-wv6mcsrb-5795ef07-d25c-42b2-8797-c242acaa5a9a",
  *            "description" : 'textDescription',
  *            "lat"         : 30.565398,
  *            "lng"         : 126.9907941,
@@ -27,7 +27,7 @@ const router = express.Router();
  *            "category"    : 'warning', 'event', 'facility'
  *          },
  *          {
- *            "id"          : "item2",
+ *            "id"          : "item-wv6mcsrb-5795ef07-d25c-42b2-8797-c242acaa5a9b",
  *            "description" : 'textDescription2',
  *            "lat"         : 32.565398,
  *            "lng"         : 153.9907941,
@@ -119,9 +119,9 @@ router.delete('/', ItemContollers.removeAll);
  * @apiName getItem
  * @apiGroup Item
  *
- * @apiParam {Number} id Unique id of the item.
+ * @apiParam {String} id Unique id of the item.
  *
- * @apiSuccess {Number} id Unique id of the item.
+ * @apiSuccess {String} id Unique id of the item.
  * @apiSuccess {String} description description of the item.
  * @apiSuccess {Number} lat latitude of the item.
  * @apiSuccess {Number} lng longitude of the item.
@@ -133,7 +133,7 @@ router.delete('/', ItemContollers.removeAll);
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *        "id"          : "item1",
+ *        "id"          : "item-wv6mcsrb-5795ef07-d25c-42b2-8797-c242acaa5a9a",
  *        "description" : 'textDescription',
  *        "lat"         : 30.565398,
  *        "lng"         : 126.9907941,
