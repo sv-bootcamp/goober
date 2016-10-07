@@ -38,7 +38,16 @@ export default {
         });
         cb();
       }).catch((err) => {
-        return cb(new APIError(err));
+        if (err.notFound) {
+          return cb(new APIError(err, {
+            statusCode: 400,
+            message: 'Item was not found'
+          }));
+        }
+        return cb(new APIError(err, {
+            statusCode: 500,
+            message: 'Internal Database Error'
+          }));
       });
       return;
     }
