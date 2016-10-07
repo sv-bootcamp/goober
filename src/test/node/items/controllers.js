@@ -3,7 +3,7 @@ import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import geohash from 'ngeohash';
 import testDB, {clearDB} from '../../../server/database';
-import {DEFAULT_PRECISON, STATUS_CODE_POS, ALIVE, REMOVED} from '../../../server/items/models';
+import {DEFAULT_PRECISON, STATUS_CODE_POS, ALIVE, REMOVED, MAX_TIME} from '../../../server/items/models';
 import uuid from 'uuid4';
 
 const itemRedSelo = {
@@ -113,6 +113,65 @@ test('get a item from database', t => {
       }
       t.end();
     });
+  });
+});
+test('get by area from database', t => {
+  // should get items around the 
+  // wv6mcsrb 
+  const centerGeohash = 'wv6mcsr';
+  const neighbors = geohash.neighbors(centerGeohash);
+  const reversedTime = MAX_TIME - Number(new Date());
+  const expected = {
+    status: 200,
+    message: 'success',
+    items: [
+      { id : `item-${ALIVE}-${centerGeohash}-${reversedTime}`},
+      { id : `item-${ALIVE}-${neighbors[0]}-${reversedTime}`},
+      { id : `item-${ALIVE}-${neighbors[1]}-${reversedTime}`},
+      { id : `item-${ALIVE}-${neighbors[2]}-${reversedTime}`},
+      { id : `item-${ALIVE}-${neighbors[3]}-${reversedTime}`},
+      { id : `item-${ALIVE}-${neighbors[4]}-${reversedTime}`},
+      { id : `item-${ALIVE}-${neighbors[5]}-${reversedTime}`},
+      { id : `item-${ALIVE}-${neighbors[6]}-${reversedTime}`},
+      { id : `item-${ALIVE}-${neighbors[7]}-${reversedTime}`}
+    ]
+  };
+  const req = httpMocks.createRequest({
+    method: 'GET',
+    url: '/items/area',
+    query: {
+      lat: 30.565398,
+      lng: 126.9907941,
+      zoom: 21
+    }
+  });
+  const res = httpMocks.createResponse();
+  clearDB(() => {
+    const ops = [];
+    for(let i = 0; i < expected.items.length; i += 1){
+      const tempValue = JSON.parse(JSON.stringify(itemRedSelo));
+      tempValue.ref = expected.items[i].id;
+      ops.push({ type: 'put', key: expected.items[i].id, value: tempValue })
+    }
+    
+    testDB.batch(ops, (err) => {
+      if (err) {
+        t.end(err);
+      }
+      ItemController.getByArea(req, res, () => {
+        t.equal(res.statusCode, expected.status, 'should be same status');
+        const items = res._getData().items.sort((a, b) => {
+          return a.id > b.id;
+        });
+        expected.items = expected.items.sort((a, b) => {
+          return a.id > b.id;
+        });
+        for(let j = 0; j < items.length; j += 1){
+          t.equal(items[j].id, expected.items[j].id, 'should be same id');
+        }
+        t.end();
+      });
+    });  
   });
 });
 test('add an item to database', t => {

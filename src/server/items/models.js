@@ -39,3 +39,12 @@ export class KeyMaker {
     return this.uuid;
   }
 }
+
+export const KeyUtils = {
+  getKeysByArea: (lat, lng, precision) => {
+    const centerGeohash = geohash.encode(lat, lng, precision);
+    const neighbors = geohash.neighbors(centerGeohash);
+    neighbors.push(centerGeohash);
+    return neighbors;
+  }
+};

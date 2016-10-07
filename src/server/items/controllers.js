@@ -1,8 +1,7 @@
 import db from '../database';
 import {APIError} from '../ErrorHandler';
-import {KeyMaker, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
+import {KeyMaker, KeyUtils,Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
         UUID_START_POS, ALIVE, EXPIRED, REMOVED} from './models';
-
 
 export default {
   getAll: (req, res, cb) => {
@@ -40,6 +39,41 @@ export default {
       value.id = key;
       res.status(200).send(value);
       return cb();
+    });
+  },
+  getByArea: (req, res, cb) => {
+    const {lat, lng, zoom} = req.query;
+    const precision = Math.floor((zoom + 1) / 3);
+    const keys = KeyUtils.getKeysByArea(lat, lng, precision);
+    const promises = [];
+    const items = [];
+    for (const key of keys) {
+      promises.push(new Promise((resolve, reject) => {
+        db.createReadStream({
+          start: `item-${ALIVE}-${key}-`,
+          end: `item-${ALIVE}-${key}-\xFF`
+        }).on('data', (data) => {
+          db.get(data.value.ref, (err, refData) => {
+            if (!err) {
+              refData.id = data.value.ref;
+              items.push(refData);
+            }
+          });
+        }).on('error', (err) => {
+          reject(err);
+        })
+        .on('close', () => {
+          resolve();
+        });
+      }));
+    }
+    Promise.all(promises).then(() => {
+      res.status(200).send({
+        items
+      });
+      cb();
+    }).catch((err) => {
+      return cb(new APIError(err));
     });
   },
   remove: (req, res, cb) => {
