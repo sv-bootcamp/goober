@@ -4,10 +4,10 @@ import config from 'config';
 import reactRoutes from './react-routes';
 import apiRoutes from './routes/api-routes';
 import bodyParser from 'body-parser';
-
+import {initMock} from './database';
 export default (cb) => {
   const app = express();
-
+  initMock();
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(bodyParser.json());
 
