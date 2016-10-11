@@ -7,6 +7,8 @@ import bodyParser from 'body-parser';
 import {initMock} from './database';
 export default (cb) => {
   const app = express();
+  
+  //Please remove it when it's realsed
   initMock(()=>{
     /* eslint-disable no-console */
     console.log('Mock data is stored successfully.');
