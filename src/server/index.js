@@ -7,11 +7,10 @@ import bodyParser from 'body-parser';
 import {initMock} from './database';
 export default (cb) => {
   const app = express();
-  
-  //Please remove it when it's realsed
+  // Please remove it when it's realsed
   initMock(()=>{
     /* eslint-disable no-console */
-    console.log('Mock data is stored successfully.');
+    console.log('Mock data was successfully stored.');
     /* eslint-enable */
   });
   app.use(bodyParser.urlencoded({extended: true}));
