@@ -1,7 +1,7 @@
 import db from '../database';
 import {APIError} from '../ErrorHandler';
-import {KeyMaker, KeyUtils,Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
-        UUID_START_POS, ALIVE, EXPIRED, REMOVED} from './models';
+import {KeyMaker, KeyUtils, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS,
+  GEOHASH_END_POS, UUID_START_POS, ALIVE, EXPIRED, REMOVED} from './models';
 
 export default {
   getAll: (req, res, cb) => {
@@ -45,9 +45,9 @@ export default {
           return cb();
         }
         return cb(new APIError(err, {
-            statusCode: 500,
-            message: 'Internal Database Error'
-          }));
+          statusCode: 500,
+          message: 'Internal Database Error'
+        }));
       });
       return;
     }
