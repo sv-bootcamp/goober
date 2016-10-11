@@ -7,7 +7,11 @@ import bodyParser from 'body-parser';
 import {initMock} from './database';
 export default (cb) => {
   const app = express();
-  initMock();
+  initMock(()=>{
+    /* eslint-disable no-console */
+    console.log('Mock data is stored successfully.');
+    /* eslint-enable */
+  });
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(bodyParser.json());
 
