@@ -4,10 +4,16 @@ import config from 'config';
 import reactRoutes from './react-routes';
 import apiRoutes from './routes/api-routes';
 import bodyParser from 'body-parser';
-
+import {initMock} from './database';
 export default (cb) => {
   const app = express();
-
+  
+  //Please remove it when it's realsed
+  initMock(()=>{
+    /* eslint-disable no-console */
+    console.log('Mock data is stored successfully.');
+    /* eslint-enable */
+  });
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(bodyParser.json());
 
