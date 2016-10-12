@@ -22,3 +22,36 @@ test('test aws instance', t => {
     return t.end();
   });
 });
+
+test('test s3 put image', t => {
+  fs.readFile('src/test/node/test.png', (errRead, image) => {
+    if (errRead) {
+      /* eslint-disable no-console */
+      console.log(errRead);
+      /* eslint-enable */
+      t.fail('Error occur while reading image file');
+      t.end();
+      return;
+    }
+    const base64Image = new Buffer(image, 'binary').toString('base64');
+    const conn = new S3Connector();
+    const opt = {
+      key: 'test-image',
+      body: base64Image
+    };
+
+    conn.putImage(opt, (err, data) => {
+      if (err) {
+        /* eslint-disable no-console */
+        console.log(err);
+        /* eslint-enable */
+        t.fail('Error, putImage fail');
+        t.end();
+        return;
+      }
+      t.ok(data.ETag, 'should have ETag in response');
+      t.end();
+      return;
+    });
+  });
+});

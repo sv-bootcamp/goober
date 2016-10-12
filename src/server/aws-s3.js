@@ -13,7 +13,7 @@ export class S3Connector {
     //   itemid: 'id',
     //   imageid: 'id'
     // }
-    console.log(opt); // will be removed
+    console.log(opt); //  will be removed
     this.s3instance.listObjects({Bucket: config.awsImageBucket}, (err, data) => {
       if (err) {
         return cb(err);
@@ -22,8 +22,21 @@ export class S3Connector {
     });
   }
 
-  putImage(opt = {}) {
-    console.log(opt); // will be removed
+  putImage(opt = {}, cb = () => {}) {
+    // opt = {
+    //   key; 'data-key',
+    //   body: 'some string (image-encoded-base64)'
+    // }
+    if (!opt.key || !opt.body) {
+      cb(new Error('Wrong parameter'));
+      return;
+    }
+    const param = {
+      Bucket: config.awsImageBucket,
+      Key: opt.key,
+      Body: opt.body
+    };
+    this.s3instance.putObject(param, cb);
   }
 
   delImage(opt = {}) {
