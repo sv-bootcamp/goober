@@ -396,7 +396,7 @@ test('delete all item from database', t => {
     }
 
     const expected = {
-      status: 200,
+      status: 20,
       message: 'success'
     };
 
