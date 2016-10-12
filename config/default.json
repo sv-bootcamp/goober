@@ -2,6 +2,8 @@
   "name": "goober",
   "port": 5000,
   "database": "goober-db",
+  "awsConfig": "config/aws.json",
+  "awsImageBucket": "goober-item-image",
   "fb": {
     "version": "v2.7",
     "appId": "1221904451173356",

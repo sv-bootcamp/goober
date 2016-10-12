@@ -8,3 +8,4 @@ import './items/models';
 import './items/validator';
 import './items/controllers';
 import './database';
+import './aws-s3';
