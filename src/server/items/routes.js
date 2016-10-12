@@ -17,24 +17,28 @@ const router = express.Router();
  *     {
  *        "items":[
  *          {
- *            "id"          : "item1",
- *            "title" : 'textTitle',
+ *            "id"          : 'item1',
+ *            "title"       : 'textTitle',
  *            "lat"         : 30.565398,
  *            "lng"         : 126.9907941,
  *            "address"     : 'testAddress',
  *            "createdDate" : '2016-10-04T04:00:00.578Z',
  *            "modifiedDate": '2016-10-04T04:00:00.578Z',
  *            "category"    : 'warning', 'event', 'facility'
+ *            "startTime"   : '2016-10-04T04:00:00.578Z',
+ *            "endTime"     : '2016-10-10T04:00:00.578Z'
  *          },
  *          {
- *            "id"          : "item2",
- *            "title" : 'textTitle2',
+ *            "id"          : 'item2',
+ *            "title"       : 'textTitle2',
  *            "lat"         : 32.565398,
  *            "lng"         : 153.9907941,
  *            "address"     : 'testAddress2',
  *            "createdDate" : '2016-10-04T04:00:00.578Z',
  *            "modifiedDate": '2016-10-04T04:00:00.578Z',
  *            "category"    : 'warning', 'event', 'facility'
+ *            "startTime"   : '2016-10-04T04:00:00.578Z',
+ *            "endTime"     : '2016-10-10T04:00:00.578Z'
  *          }
  *        ]
  *     }
@@ -58,14 +62,20 @@ router.get('/', ItemControllers.getAll);
  * @apiParam {Number} lng lng(e.g. 126.9907941)
  * @apiParam {String} address address
  * @apiParam {String} category category
- *
+ * @apiParam {String} startTime startTime
+ * @apiParam {String} endTime endTime
+ * @apiParam {String} image base64 encoding image
+ * 
  * @apiParamExample {json} Request-Example:
  *      {
- *          "title" : "textTitle",
+ *          "title"       : "textTitle",
  *          "lat"         : 30.565398,
  *          "lng"         : 126.9907941,
  *          "address"     : "testAddress",
  *          "category"    : 'warning', 'event', 'facility'
+ *          "startTime"   : '2016-10-04T04:00:00.578Z',
+ *          "endTime"     : '2016-10-10T04:00:00.578Z'
+ *          "image"       : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA5IAAAIYCAYAAAAfLdMYAAAL'
  *      }
  *
  * @apiSuccess {String} message success
@@ -126,21 +136,23 @@ router.delete('/', ItemControllers.removeAll);
  * @apiSuccess {Number} lat latitude of the item.
  * @apiSuccess {Number} lng longitude of the item.
  * @apiSuccess {String} address address of the item.
- * @apiSuccess {String} createdDate created date of the item.
- * @apiSuccess {String} updatedDate updated date of the item.
  * @apiSuccess {String} category category of the item.
+ * @apiSuccess {String} startTime startTime
+ * @apiSuccess {String} endTime endTime
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *        "id"          : "item1",
- *        "title" : 'textTitle',
+ *        "id"          : 'item1',
+ *        "title"       : 'textTitle',
  *        "lat"         : 30.565398,
  *        "lng"         : 126.9907941,
  *        "address"     : 'testAddress',
  *        "createdDate" : '2016-10-04T04:00:00.578Z',
  *        "modifiedDate": '2016-10-04T04:00:00.578Z',
  *        "category"    : 'warning', 'event', 'facility'
+ *        "startTime"   : '2016-10-04T04:00:00.578Z',
+ *        "endTime"     : '2016-10-10T04:00:00.578Z'
  *     }
  *
  * @apiError (Error 400) ItemNotFound The id of the Item was not found.
@@ -174,11 +186,15 @@ router.get('/:id', ItemControllers.getById);
  *
  * @apiParamExample {json} Request-Example:
  *      {
- *          "title" : "texttitle",
+ *          "title"       : "texttitle",
  *          "lat"         : 30.565398,
  *          "lng"         : 126.9907941,
  *          "address"     : "testAddress",
  *          "category"    : 'warning', 'event', 'facility'
+ *          "startTime"   : '2016-10-04T04:00:00.578Z',
+ *          "endTime"     : '2016-10-10T04:00:00.578Z'
+ *          "startTime"   : '2016-10-04T04:00:00.578Z',
+ *          "endTime"     : '2016-10-10T04:00:00.578Z'
  *      }
  *
  *
