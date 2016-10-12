@@ -3,8 +3,7 @@ import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import geohash from 'ngeohash';
 import testDB, {clearDB} from '../../../server/database';
-import {DEFAULT_PRECISON, STATUS_CODE_POS, ALIVE,
-        REMOVED, MAX_TIME} from '../../../server/items/models';
+import {STATE_CODE_POS, DEFAULT_PRECISON, STATE, MAX_TIME} from '../../../server/items/models';
 import uuid from 'uuid4';
 
 const itemRedSelo = {
@@ -124,15 +123,15 @@ test('get by area from database', t => {
     status: 200,
     message: 'success',
     items: [
-      { id: `item-${ALIVE}-${centerGeohash}-${reversedTime}`},
-      { id: `item-${ALIVE}-${neighbors[0]}-${reversedTime}`},
-      { id: `item-${ALIVE}-${neighbors[1]}-${reversedTime}`},
-      { id: `item-${ALIVE}-${neighbors[2]}-${reversedTime}`},
-      { id: `item-${ALIVE}-${neighbors[3]}-${reversedTime}`},
-      { id: `item-${ALIVE}-${neighbors[4]}-${reversedTime}`},
-      { id: `item-${ALIVE}-${neighbors[5]}-${reversedTime}`},
-      { id: `item-${ALIVE}-${neighbors[6]}-${reversedTime}`},
-      { id: `item-${ALIVE}-${neighbors[7]}-${reversedTime}`}
+      { id: `item-${STATE.ALIVE}-${centerGeohash}-${reversedTime}`},
+      { id: `item-${STATE.ALIVE}-${neighbors[0]}-${reversedTime}`},
+      { id: `item-${STATE.ALIVE}-${neighbors[1]}-${reversedTime}`},
+      { id: `item-${STATE.ALIVE}-${neighbors[2]}-${reversedTime}`},
+      { id: `item-${STATE.ALIVE}-${neighbors[3]}-${reversedTime}`},
+      { id: `item-${STATE.ALIVE}-${neighbors[4]}-${reversedTime}`},
+      { id: `item-${STATE.ALIVE}-${neighbors[5]}-${reversedTime}`},
+      { id: `item-${STATE.ALIVE}-${neighbors[6]}-${reversedTime}`},
+      { id: `item-${STATE.ALIVE}-${neighbors[7]}-${reversedTime}`}
     ]
   };
   const req = httpMocks.createRequest({
@@ -174,14 +173,14 @@ test('add an item to database', t => {
     message: 'success',
     keys: [
       `item-${geo}-`,
-      `item-${ALIVE}-${geo.substring(0, 1)}-`,
-      `item-${ALIVE}-${geo.substring(0, 2)}-`,
-      `item-${ALIVE}-${geo.substring(0, 3)}-`,
-      `item-${ALIVE}-${geo.substring(0, 4)}-`,
-      `item-${ALIVE}-${geo.substring(0, 5)}-`,
-      `item-${ALIVE}-${geo.substring(0, 6)}-`,
-      `item-${ALIVE}-${geo.substring(0, 7)}-`,
-      `item-${ALIVE}-${geo}-`
+      `item-${STATE.ALIVE}-${geo.substring(0, 1)}-`,
+      `item-${STATE.ALIVE}-${geo.substring(0, 2)}-`,
+      `item-${STATE.ALIVE}-${geo.substring(0, 3)}-`,
+      `item-${STATE.ALIVE}-${geo.substring(0, 4)}-`,
+      `item-${STATE.ALIVE}-${geo.substring(0, 5)}-`,
+      `item-${STATE.ALIVE}-${geo.substring(0, 6)}-`,
+      `item-${STATE.ALIVE}-${geo.substring(0, 7)}-`,
+      `item-${STATE.ALIVE}-${geo}-`
     ],
     address: itemRedSelo.address
   };
@@ -297,8 +296,8 @@ test('delete an item from database', t => {
     message: 'success',
     itemCnt: 1,
     indexingItemCntBefore: DEFAULT_PRECISON,
-    statusCodeBefore: ALIVE,
-    statusCodeAfter: REMOVED
+    statusCodeBefore: STATE.ALIVE,
+    statusCodeAfter: STATE.REMOVED
   };
   clearDB(()=>{
     const addReq = httpMocks.createRequest({
@@ -319,7 +318,7 @@ test('delete an item from database', t => {
       }).on('data', (data) => {
         if (data.value.ref === key) {
           indexingItemsCnt = indexingItemsCnt + 1;
-          statusCode = data.key.charAt(STATUS_CODE_POS);
+          statusCode = data.key.charAt(STATE_CODE_POS);
           t.equal(statusCode, expected.statusCodeBefore
           , `should be same status code[${indexingItemsCnt}]`);
         } else if (data.value.description === itemRedSelo.description) {
@@ -357,7 +356,7 @@ test('delete an item from database', t => {
               end: '\xFF'
             }).on('data', (data) => {
               if (data.value.ref === key) {
-                statusCode = data.key.charAt(STATUS_CODE_POS);
+                statusCode = data.key.charAt(STATE_CODE_POS);
                 t.equal(statusCode, expected.statusCodeAfter
             , 'should be same status code after delete');
               } else if (data.value.description === itemRedSelo.description) {

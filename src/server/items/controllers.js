@@ -1,7 +1,7 @@
 import db from '../database';
 import {APIError} from '../ErrorHandler';
 import {KeyMaker, KeyUtils, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS,
-  GEOHASH_END_POS, UUID_START_POS, ALIVE, EXPIRED, REMOVED} from './models';
+  GEOHASH_END_POS, UUID_START_POS, STATE} from './models';
 
 export default {
   getAll: (req, res, cb) => {
@@ -15,8 +15,8 @@ export default {
         promises.push(new Promise((resolve, reject) => {
           // @TODO we have to limit the number of items.
           db.createReadStream({
-            start: `item-${ALIVE}-${key}-`,
-            end: `item-${ALIVE}-${key}-\xFF`
+            start: `item-${STATE.ALIVE}-${key}-`,
+            end: `item-${STATE.ALIVE}-${key}-\xFF`
           }).on('data', (data) => {
             db.get(data.value.ref, (err, refData) => {
               if (!err) {
@@ -103,14 +103,21 @@ export default {
         return cb(new APIError(getErr));
       }
       const item = value;
-      const itemTimeStamp = new Timestamp(item.createdDate).getTimestamp();
+      const TimeStamp = new Timestamp(item.createdDate).getTimestamp();
       const ops = [];
       for (let i = 0; i < DEFAULT_PRECISON; i = i + 1) {
         const ghSubstr = itemGeohash.substring(0, i + 1);
-        const deletedItemId = `item-${REMOVED}-${ghSubstr}-${itemTimeStamp}-${itemUuid}`;
-        ops.push({type: 'put', key: deletedItemId, value: {ref: key}});
-        ops.push({type: 'del', key: `item-${ALIVE}-${ghSubstr}-${itemTimeStamp}-${itemUuid}`});
-        ops.push({type: 'del', key: `item-${EXPIRED}-${ghSubstr}-${itemTimeStamp}-${itemUuid}`});
+        const deletedItemId = `item-${STATE.REMOVED}-${ghSubstr}-${TimeStamp}-${itemUuid}`;
+        ops.push({
+          type: 'put',
+          key: deletedItemId,
+          value: {ref: key}
+        });
+        ops.push({
+          type: 'del',
+          key: `item-${STATE.ALIVE}-${ghSubstr}-${TimeStamp}-${itemUuid}`
+        });
+        ops.push({type: 'del', key: `item-${STATE.EXPIRED}-${ghSubstr}-${TimeStamp}-${itemUuid}`});
       }
       return db.batch(ops, (itemErr) => {
         if (itemErr) {
