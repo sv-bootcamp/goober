@@ -22,7 +22,6 @@ test('test aws instance', t => {
     return t.end();
   });
 });
-
 test('test s3 put image', t => {
   fs.readFile('src/test/node/test.png', (errRead, image) => {
     if (errRead) {
@@ -53,5 +52,42 @@ test('test s3 put image', t => {
       t.end();
       return;
     });
+  });
+});
+test('test s3 get image', t => {
+  const conn = new S3Connector();
+  const opt = ['test-image', '11'];
+  const expected = {
+    length: opt.length
+  };
+  conn.getImageUrls(opt, (err, data) => {
+    if (err) {
+      /* eslint-disable no-console */
+      console.log(err);
+      /* eslint-enable */
+      t.fail('Error, getImageUrls');
+      t.end();
+      return;
+    }
+    t.equal(data.length, expected.length, 'should be same length');
+    t.end();
+  });
+});
+test('test s3 delete image', t => {
+  const conn = new S3Connector();
+  const opt = {
+    key: 'test-image'
+  };
+  conn.delImage(opt, (err) => {
+    if (err) {
+      /* eslint-disable no-console */
+      console.log(err);
+      /* eslint-enable */
+      t.fail('Error, delImage');
+      t.end();
+      return;
+    }
+    t.ok(true, 'image removed');
+    t.end();
   });
 });

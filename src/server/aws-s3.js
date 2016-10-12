@@ -1,28 +1,86 @@
 import AWS from 'aws-sdk';
 import config from 'config';
+import fs from 'fs';
 
 AWS.config.loadFromPath(config.awsConfig);
 
-export class S3Connector {
-  constructor() {
-    this.s3instance = new AWS.S3();
+class MockS3 {
+  // We can trust AWS-sdk
+  // This class is just for test
+  constructor(configuration) {
+    const json = fs.readFileSync(configuration, 'utf8');
+    const awsConfig = JSON.parse(json);
+    this.endpoint = {};
+    this.endpoint.protocol = 'https:';
+    this.endpoint.host = `s3.${awsConfig.region}.amazonaws.com`;
   }
 
-  getImage(opt = {}, cb = () => {}) {
-    // opt {
-    //   itemid: 'id',
-    //   imageid: 'id'
-    // }
-    console.log(opt); //  will be removed
-    this.s3instance.listObjects({Bucket: config.awsImageBucket}, (err, data) => {
-      if (err) {
-        return cb(err);
-      }
-      return cb(null, data);
+  getSignedUrl() {
+    return 'some-url';
+  }
+
+  putObject(param = {}, cb = () => {}) {
+    if (!param.Bucket || !param.Key || !param.Body) {
+      cb(new Error('Error, Invalid parameter'));
+      return;
+    }
+    cb(null, {ETag: 'some-tag-code'});
+  }
+
+  deleteObject(params = {}, cb = () => {}) {
+    cb(null, params);
+  }
+}
+
+export class S3Connector {
+  constructor() {
+    if (process.env.NODE_ENV === 'test') {
+      // Make sure that
+      // SHOULD test with real s3 instance
+      this.s3instance = new MockS3(config.awsConfig);
+    } else {
+      this.s3instance = new AWS.S3();
+    }
+  }
+
+  getImageUrls(keys = [], cb = () => {}) {
+    // input parameters
+    // keys = ['key1', 'key2'];
+    //
+    // callback parameters
+    // err : err
+    // data : array of url
+    if (keys.length === 0) {
+      cb(null, []);
+      return;
+    }
+    const promises = [];
+    const urlList = [];
+    for (const key of keys) {
+      promises.push(new Promise((resolve, reject) => {
+        const params = {
+          Bucket: config.awsImageBucket,
+          Key: key,
+          Expires: 120
+        };
+        const url = this.s3instance.getSignedUrl('getObject', params);
+        if (!url) {
+          reject('No url');
+        }
+        // remove query string
+        urlList.push(url.split('?')[0]);
+        resolve();
+      }));
+    }
+    Promise.all(promises).then(() => {
+      cb(null, urlList);
+    }).catch((err) => {
+      cb(err);
     });
   }
 
   putImage(opt = {}, cb = () => {}) {
+    // input parameters
     // opt = {
     //   key; 'data-key',
     //   body: 'some string (image-encoded-base64)'
@@ -31,39 +89,29 @@ export class S3Connector {
       cb(new Error('Wrong parameter'));
       return;
     }
-    const param = {
+    const params = {
       Bucket: config.awsImageBucket,
       Key: opt.key,
-      Body: opt.body
+      Body: opt.body,
+      ACL: 'public-read'
     };
-    this.s3instance.putObject(param, cb);
+    this.s3instance.putObject(params, cb);
   }
 
-  delImage(opt = {}) {
-    console.log(opt); // will be removed
-  }
-
-}
-/*
-class MockS3 {
-  constructor() {}
-
-  listObjects(opt={}, cb=this.next) {
-    if (!opt.Bucket) {
-      const err = new Error('No Bucket');
-      return cb(err);
+  delImage(opt = {}, cb = () => {}) {
+    // input parameters
+    // opt = {
+    //   key; 'data-key'
+    // }
+    if (!opt.key) {
+      cb(new Error('Wrong parameter'));
+      return;
     }
-    return {
-      IsTruncated: false,
-      Marker: opt.Marker ? opt.Marker : '',
-      Contents: [],
-      Name: opt.Bucket,
-      Prefix: '',
-      MaxKeys: 1000,
-      CommonPrefixes: []
+    const params = {
+      Bucket: config.awsImageBucket,
+      Key: opt.key
     };
+    this.s3instance.deleteObject(params, cb);
   }
 
-  next(err=null, data={}) {}
 }
-*/
