@@ -94,6 +94,7 @@ gulp.task('run:test', ['build:test'], () => {
     if (exitCode !== 0) {
       console.error('Tests failed! - Test script exited with non-zero status code.');
     }
+    process.exitCode = exitCode;
     return true;
   });
   output.pipe(process.stdout);
