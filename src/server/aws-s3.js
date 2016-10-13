@@ -89,6 +89,10 @@ export class S3Connector {
     //   key; 'data-key',
     //   body: 'some string (image-encoded-base64)'
     // }
+    //
+    // callback parameter
+    // err  : error when fail put image
+    // data : { ETag : 'etag string'}
     if (!opt.key || !opt.body) {
       cb(new Error('Wrong parameter'));
       return;
