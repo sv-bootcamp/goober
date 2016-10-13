@@ -53,3 +53,6 @@ doc
 # database
 test-db
 goober-db
+
+# AWS config
+config/aws.json
