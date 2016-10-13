@@ -1,7 +1,7 @@
 import db from '../database';
 import {APIError} from '../ErrorHandler';
 import {KeyMaker, KeyUtils, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS,
-  GEOHASH_END_POS, UUID_START_POS, STATE} from './models';
+  GEOHASH_END_POS, UUID_START_POS, STATE} from './../key-utils';
 
 export default {
   getAll: (req, res, cb) => {

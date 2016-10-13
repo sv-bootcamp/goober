@@ -3,7 +3,7 @@ import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import geohash from 'ngeohash';
 import testDB, {clearDB} from '../../../server/database';
-import {STATE_CODE_POS, DEFAULT_PRECISON, STATE, MAX_TIME} from '../../../server/items/models';
+import {STATE_CODE_POS, DEFAULT_PRECISON, STATE, MAX_TIME} from '../../../server/key-utils';
 import uuid from 'uuid4';
 
 const itemRedSelo = {

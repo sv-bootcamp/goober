@@ -1,7 +1,7 @@
 import test from 'tape';
 import geohash from 'ngeohash';
 import {KeyMaker, STATE, DEFAULT_PRECISON, MAX_TIME, Timestamp, GEOHASH_START_POS, GEOHASH_END_POS,
-        REF_GEOHASH_START_POS, STATE_CODE_POS} from '../../../server/items/models';
+        REF_GEOHASH_START_POS, STATE_CODE_POS} from '../../../server/key-utils';
 
 const mockData = {
   lat: 37.565398,
