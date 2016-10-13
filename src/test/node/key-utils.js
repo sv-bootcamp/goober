@@ -1,7 +1,8 @@
 import test from 'tape';
 import geohash from 'ngeohash';
-import {KeyMaker, STATE, DEFAULT_PRECISON, MAX_TIME, Timestamp, GEOHASH_START_POS, GEOHASH_END_POS,
-        REF_GEOHASH_START_POS, STATE_CODE_POS} from '../../../server/key-utils';
+import {KeyMaker, KeyUtils, STATE, DEFAULT_PRECISON, MAX_TIME, Timestamp,
+        GEOHASH_START_POS, GEOHASH_END_POS,REF_GEOHASH_START_POS,
+        STATE_CODE_POS} from '../../../server/key-utils';
 
 const mockData = {
   lat: 37.565398,
@@ -48,5 +49,14 @@ test('make timestamp using module', t => {
   t.equal(stringTS, expected.stringResult, 'should have same timeStamp(String use)');
   const dateTS = new Timestamp(mockData.dateObject).getTimestamp();
   t.equal(dateTS, expected.dateResult, 'should have same timeStamp(Date use)');
+  t.end();
+});
+
+test('make time reversed', t => {
+  const expected = {
+    reversedTime: MAX_TIME - Number(new Date(mockData.dateString))
+  };
+  const reversedTime = KeyUtils.getReversedTime(mockData.dateString);
+  t.equal(reversedTime, expected.reversedTime, 'should have same time');
   t.end();
 });

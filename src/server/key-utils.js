@@ -4,7 +4,17 @@ import uuid from 'uuid4';
 export const MAX_TIME = 10000000000000;
 
 export const DEFAULT_PRECISON = 8;
-export const STATE = { ALIVE: '0', EXPIRED: '1', REMOVED: '2'};
+export const STATE = {ALIVE: '0', EXPIRED: '1', REMOVED: '2'};
+export const ENTITY = {
+  ITEM: 'item',
+  REPORT: 'report',
+  IMAGE: 'image',
+  COMMENT: 'comment',
+  USER: 'user',
+  CREATED_POST: 'created-post',
+  SAVED_POST: 'saved-post',
+  REACT_POST: 'react-post'
+};
 export const STATE_CODE_POS = 5;
 export const GEOHASH_START_POS = 5;
 export const GEOHASH_END_POS = GEOHASH_START_POS + DEFAULT_PRECISON - 1;
