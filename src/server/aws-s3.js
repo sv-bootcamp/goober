@@ -35,8 +35,12 @@ class MockS3 {
 export class S3Connector {
   constructor() {
     if (process.env.NODE_ENV === 'test') {
+      // TODO: Real S3 instance test
       // Make sure that
-      // SHOULD test with real s3 instance
+      // You SHOULD test with real s3 instance when edit S3Connector
+      // You have to change value of awsConfig of 'config/test.json'
+      //   as 'aws.json' and fill 'aws.json' with proper values for real s3 instance test
+      // this code is just for No more request at CI time (aws pretty expensive)
       this.s3instance = new MockS3(config.awsConfig);
     } else {
       this.s3instance = new AWS.S3();
