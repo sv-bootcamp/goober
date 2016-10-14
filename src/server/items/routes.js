@@ -65,7 +65,6 @@ router.get('/', ItemControllers.getAll);
  * @apiParam {String} startTime startTime
  * @apiParam {String} endTime endTime
  * @apiParam {String} image base64 encoding image
- * 
  * @apiParamExample {json} Request-Example:
  *      {
  *          "title"       : "textTitle",

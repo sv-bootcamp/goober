@@ -1,6 +1,6 @@
 {
   "name": "goober",
-  "port": 8080,
+  "port": 5000,
   "database": "goober-db",
   "awsConfig": "config/aws.json",
   "awsImageBucket": "goober-item-image",

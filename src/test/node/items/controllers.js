@@ -4,7 +4,7 @@ import httpMocks from 'node-mocks-http';
 import geohash from 'ngeohash';
 import testDB, {clearDB} from '../../../server/database';
 import {DEFAULT_PRECISON, STATE, MAX_TIME, KeyUtils}
-        from '../../../server/items/key-utils';
+        from '../../../server/key-utils';
 import uuid from 'uuid4';
 import {S3Connector, S3Utils} from '../../../server/aws-s3';
 

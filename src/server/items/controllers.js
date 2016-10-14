@@ -1,7 +1,7 @@
 import db from '../database';
 import {APIError} from '../ErrorHandler';
 import {KeyUtils, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
-        UUID_START_POS, STATE, ENTITY, CATEGORY} from './key-utils';
+        UUID_START_POS, STATE, ENTITY, CATEGORY} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 
 export default {
