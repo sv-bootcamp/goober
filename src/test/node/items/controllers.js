@@ -3,15 +3,19 @@ import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import geohash from 'ngeohash';
 import testDB, {clearDB} from '../../../server/database';
-import {STATE_CODE_POS, DEFAULT_PRECISON, STATE, MAX_TIME} from '../../../server/key-utils';
+import {DEFAULT_PRECISON, STATE, MAX_TIME, KeyUtils}
+        from '../../../server/items/key-utils';
 import uuid from 'uuid4';
+import {S3Connector, S3Utils} from '../../../server/aws-s3';
 
 const itemRedSelo = {
   title: 'This is Red Selo',
   lat: 30.565398,
   lng: 126.9907941,
   address: 'Red Selo',
-  category: 'warning'
+  category: 'warning',
+  userKey: `user-${uuid()}`,
+  caption: 'Sample image caption of itemRedSelo.'
 };
 const itemAlaska = {
   title: 'This is Alaska',
@@ -88,8 +92,7 @@ test('get a item from database', t => {
       t.end(err);
     }
   });
-
-  const expected = itemRedSelo;
+  const expected = JSON.parse(JSON.stringify(itemRedSelo));
   expected.status = 200;
   const req = httpMocks.createRequest({
     method: 'GET',
@@ -167,83 +170,109 @@ test('get by area from database', t => {
   });
 });
 test('add an item to database', t => {
-  const geo = geohash.encode(itemRedSelo.lat, itemRedSelo.lng, DEFAULT_PRECISON);
   const expected = {
     status: 200,
     message: 'success',
-    keys: [
-      `item-${geo}-`,
-      `item-${STATE.ALIVE}-${geo.substring(0, 1)}-`,
-      `item-${STATE.ALIVE}-${geo.substring(0, 2)}-`,
-      `item-${STATE.ALIVE}-${geo.substring(0, 3)}-`,
-      `item-${STATE.ALIVE}-${geo.substring(0, 4)}-`,
-      `item-${STATE.ALIVE}-${geo.substring(0, 5)}-`,
-      `item-${STATE.ALIVE}-${geo.substring(0, 6)}-`,
-      `item-${STATE.ALIVE}-${geo.substring(0, 7)}-`,
-      `item-${STATE.ALIVE}-${geo}-`
-    ],
-    address: itemRedSelo.address
+    address: itemRedSelo.address,
+    idxItemsCnt: DEFAULT_PRECISON
   };
-
   const req = httpMocks.createRequest({
     method: 'POST',
     url: '/items',
     body: itemRedSelo
   });
-
-  clearDB(()=>{
-    const res = httpMocks.createResponse();
-    ItemController.add(req, res, () => {
-      const status = res.statusCode;
-      const message = res._getData().message;
-      const key = res._getData().data;
-      t.equal(status, expected.status, 'should be same status');
-      t.equal(message, expected.message, 'should be same message');
-
-      let error;
-      let refs = [];
-      let ref;
-
-      testDB.createReadStream({
-        start: '\x00',
-        end: '\xFF'
-      }).on('data', (data) => {
-        if (!data.value.ref) {
-          t.equal(key, data.key,
-            'should have same key');
-          t.equal(true, data.key.includes(expected.keys[0]),
-            'should have same key prefix');
-          t.equal(expected.address, data.value.address,
-            'should be same address');
-          ref = data.key;
-          return;
-        }
-        let exist = false;
-        for (let i = 1; i <= DEFAULT_PRECISON; i = i + 1) {
-          if (data.key.includes(expected.keys[i])) {
-            exist = true;
-          }
-        }
-        t.equal(true, exist, 'should have same key prefix');
-        refs.push(data.value.ref);
-      }).on('error', (err) => {
-        error = err;
-      }).on('close', () => {
-        if (error) {
-          t.fail('database error');
+  const res = httpMocks.createResponse();
+  new Promise((resolve, reject) => {
+    S3Utils.imgToBase64('src/test/node/small-test.png', (err, base64Img) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(base64Img);
+    });
+  })
+  .then((base64Img) => {
+    return new Promise((resolve) => {
+      itemRedSelo.image = base64Img;
+      clearDB(resolve());
+    });
+  })
+  .then(()=>{
+    return new Promise((resolve) => {
+      ItemController.addItem(req, res, resolve);
+    });
+  })
+  .then(()=>{
+    const status = res.statusCode;
+    const message = res._getData().message;
+    const key = res._getData().data;
+    const timeHash = KeyUtils.getTimeHash(key);
+    t.equal(status, expected.status, 'should be same status');
+    t.equal(message, expected.message, 'should be same message');
+    let error;
+    let addedItem;
+    const addedIdxItems = [];
+    let addedImage;
+    testDB.createReadStream({
+      start: '\x00',
+      end: '\xFF'
+    }).on('data', (data) => {
+      if (KeyUtils.getTimeHash(data.key) !== timeHash) {
+        t.fail(`TimeHash is wrong : ${KeyUtils.getTimeHash(data.key)}`);
+        t.end();
+      }
+      const isOriginKey = KeyUtils.isOriginKey(data.key);
+      const isItem = data.key.startsWith('item-');
+      // Case of origin item having information about event data(title, geolocation..).
+      if (isItem && isOriginKey) {
+        addedItem = data.value;
+        t.equal(data.value.address, expected.address, 'should be same address');
+      // Case of indexing item to search in levelDB.
+      } else if (isItem && !isOriginKey) {
+        addedIdxItems.push(data.value);
+        if (data.value.key !== key) {
+          t.fail(`Indexing item's key is wrong : ${data.value.key}`);
           t.end();
-          return;
         }
-        for (let i = 0; i < DEFAULT_PRECISON; i = i + 1) {
-          if (refs[i] !== ref) {
-            t.fail('should have same ref');
-            break;
+      // Case of origin image having information about image data(userKey, caption...).
+      } else if (!isItem && isOriginKey) {
+        addedImage = data.value;
+        new S3Connector().getImageUrl(data.key, (err, url) => {
+          if (err || !url) {
+            t.fail('Failed to get a image from database.');
+            t.end();
           }
-        }
+        });
+      // Case of indexing image to search in levelDB.
+      } else if (!isItem && !isOriginKey) {
+        new S3Connector().getImageUrl(data.value.key, (err, url) => {
+          if (err || !url) {
+            t.fail('Failed to get a image from database.');
+            t.end();
+          }
+        });
+      } else {
+        t.fail(`Key is wrong : ${data.key}`);
+        t.end();
+      }
+    }).on('error', (err) => {
+      error = err;
+    }).on('close', () => {
+      if (error) {
+        t.fail('database error');
         t.end();
         return;
-      });
+      }
+      t.equal(addedIdxItems.length, expected.idxItemsCnt,
+      'should be same number of indexing items');
+      t.equal(addedItem.createdTime, addedImage.createdTime,
+      'should be created time');
+      t.end();
     });
+  })
+  .catch((err) => {
+    /* eslint-disable no-console */
+    console.log(err);
+    /* eslint-enable */
   });
 });
 test('modify an item in database', t => {
@@ -290,6 +319,7 @@ test('modify an item in database', t => {
     });
   });
 });
+/*
 test('delete an item from database', t => {
   const expected = {
     status: 200,
@@ -381,6 +411,7 @@ test('delete an item from database', t => {
     });
   });
 });
+*/
 test('delete all item from database', t => {
   const redSeloKey = `item-${uuid()}`;
   const alaskaKey = `item-${uuid()}`;

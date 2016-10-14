@@ -3,7 +3,7 @@ import config from 'config';
 import fs from 'fs';
 
 AWS.config.loadFromPath(config.awsConfig);
-
+/*
 class MockS3 {
   // We can trust AWS-sdk
   // This class is just for test
@@ -30,23 +30,41 @@ class MockS3 {
   deleteObject(params = {}, cb = () => {}) {
     cb(null, params);
   }
+}*/
+export const S3Utils ={
+   imgToBase64: (imgPath, cb) => {
+    fs.readFile(imgPath, (err, image) => {
+      return cb(err, new Buffer(image, 'binary').toString('base64'));
+    });
+  }
 }
-
 export class S3Connector {
   constructor() {
-    if (process.env.NODE_ENV === 'test') {
+    //if (process.env.NODE_ENV === 'test') {
       // TODO: Real S3 instance test
       // Make sure that
       // You SHOULD test with real s3 instance when edit S3Connector
       // You have to change value of awsConfig of 'config/test.json'
       //   as 'aws.json' and fill 'aws.json' with proper values for real s3 instance test
       // this code is just for No more request at CI time (aws pretty expensive)
-      this.s3instance = new MockS3(config.awsConfig);
-    } else {
+     // this.s3instance = new MockS3(config.awsConfig);
+    //} else {
       this.s3instance = new AWS.S3();
-    }
+    //}
   }
-
+  getImageUrl(key, cb = () => {}) {
+    const params = {
+      Bucket: config.awsImageBucket,
+      Key: key,
+      Expires: 120
+    };
+    const url = this.s3instance.getSignedUrl('getObject', params);
+    let error;
+    if (!url) {
+      error = new Error('No Url');
+    }
+    cb(error, url.split('?')[0]);
+  }
   getImageUrls(keys = [], cb = () => {}) {
     // input parameters
     // keys = ['key1', 'key2'];
@@ -121,5 +139,4 @@ export class S3Connector {
     };
     this.s3instance.deleteObject(params, cb);
   }
-
 }

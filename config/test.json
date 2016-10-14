@@ -2,6 +2,6 @@
   "name": "goober test",
   "port": 5000,
   "database": "test-db",
-  "awsConfig": "config/aws.json.example",
+  "awsConfig": "config/aws.json",
   "awsImageBucket": "goober-item-image-test"
 }
