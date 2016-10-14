@@ -1,7 +1,8 @@
 import test from 'tape';
 import geohash from 'ngeohash';
-import {KeyMaker, ALIVE, DEFAULT_PRECISON, MAX_TIME, Timestamp, GEOHASH_START_POS, GEOHASH_END_POS,
-        REF_GEOHASH_START_POS, STATUS_CODE_POS} from '../../../server/items/models';
+import {KeyMaker, KeyUtils, STATE, DEFAULT_PRECISON, MAX_TIME, Timestamp,
+        GEOHASH_START_POS, GEOHASH_END_POS,REF_GEOHASH_START_POS,
+        STATE_CODE_POS} from '../../../server/key-utils';
 
 const mockData = {
   lat: 37.565398,
@@ -11,11 +12,11 @@ const mockData = {
   precision: DEFAULT_PRECISON
 };
 
-test('make alive key stream', t => {
+test('make STATE.ALIVE key stream', t => {
   const expected = {
     hash: geohash.encode(mockData.lat, mockData.lng, mockData.precision),
     time: MAX_TIME - Number(new Date(mockData.date)),
-    type: ALIVE.toString()
+    type: STATE.ALIVE
   };
 
   const keyMaker = new KeyMaker(mockData.lat, mockData.lng, mockData.date);
@@ -29,7 +30,7 @@ test('make alive key stream', t => {
   'should have same uuid');
 
   for (let i = 1; i <= mockData.precision; i = i + 1) {
-    t.equal(keyStream[i].charAt(STATUS_CODE_POS), expected.type, 'should have same type');
+    t.equal(keyStream[i].charAt(STATE_CODE_POS), expected.type, 'should have same type');
     t.equal(keyStream[i].slice(REF_GEOHASH_START_POS, REF_GEOHASH_START_POS + i),
     expected.hash.slice(0, i), 'should have same geohash');
     t.equal(keyStream[i].includes(expected.time), true, 'should have same time');
@@ -48,5 +49,14 @@ test('make timestamp using module', t => {
   t.equal(stringTS, expected.stringResult, 'should have same timeStamp(String use)');
   const dateTS = new Timestamp(mockData.dateObject).getTimestamp();
   t.equal(dateTS, expected.dateResult, 'should have same timeStamp(Date use)');
+  t.end();
+});
+
+test('make time reversed', t => {
+  const expected = {
+    reversedTime: MAX_TIME - Number(new Date(mockData.dateString))
+  };
+  const reversedTime = KeyUtils.getReversedTime(mockData.dateString);
+  t.equal(reversedTime, expected.reversedTime, 'should have same time');
   t.end();
 });
