@@ -24,6 +24,7 @@ const itemAlaska = {
   address: 'Alaska',
   category: 'warning'
 };
+
 test('get all items from database', t => {
   let key1 = `item-${uuid()}`;
   let key2 = `item-${uuid()}`;
@@ -184,21 +185,22 @@ test('add an item to database', t => {
   const res = httpMocks.createResponse();
   new Promise((resolve, reject) => {
     S3Utils.imgToBase64('src/test/node/small-test.png', (err, base64Img) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(base64Img);
+      return (err) ? reject(err): resolve(base64Img);
     });
   })
   .then((base64Img) => {
     return new Promise((resolve) => {
       itemRedSelo.image = base64Img;
-      clearDB(resolve());
+      clearDB(() => {
+        resolve();
+      });
     });
   })
   .then(()=>{
     return new Promise((resolve) => {
-      ItemController.addItem(req, res, resolve);
+      ItemController.addItem(req, res, ()=>{
+        resolve();
+      });
     });
   })
   .then(()=>{

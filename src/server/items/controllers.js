@@ -175,10 +175,7 @@ export default {
     const opt = {key: imageKey, body: item.image};
     new Promise((resolve, reject) => {
       new S3Connector().putImage(opt, (err) => {
-        if (err) {
-          reject(err);
-        }
-        resolve();
+        return (err) ? reject(err) : resolve();
       });
     })
     .then(() => {
@@ -198,10 +195,7 @@ export default {
           ops.push({type: 'put', key: idxKey, value: {key: key}});
         });
         db.batch(ops, (err) => {
-          if (err) {
-            reject(err);
-          }
-          resolve();
+          return (err) ? reject(err) : resolve();
         });
       });
     })
