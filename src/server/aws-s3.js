@@ -16,7 +16,11 @@ class MockS3 {
   getSignedUrl() {
     return 'some-url';
   }
-
+  
+  getImageUrls(keys = [], cb = () => {}) {
+    cb(null, keys);
+  }
+  
   putObject(param = {}, cb = () => {}) {
     if (!param.Bucket || !param.Key || !param.Body) {
       cb(new Error('Error, Invalid parameter'));
