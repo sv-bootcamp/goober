@@ -83,6 +83,15 @@ export const KeyUtils = {
     }
     return keys;
   },
+  getPrefix: (entity, state, ...options) => {
+    // in options, high rank entity should come first
+    // ex) item, image
+    let key = `${entity}-${state}`;
+    options.map((option) => {
+      key = `${key}-${option}`;
+    });
+    return key;
+  },
   getKeysByArea: (lat, lng, precision) => {
     const centerGeohash = geohash.encode(lat, lng, precision);
     const neighbors = geohash.neighbors(centerGeohash);

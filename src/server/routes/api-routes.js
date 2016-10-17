@@ -1,10 +1,12 @@
 import express from 'express';
 import items from '../items/routes';
+import images from '../images/router';
 import validator from '../items/validator';
 
 const router = express.Router();
 
 router.use('/items', validator, items);
+router.use('/images', images);
 
 router.use('/*', (req, res) => {
   if (res.statusCode === 200 || res.statusCode === 304) {
