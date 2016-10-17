@@ -62,10 +62,11 @@ router.get('/', ItemControllers.getAll);
  * @apiParam {Number} lng lng(e.g. 126.9907941)
  * @apiParam {String} address address
  * @apiParam {String} category category
- * @apiParam {String} startTime startTime
- * @apiParam {String} endTime endTime
+ * @apiParam {String} [startTime] startTime
+ * @apiParam {String} [endTime] endTime
  * @apiParam {String} image base64 encoding image
- * 
+ * @apiParam {String} userKey userKey userkey of user who post
+ * @apiParam {String} caption caption of image
  * @apiParamExample {json} Request-Example:
  *      {
  *          "title"       : "textTitle",
@@ -75,7 +76,9 @@ router.get('/', ItemControllers.getAll);
  *          "category"    : 'warning', 'event', 'facility'
  *          "startTime"   : '2016-10-04T04:00:00.578Z',
  *          "endTime"     : '2016-10-10T04:00:00.578Z'
- *          "image"       : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA5IAAAIYCAYAAAAfLdMYAAAL'
+ *          "image"       : 'iVBORw0KGgoAAAANSUhEUgAAAB4AAAAOCAMAAAAPOFwLAAAACXBIWXMAA...'
+ *          "userKey"     : 'user-8523574664000-b82e-473b-1234-ead0f54gvr00',
+ *          "caption"     : 'Zihoon loves zzactae.'
  *      }
  *
  * @apiSuccess {String} message success
@@ -94,7 +97,7 @@ router.get('/', ItemControllers.getAll);
  *       error: "error message ..."
  *     }
  */
-router.post('/', ItemControllers.add);
+router.post('/', ItemControllers.addItem);
 
 router.put('/', (req, res, next) => {
   next();

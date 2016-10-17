@@ -1,7 +1,8 @@
 import db from '../database';
 import {APIError} from '../ErrorHandler';
-import {KeyMaker, KeyUtils, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS,
-  GEOHASH_END_POS, UUID_START_POS, STATE} from './../key-utils';
+import {KeyUtils, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
+        UUID_START_POS, STATE, ENTITY, CATEGORY} from '../key-utils';
+import {S3Connector} from '../aws-s3';
 
 export default {
   getAll: (req, res, cb) => {
@@ -154,32 +155,61 @@ export default {
       return cb();
     });
   },
-  add: (req, res, cb) => {
+  addItem: (req, res, cb) => {
     const currentTime = new Date();
-    req.body.createdDate = currentTime.toISOString();
-    req.body.modifiedDate = currentTime.toISOString();
-    const keyStream = new KeyMaker(req.body.lat, req.body.lng, currentTime).getKeyStream();
-    const ops = [{
-      type: 'put',
-      key: keyStream[0],
-      value: req.body
-    }];
-    for (let i = 1; i <= DEFAULT_PRECISON; i = i + 1) {
-      ops.push({
-        type: 'put',
-        key: keyStream[i],
-        value: {ref: keyStream[0]}
-      });
+    const timeHash = KeyUtils.genTimeHash(currentTime);
+    const key = `${ENTITY.ITEM}-${timeHash}`;
+    const idxKeys = KeyUtils.getIdxKeys(req.body.lat, req.body.lng, timeHash);
+    const imageKey = `${ENTITY.IMAGE}-${timeHash}`;
+    const imageIdxKey = KeyUtils.getIdxKey(ENTITY.IMAGE, timeHash, key);
+    const item = {
+      key: key,
+      title: req.body.title,
+      lat: req.body.lat,
+      lng: req.body.lng,
+      address: req.body.address,
+      category: req.body.category,
+      startTime: req.body.startTime,
+      endTime: req.body.endTime,
+      createdDate: currentTime.toISOString(),
+      modifiedDate: currentTime.toISOString()
     }
-    db.batch(ops, (err) => {
-      if (err) {
-        return cb(new APIError(err));
-      }
-      res.status(200).send({
-        message: 'success',
-        data: keyStream[0]
+    const image = {
+      key: imageKey,
+      userKey: item.userKey,
+      caption: item.caption,
+      createdDate: currentTime.toISOString()
+    };
+    const opt = {key: imageKey, body: req.body.image};
+    new Promise((resolve, reject) => {
+      new S3Connector().putImage(opt, (err) => {
+        return (err) ? reject(err) : resolve();
       });
+    })
+    .then(() => {
+      return new Promise((resolve, reject) => {
+        if (item.category !== CATEGORY.FACILITY && !item.startTime) {
+          item.startTime = item.createdDate;
+        }
+        const ops = [
+          {type: 'put', key: key, value: item},
+          {type: 'put', key: imageKey, value: image},
+          {type: 'put', key: imageIdxKey, value: {key: imageKey}}
+        ];
+        idxKeys.map((idxKey) => {
+          ops.push({type: 'put', key: idxKey, value: {key: key}});
+        });
+        db.batch(ops, (err) => {
+          return (err) ? reject(err) : resolve();
+        });
+      });
+    })
+    .then(() => {
+      res.status(200).send({message: 'success', data: key });
       return cb();
+    })
+    .catch((err) => {
+      return cb(new APIError(err, {statusCode: err.statusCode, message: err.message}));
     });
   },
   modify: (req, res, cb) => {
@@ -210,5 +240,4 @@ export default {
     });
   }
 };
-
 

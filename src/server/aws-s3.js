@@ -32,6 +32,13 @@ class MockS3 {
   }
 }
 
+export const S3Utils = {
+  imgToBase64: (imgPath, cb) => {
+    fs.readFile(imgPath, (err, image) => {
+      return cb(err, new Buffer(image, 'binary').toString('base64'));
+    });
+  }
+};
 export class S3Connector {
   constructor() {
     if (process.env.NODE_ENV === 'test') {
@@ -46,7 +53,19 @@ export class S3Connector {
       this.s3instance = new AWS.S3();
     }
   }
-
+  getImageUrl(key, cb = () => {}) {
+    const params = {
+      Bucket: config.awsImageBucket,
+      Key: key,
+      Expires: 120
+    };
+    const url = this.s3instance.getSignedUrl('getObject', params);
+    let error;
+    if (!url) {
+      error = new Error('No Url');
+    }
+    cb(error, url.split('?')[0]);
+  }
   getImageUrls(keys = [], cb = () => {}) {
     // input parameters
     // keys = ['key1', 'key2'];
@@ -121,5 +140,4 @@ export class S3Connector {
     };
     this.s3instance.deleteObject(params, cb);
   }
-
 }
