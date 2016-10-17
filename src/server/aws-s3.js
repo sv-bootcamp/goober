@@ -2,8 +2,6 @@ import AWS from 'aws-sdk';
 import config from 'config';
 import fs from 'fs';
 
-AWS.config.loadFromPath(config.awsConfig);
-
 class MockS3 {
   // We can trust AWS-sdk
   // This class is just for test
@@ -50,6 +48,9 @@ export class S3Connector {
       // this code is just for No more request at CI time (aws pretty expensive)
       this.s3instance = new MockS3(config.awsConfig);
     } else {
+      if (!process.env.AWS_ACCESS_KEY_ID) {
+        AWS.config.loadFromPath(config.awsConfig);
+      }
       this.s3instance = new AWS.S3();
     }
   }
