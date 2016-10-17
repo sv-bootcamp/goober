@@ -156,23 +156,31 @@ export default {
     });
   },
   addItem: (req, res, cb) => {
-    let item = req.body;
     const currentTime = new Date();
-    item.createdDate = currentTime.toISOString();
-    item.modifiedDate = currentTime.toISOString();
     const timeHash = KeyUtils.genTimeHash(currentTime);
     const key = `${ENTITY.ITEM}-${timeHash}`;
-    item.key = key;
-    const idxKeys = KeyUtils.getIdxKeys(item.lat, item.lng, timeHash);
+    const idxKeys = KeyUtils.getIdxKeys(req.body.lat, req.body.lng, timeHash);
     const imageKey = `${ENTITY.IMAGE}-${timeHash}`;
     const imageIdxKey = KeyUtils.getIdxKey(ENTITY.IMAGE, timeHash, key);
+    const item = {
+      key: key,
+      title: req.body.title,
+      lat: req.body.lat,
+      lng: req.body.lng,
+      address: req.body.address,
+      category: req.body.category,
+      startTime: req.body.startTime,
+      endTime: req.body.endTime,
+      createdDate: currentTime.toISOString(),
+      modifiedDate: currentTime.toISOString()
+    }
     const image = {
       key: imageKey,
       userKey: item.userKey,
       caption: item.caption,
-      createdDate: item.createdDate
+      createdDate: currentTime.toISOString()
     };
-    const opt = {key: imageKey, body: item.image};
+    const opt = {key: imageKey, body: req.body.image};
     new Promise((resolve, reject) => {
       new S3Connector().putImage(opt, (err) => {
         return (err) ? reject(err) : resolve();
@@ -180,9 +188,6 @@ export default {
     })
     .then(() => {
       return new Promise((resolve, reject) => {
-        delete item.userKey;
-        delete item.caption;
-        delete item.image;
         if (item.category !== CATEGORY.FACILITY && !item.startTime) {
           item.startTime = item.createdDate;
         }
