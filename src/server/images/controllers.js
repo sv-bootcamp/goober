@@ -1,3 +1,4 @@
+import db from '../database';
 import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import {APIError} from '../ErrorHandler';
@@ -88,5 +89,52 @@ export default {
         });
       });
     }
+  },
+  post(req, res, cb) {
+    const currentTime = new Date();
+    const timeHash = KeyUtils.genTimeHash(currentTime);
+    const key = `${ENTITY.IMAGE}-${timeHash}`;
+    const idxKey = KeyUtils.getIdxKey(ENTITY.IMAGE, timeHash, req.body.itemKey);
+    const s3 = new S3Connector();
+
+    const opt = {key: key, body: req.body.image};
+    new Promise((resolve, reject) => {
+      s3.putImage(opt, (err) => {
+        return (err) ? reject(err) : resolve();
+      });
+    })
+    .then(() => {
+      return new Promise((resolve, reject) => {
+        s3.getImageUrl(key, (err, url)=>{
+          return (err) ? reject(err) : resolve(url);
+        });
+      });
+    })
+    .then((url) => {
+      return new Promise((resolve, reject) => {
+        const image = {
+          key: key,
+          url: url,
+          userKey: req.body.userKey,
+          caption: req.body.caption,
+          createdDate: currentTime.toISOString()
+        };
+        const idxImage = {key: key};
+        const ops = [
+          {type: 'put', key: key, value: image},
+          {type: 'put', key: idxKey, value: idxImage}
+        ];
+        db.batch(ops, (err) => {
+          return (err) ? reject(err) : resolve();
+        });
+      });
+    })
+    .then(() => {
+      res.status(200).send({message: 'success', data: key });
+      return cb();
+    })
+    .catch((err) => {
+      return cb(new APIError(err, {statusCode: err.statusCode, message: err.message}));
+    });
   }
 };
