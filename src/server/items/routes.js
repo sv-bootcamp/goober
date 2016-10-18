@@ -4,7 +4,7 @@ import ItemControllers from './controllers';
 const router = express.Router();
 
 /**
- * @api {get} /items?lat=30.565398&lng=126.9907941&zoom=21 Get All items
+ * @api {get} /items?lat=37.768696&lng=-122.419495&zoom=14 Get All items
  * @apiName getAllItem
  * @apiGroup Item
  *
@@ -15,33 +15,45 @@ const router = express.Router();
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *        "items":[
- *          {
- *            "id"          : 'item1',
- *            "title"       : 'textTitle',
- *            "lat"         : 30.565398,
- *            "lng"         : 126.9907941,
- *            "address"     : 'testAddress',
- *            "createdDate" : '2016-10-04T04:00:00.578Z',
- *            "modifiedDate": '2016-10-04T04:00:00.578Z',
- *            "category"    : 'warning', 'event', 'facility'
- *            "startTime"   : '2016-10-04T04:00:00.578Z',
- *            "endTime"     : '2016-10-10T04:00:00.578Z'
+ *       "items": [
+ *         {
+ *            "title": "Union Square Public Toilet",
+ *            "lat": 37.7632684,
+ *            "lng": -122.4182374,
+ *            "address": "2295 Harrison St, San Francisco, CA 94110, United States",
+ *            "createdDate": "2016-10-08T01:11:46.851Z",
+ *            "modifiedDate": "2016-10-08T01:11:46.851Z",
+ *            "category": "facility",
+ *            "startTime": "2016-10-08T01:11:46.851Z",
+ *            "endTime": "2016-10-20T01:11:46.851Z",
+ *            "key": "item-8523910540000-b82e-473b-1234-ead0f190b005",
+ *            "imageUrls": [
+ *              "https://goober-item-image",
+ *              "https://goober-item-image",
+ *              "https://goober-item-image",
+ *              "https://goober-item-image"
+ *            ]
  *          },
  *          {
- *            "id"          : 'item2',
- *            "title"       : 'textTitle2',
- *            "lat"         : 32.565398,
- *            "lng"         : 153.9907941,
- *            "address"     : 'testAddress2',
- *            "createdDate" : '2016-10-04T04:00:00.578Z',
- *            "modifiedDate": '2016-10-04T04:00:00.578Z',
- *            "category"    : 'warning', 'event', 'facility'
- *            "startTime"   : '2016-10-04T04:00:00.578Z',
- *            "endTime"     : '2016-10-10T04:00:00.578Z'
- *          }
- *        ]
- *     }
+ *            "title": "Cafe Free Wifi",
+ *            "lat": 37.7652022,
+ *            "lng": -122.4201257,
+ *            "address": "2500 17th St, San Francisco, CA 94110, United State",
+ *            "createdDate": "2016-10-09T01:11:46.851Z",
+ *            "modifiedDate": "2016-10-09T01:11:46.851Z",
+ *            "category": "facility",
+ *            "startTime": "2016-10-09T01:11:46.851Z",
+ *            "endTime": "2016-10-19T01:11:46.851Z",
+ *           "key": "item-8523910540001-b82e-473b-1234-ead0f190b004",
+ *           "imageUrls": [
+ *             "https://goober-item-image",
+ *              "https://goober-item-image",
+ *              "https://goober-item-image",
+ *              "https://goober-item-image"
+ *            ]
+ *          },
+ *       ]
+ *    }
  * @apiError (Error 500) DatabaseError Internal error occured in the database.
  *
  * @apiErrorExample {json} Database-Error-Response:
@@ -75,8 +87,8 @@ router.get('/', ItemControllers.getAll);
  *          "address"     : "testAddress",
  *          "category"    : 'warning', 'event', 'facility'
  *          "startTime"   : '2016-10-04T04:00:00.578Z',
- *          "endTime"     : '2016-10-10T04:00:00.578Z'
- *          "image"       : 'iVBORw0KGgoAAAANSUhEUgAAAB4AAAAOCAMAAAAPOFwLAAAACXBIWXMAA...'
+ *          "endTime"     : '2016-10-10T04:00:00.578Z',
+ *          "image"       : 'iVBORw0KGgoAAAANSUhEUgAAAB4AAAAOCAMAAAAPOFwLAAAACXBIWXMAA',
  *          "userKey"     : 'user-8523574664000-b82e-473b-1234-ead0f54gvr00',
  *          "caption"     : 'Zihoon loves zzactae.'
  *      }

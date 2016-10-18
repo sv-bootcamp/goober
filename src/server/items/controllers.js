@@ -7,37 +7,63 @@ import {S3Connector} from '../aws-s3';
 export default {
   getAll: (req, res, cb) => {
     const {lat, lng, zoom} = req.query;
+    // getByArea
     if (lat && lng && zoom) {
       const precision = KeyUtils.calcPrecisionByZoom(Number(zoom));
       const keys = KeyUtils.getKeysByArea(lat, lng, precision);
       const promises = [];
       const items = [];
+      const s3Connector = new S3Connector();
       for (const key of keys) {
         promises.push(new Promise((resolve, reject) => {
           // @TODO we have to limit the number of items.
+          const imagePromises = [];
           db.createReadStream({
-            start: `item-${STATE.ALIVE}-${key}-`,
-            end: `item-${STATE.ALIVE}-${key}-\xFF`
+            start: `${ENTITY.ITEM}-${STATE.ALIVE}-${key}-`,
+            end: `${ENTITY.ITEM}-${STATE.ALIVE}-${key}-\xFF`
           }).on('data', (data) => {
-            db.get(data.value.ref, (err, refData) => {
+            db.get(data.value.key, (err, refData) => {
               if (!err) {
-                refData.id = data.value.ref;
-                items.push(refData);
+                imagePromises.push(new Promise((imageResolve, imageReject) => {
+                  const images = [];
+                  db.createReadStream({
+                    start: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-`,
+                    end: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-\xFF`
+                  }).on('data', (imageIndex) => {
+                    images.push(imageIndex.value.key);
+                  }).on('error', (imageErr) => {
+                    imageReject(imageErr);
+                  }).on('close', () => {
+                    s3Connector.getImageUrls(images, (urlErr, urlList)=>{
+                      if(!urlErr){
+                        refData.imageUrls = urlList;
+                        items.push(refData);
+                        return imageResolve();
+                      }
+                      return imageReject(urlErr);
+                    });
+                  });
+                }));
+                
               }
             });
           }).on('error', (err) => {
             reject(err);
           })
           .on('close', () => {
-            resolve();
+            Promise.all(imagePromises).then(()=>{
+              resolve();
+            }).catch((err)=>{
+              reject(err);
+            })
           });
-        }));
+        }))
       }
-      Promise.all(promises).then(() => {
+      Promise.all(promises).then(()=>{
         res.status(200).send({
           items
         });
-        cb();
+        return cb();
       }).catch((err) => {
         if (err.notFound) {
           res.status(200).send({
@@ -55,8 +81,8 @@ export default {
     const items = [];
     let error;
     db.createReadStream({
-      start: 'item-',
-      end: 'item-\xFF'
+      start: `${STATE.ITEM}-`,
+      end: `${STATE.ITEM}-\xFF`
     }).on('data', (data) => {
       data.value.id = data.key;
       items.push(data.value);
@@ -176,8 +202,8 @@ export default {
     }
     const image = {
       key: imageKey,
-      userKey: item.userKey,
-      caption: item.caption,
+      userKey: req.body.userKey,
+      caption: req.body.caption,
       createdDate: currentTime.toISOString()
     };
     const opt = {key: imageKey, body: req.body.image};

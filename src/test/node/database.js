@@ -25,5 +25,5 @@ test('database clear', t => {
       return t.end();
     });
   };
-  clearDB(onClear);
+  clearDB().then(onClear);
 });
