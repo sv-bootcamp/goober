@@ -38,7 +38,7 @@ export default {
                   imageReject(imageErr);
                 }).on('close', () => {
                   s3Connector.getImageUrls(images, (urlErr, urlList)=>{
-                    if(!urlErr){
+                    if (!urlErr) {
                       refData.imageUrls = urlList;
                       items.push(refData);
                       return imageResolve();
@@ -55,9 +55,9 @@ export default {
               resolve();
             }).catch((err)=>{
               reject(err);
-            })
+            });
           });
-        }))
+        }));
       }
       Promise.all(promises).then(()=>{
         res.status(200).send({

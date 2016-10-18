@@ -23,7 +23,7 @@ export const clearDB = () => {
 export const initMock = () => {
   return new Promise((resolve, reject)=>{
     const ops = [];
-    for(const key in mockItems){
+    for (const key in mockItems) {
       if (mockItems.hasOwnProperty(key)) {
         ops.push({
           type: 'put',
@@ -32,7 +32,7 @@ export const initMock = () => {
         });
       }
     }
-    for(const key in mockItemIndexies){
+    for (const key in mockItemIndexies) {
       if (mockItemIndexies.hasOwnProperty(key)) {
         ops.push({
           type: 'put',
@@ -41,7 +41,7 @@ export const initMock = () => {
         });
       }
     }
-    for(const key in mockImages){
+    for (const key in mockImages) {
       if (mockImages.hasOwnProperty(key)) {
         ops.push({
           type: 'put',
@@ -50,7 +50,7 @@ export const initMock = () => {
         });
       }
     }
-    for(const key in mockImageIndexies){
+    for (const key in mockImageIndexies) {
       if (mockImageIndexies.hasOwnProperty(key)) {
         ops.push({
           type: 'put',
@@ -59,7 +59,7 @@ export const initMock = () => {
         });
       }
     }
-    for(const key in mockUsers){
+    for (const key in mockUsers) {
       if (mockUsers.hasOwnProperty(key)) {
         ops.push({
           type: 'put',

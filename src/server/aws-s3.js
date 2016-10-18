@@ -18,11 +18,9 @@ class MockS3 {
     params.method = method;
     return `url-of-${params.Key}`;
   }
-  
   getImageUrls(keys = [], cb = () => {}) {
     cb(null, keys);
   }
-  
   putObject(param = {}, cb = () => {}) {
     if (!param.Bucket || !param.Key || !param.Body) {
       cb(new Error('Error, Invalid parameter'));
