@@ -12,12 +12,7 @@ test('fetch prefix ImageManager', t => {
   ];
   const expectedLength = 2;
 
-  clearDB((errClear) => {
-    if (errClear) {
-      t.fail(errClear);
-      t.end();
-      return;
-    }
+  clearDB().then(() => {
     const opts = [];
     for (let i = 0; i < keys.length; i = i + 1) {
       opts.push({

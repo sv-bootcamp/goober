@@ -25,12 +25,7 @@ test('get all image of an item', t => {
   const itemKey = 'item-BlaBla';
   const imageIndexKey = `image-${STATE.ALIVE}-${itemKey}-${MockImageA.key}`;
 
-  clearDB((errClear) => {
-    if (errClear) {
-      t.fail(errClear);
-      t.end();
-      return;
-    }
+  clearDB().then(() => {
     const opts = [];
     opts.push({
       type: 'put',
@@ -72,14 +67,7 @@ test('get all image of an item', t => {
 });
 
 test('get an image', t => {
-  new Promise((rs, rj) => {
-    clearDB((err) => {
-      if (err) {
-        return rj();
-      }
-      return rs();
-    });
-  }).then(() => {
+  clearDB().then(() => {
     return new Promise((rs, rj)=>{
       testDB.put(MockImageA.key, MockImageA, (err) => {
         if (err) {
