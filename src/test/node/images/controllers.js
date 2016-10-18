@@ -12,7 +12,10 @@ import httpMocks from 'node-mocks-http';
 //   category: 'warning'
 // };
 const MockImageA = {
-  caption: 'this is image A'
+  key: 'image-8523306706662-c8a94c49-0c3c-414a-bec0-74fc369a105e',
+  userKey: 'user-1234uuid',
+  caption: 'thisissmaplecode.',
+  createdDate: '2016-10-17T08:34:53.338Z'
 };
 // const MockImageB = {
 //   caption: 'this is image B'
@@ -20,8 +23,7 @@ const MockImageA = {
 
 test('get all image of an item', t => {
   const itemKey = 'item-BlaBla';
-  const imageIndexKey = `image-${STATE.ALIVE}-${itemKey}-imageA-unique-id`;
-  const expectedLength = 1;
+  const imageIndexKey = `image-${STATE.ALIVE}-${itemKey}-${MockImageA.key}`;
 
   clearDB((errClear) => {
     if (errClear) {
@@ -34,17 +36,13 @@ test('get all image of an item', t => {
       type: 'put',
       key: imageIndexKey,
       value: {
-        key: 'image-origin-key'
+        key: MockImageA.key
       }
     });
     opts.push({
       type: 'put',
-      key: 'image-origin-key',
-      value: {
-        createdDate: new Date().toISOString(),
-        userKey: 'user1',
-        caption: MockImageA.caption
-      }
+      key: MockImageA.key,
+      value: MockImageA
     });
 
     testDB.batch(opts, (err) => {
@@ -63,10 +61,50 @@ test('get all image of an item', t => {
       const res = httpMocks.createResponse();
 
       controller.get(req, res, () => {
-        const imageUrls = res._getData().imageUrls;
-        t.equal(imageUrls.length, expectedLength, 'should be same key');
+        const value = res._getData().values;
+        t.equal(value[0].caption, MockImageA.caption, 'should be same caption');
+        t.equal(value[0].key, MockImageA.key, 'should be same key');
+        t.equal(typeof (value[0].url), 'string', 'should be same type');
         t.end();
       });
     });
+  });
+});
+
+test('get an image', t => {
+  new Promise((rs, rj) => {
+    clearDB((err) => {
+      if (err) {
+        return rj();
+      }
+      return rs();
+    });
+  }).then(() => {
+    return new Promise((rs, rj)=>{
+      testDB.put(MockImageA.key, MockImageA, (err) => {
+        if (err) {
+          return rj();
+        }
+        return rs();
+      });
+    });
+  }).then(() => {
+    const req = httpMocks.createRequest({
+      method: 'GET',
+      url: `/images?imageid=${MockImageA.key}`,
+      query: {
+        imageid: MockImageA.key
+      }
+    });
+    const res = httpMocks.createResponse();
+    controller.get(req, res, () => {
+      const value = res._getData();
+      t.equal(value.caption, MockImageA.caption, 'should be same caption');
+      t.equal(value.key, MockImageA.key, 'should be same key');
+      t.end();
+    });
+  }).catch(() => {
+    t.fail();
+    t.end();
   });
 });

@@ -28,13 +28,35 @@ export default {
         }));
       }
       Promise.all(promises).then(() => {
-        const conn = new S3Connector();
-        conn.getImageUrls(keys, (err, urls) => {
+        return new Promise((resolve, reject) => {
+          const conn = new S3Connector();
+          conn.getImageUrls(keys, (err, urls) => {
+            if (err) {
+              reject();
+              return;
+            }
+            resolve(urls);
+          });
+        });
+      }).then((urls)=>{
+        ImageManager.fetchImage(keys, (err, values) => {
           if (err) {
-            return cb(new APIError(err));
+            return cb(new APIError(err, {
+              statusCode: 500,
+              message: 'Internal Database Error'
+            }));
+          }
+
+          for (const url of urls) {
+            for (const value of values) {
+              if (url.indexOf(value.key) !== -1) {
+                value.url = url;
+                break;
+              }
+            }
           }
           res.status(200).send({
-            imageUrls: urls
+            values: values
           });
           return cb();
         });
@@ -46,15 +68,24 @@ export default {
       });
     } else if (imageid) {
       // get an images
-      const conn = new S3Connector();
-      conn.getImageUrls([imageid], (err, urls) => {
-        if (err) {
-          return cb(new APIError(err));
+      ImageManager.fetchImage([imageid], (errFetch, values) => {
+        if (errFetch) {
+          cb(new APIError(errFetch, {
+            statusCode: 500,
+            message: 'Internal Database Error'
+          }));
+          return;
         }
-        res.status(200).send({
-          imageUrl: urls[0]
+        const value = values[0];
+        const conn = new S3Connector();
+        conn.getImageUrl(imageid, (err, url) => {
+          if (err) {
+            return cb(new APIError(err));
+          }
+          value.url = url;
+          res.status(200).send(value);
+          return cb();
         });
-        return cb();
       });
     }
   }

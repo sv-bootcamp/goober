@@ -10,12 +10,16 @@ const router = express.Router();
  *
  * @apiParam {String} imageid ID of target image
  *
- * @apiSuccess {String} imageUrl image access url
+ * @apiSuccess {String} image object
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *        "imageUrl": "an-images-url"
+ *        key: 'image-8523306706662-c8a94c49-0c3c-414a-bec0-74fc369a105e',
+ *        userKey: 'user-1234uuid',
+ *        caption: 'thisissmaplecode.',
+ *        createdDate: '2016-10-17T08:34:53.338Z',
+ *        url: 'url-of-image-8523306706662-c8a94c49-0c3c-414a-bec0-74fc369a105e'
  *     }
  * @apiError (Error 500) Internal Server Error.
  *
@@ -34,18 +38,20 @@ const router = express.Router();
  *
  * @apiParam {String} itemid ID of target item
  *
- * @apiSuccess {Array} imageUrls array of image access url
+ * @apiSuccess {Array} image json array
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *        "imageUrls": [
- *          "an-images-url",
- *          "an-images-url",
- *          "an-images-url",
- *          "an-images-url",
- *          "an-images-url",
- *          "an-images-url"
+ *        "values": [
+ *          {
+ *            key: 'image-8523306706662-c8a94c49-0c3c-414a-bec0-74fc369a105e',
+ *            userKey: 'user-1234uuid',
+ *            caption: 'thisissmaplecode.',
+ *            createdDate: '2016-10-17T08:34:53.338Z',
+ *            url: 'url-of-image-8523306706662-c8a94c49-0c3c-414a-bec0-74fc369a105e'
+ *          },
+ *          ......
  *        ]
  *     }
  *
