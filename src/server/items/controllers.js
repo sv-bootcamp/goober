@@ -60,7 +60,6 @@ export default {
         }))
       }
       Promise.all(promises).then(()=>{
-          console.log('imagePromies');
           res.status(200).send({
             items
           });
