@@ -76,7 +76,6 @@ export default {
           message: 'Internal Database Error'
         }));
       });
-        
       return;
     }
     const items = [];
