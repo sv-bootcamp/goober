@@ -51,6 +51,9 @@ export class S3Connector {
       if (!process.env.AWS_ACCESS_KEY_ID) {
         AWS.config.loadFromPath(config.awsConfig);
       }
+      if (process.env.AWS_REGION) {
+        AWS.config.region = process.env.AWS_REGION;
+      }
       this.s3instance = new AWS.S3();
     }
   }
