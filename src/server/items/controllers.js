@@ -23,34 +23,34 @@ export default {
             end: `${ENTITY.ITEM}-${STATE.ALIVE}-${key}-\xFF`
           }).on('data', (data) => {
             db.get(data.value.key, (err, refData) => {
-              if (!err) {
-                imagePromises.push(new Promise((imageResolve, imageReject) => {
-                  const images = [];
-                  db.createReadStream({
-                    start: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-`,
-                    end: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-\xFF`
-                  }).on('data', (imageIndex) => {
-                    images.push(imageIndex.value.key);
-                  }).on('error', (imageErr) => {
-                    imageReject(imageErr);
-                  }).on('close', () => {
-                    s3Connector.getImageUrls(images, (urlErr, urlList)=>{
-                      if(!urlErr){
-                        refData.imageUrls = urlList;
-                        items.push(refData);
-                        return imageResolve();
-                      }
-                      return imageReject(urlErr);
-                    });
-                  });
-                }));
-                
+              if (err) {
+                reject(err);
+                return;
               }
+              imagePromises.push(new Promise((imageResolve, imageReject) => {
+                const images = [];
+                db.createReadStream({
+                  start: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-`,
+                  end: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-\xFF`
+                }).on('data', (imageIndex) => {
+                  images.push(imageIndex.value.key);
+                }).on('error', (imageErr) => {
+                  imageReject(imageErr);
+                }).on('close', () => {
+                  s3Connector.getImageUrls(images, (urlErr, urlList)=>{
+                    if(!urlErr){
+                      refData.imageUrls = urlList;
+                      items.push(refData);
+                      return imageResolve();
+                    }
+                    return imageReject(urlErr);
+                  });
+                });
+              }));
             });
           }).on('error', (err) => {
             reject(err);
-          })
-          .on('close', () => {
+          }).on('close', () => {
             Promise.all(imagePromises).then(()=>{
               resolve();
             }).catch((err)=>{
@@ -81,16 +81,15 @@ export default {
     const items = [];
     let error;
     db.createReadStream({
-      start: `${STATE.ITEM}-`,
-      end: `${STATE.ITEM}-\xFF`
+      start: `${ENTITY.ITEM}-`,
+      end: `${ENTITY.ITEM}-\xFF`
     }).on('data', (data) => {
-      data.value.id = data.key;
+      data.value.key = data.key;
       items.push(data.value);
     }).on('error', (err) => {
       error = err;
       return cb(new APIError(err));
-    })
-    .on('close', () => {
+    }).on('close', () => {
       if (!error) {
         res.status(200).send({items});
         cb();

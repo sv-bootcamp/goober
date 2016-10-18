@@ -8,7 +8,7 @@ import {initMock} from './database';
 export default (cb) => {
   const app = express();
   // Please remove it when it's realsed
-  initMock(()=>{
+  initMock().then(()=>{
     /* eslint-disable no-console */
     console.log('Mock data was successfully stored.');
     /* eslint-enable */
