@@ -7,16 +7,14 @@ import { mockItems, mockItemIndexies, mockImages, mockImageIndexies,
 const db = levelup(config.database, {valueEncoding: 'json'});
 export default db;
 
-export const clearDB = (cb) => {
+export const clearDB = () => {
   return new Promise((resolve, reject) => {
     db.close(() => {
       leveldown.destroy(config.database, (err) => {
         if (err) {
-          // error
           return reject(err);
         }
-        db.open(cb);
-        return resolve();
+        return db.open(resolve);  
       });
     });
   });

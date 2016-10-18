@@ -173,7 +173,7 @@ test('get by area from database', t => {
     url: '/items?lat=37.768696&lng=-122.419495&zoom=14'
   });
   const res = httpMocks.createResponse();
-  clearDB().then(initMock()).then(()=>{
+  clearDB().then(initMock).then(()=>{
     ItemController.getAll(req, res, () => {
       t.equal(res.statusCode, expected.status, 'should be same status');
       const items = res._getData().items.sort((a, b) => {
@@ -212,9 +212,7 @@ test('add an item to database', t => {
   .then((base64Img) => {
     return new Promise((resolve) => {
       itemRedSelo.image = base64Img;
-      clearDB(() => {
-        resolve();
-      });
+      clearDB().then(resolve);
     });
   })
   .then(()=>{
