@@ -4,11 +4,11 @@ import controller from './controllers';
 const router = express.Router();
 
 /**
- * @api {get} /images?imageid=image-unique-id Get an images
+ * @api {get} /images?image=image-unique-id Get an images
  * @apiName get an image
  * @apiGroup Image
  *
- * @apiParam {String} imageid ID of target image
+ * @apiParam {String} image ID of target image
  *
  * @apiSuccess {String} image object
  *
@@ -32,11 +32,11 @@ const router = express.Router();
 
 
 /**
- * @api {get} /images?itemid=item-unique-id Get all images of an item
+ * @api {get} /images?item=item-unique-id Get all images of an item
  * @apiName get all image of an item
  * @apiGroup Image
  *
- * @apiParam {String} itemid ID of target item
+ * @apiParam {String} item ID of target item
  *
  * @apiSuccess {Array} image json array
  *

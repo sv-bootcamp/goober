@@ -5,8 +5,8 @@ import ImageManager from './models';
 
 export default {
   get(req, res, cb) {
-    const {itemid, imageid} = req.query;
-    if (itemid) {
+    const {item, image} = req.query;
+    if (item) {
       // get all images of item
       const keys = [];
       const promises = [];
@@ -14,7 +14,7 @@ export default {
 
       for (const state of checkState) {
         promises.push(new Promise((resolve, reject) => {
-          const prefix = KeyUtils.getPrefix(ENTITY.IMAGE, state, itemid);
+          const prefix = KeyUtils.getPrefix(ENTITY.IMAGE, state, item);
           ImageManager.fetchPrefix(prefix, (err, data) => {
             if (err) {
               reject(err);
@@ -66,9 +66,9 @@ export default {
           message: 'Internal Database Error'
         }));
       });
-    } else if (imageid) {
+    } else if (image) {
       // get an images
-      ImageManager.fetchImage([imageid], (errFetch, values) => {
+      ImageManager.fetchImage([image], (errFetch, values) => {
         if (errFetch) {
           cb(new APIError(errFetch, {
             statusCode: 500,
@@ -78,7 +78,7 @@ export default {
         }
         const value = values[0];
         const conn = new S3Connector();
-        conn.getImageUrl(imageid, (err, url) => {
+        conn.getImageUrl(image, (err, url) => {
           if (err) {
             return cb(new APIError(err));
           }

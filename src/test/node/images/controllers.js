@@ -53,9 +53,9 @@ test('get all image of an item', t => {
       }
       const req = httpMocks.createRequest({
         method: 'GET',
-        url: `/images?itemid=${itemKey}`,
+        url: `/images?item=${itemKey}`,
         query: {
-          itemid: itemKey
+          item: itemKey
         }
       });
       const res = httpMocks.createResponse();
@@ -91,9 +91,9 @@ test('get an image', t => {
   }).then(() => {
     const req = httpMocks.createRequest({
       method: 'GET',
-      url: `/images?imageid=${MockImageA.key}`,
+      url: `/images?image=${MockImageA.key}`,
       query: {
-        imageid: MockImageA.key
+        image: MockImageA.key
       }
     });
     const res = httpMocks.createResponse();
