@@ -60,10 +60,10 @@ export default {
         }))
       }
       Promise.all(promises).then(()=>{
-          res.status(200).send({
-            items
-          });
-          cb();
+        res.status(200).send({
+          items
+        });
+        return cb();
       }).catch((err) => {
         if (err.notFound) {
           res.status(200).send({
