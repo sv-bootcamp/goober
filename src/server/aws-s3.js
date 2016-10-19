@@ -109,7 +109,6 @@ export class S3Connector {
       cb(err);
     });
   }
-
   putImage(opt = {}, cb = () => {}) {
     // input parameters
     // opt = {
@@ -127,12 +126,13 @@ export class S3Connector {
     const params = {
       Bucket: config.awsImageBucket,
       Key: opt.key,
-      Body: opt.body,
-      ACL: 'public-read'
+      Body: new Buffer(opt.body, 'base64'),
+      ACL: 'public-read',
+      ContentType: 'image/png',
+      ContentEncoding: 'base64'
     };
     this.s3instance.putObject(params, cb);
   }
-
   delImage(opt = {}, cb = () => {}) {
     // input parameters
     // opt = {
