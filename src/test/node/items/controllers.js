@@ -184,7 +184,7 @@ test('get by area from database', t => {
       });
       for (let j = 0; j < items.length; j = j + 1) {
         t.equal(items[j].id, expected.items[j].id, 'should be same id');
-        t.equal(items[j].imageUrls.length, expected.items[j].imageUrls.length, 
+        t.equal(items[j].imageUrls.length, expected.items[j].imageUrls.length,
           'should be same length');
       }
       t.end();
@@ -206,7 +206,7 @@ test('add an item to database', t => {
   const res = httpMocks.createResponse();
   new Promise((resolve, reject) => {
     S3Utils.imgToBase64('src/test/node/small-test.png', (err, base64Img) => {
-      return (err) ? reject(err): resolve(base64Img);
+      return (err) ? reject(err) : resolve(base64Img);
     });
   })
   .then((base64Img) => {

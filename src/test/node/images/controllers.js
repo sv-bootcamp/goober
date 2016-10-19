@@ -1,8 +1,9 @@
 import test from 'tape';
-import {STATE} from '../../../server/key-utils';
-import testDB, {clearDB} from '../../../server/database';
+import {STATE, KeyUtils} from '../../../server/key-utils';
+import testDB, {clearDB, initMock} from '../../../server/database';
 import controller from '../../../server/images/controllers';
 import httpMocks from 'node-mocks-http';
+import {S3Utils} from '../../../server/aws-s3';
 
 // const MockItem = {
 //   title: 'This is Red Selo',
@@ -17,10 +18,11 @@ const MockImageA = {
   caption: 'thisissmaplecode.',
   createdDate: '2016-10-17T08:34:53.338Z'
 };
-// const MockImageB = {
-//   caption: 'this is image B'
-// };
-
+const MockImageB = {
+  itemKey: 'item-8500000000000-aaaa-aaaa-aaaa-aaaaaaaaa000',
+  userKey: 'user-8500000000000-bbbb-bbbb-bbbb-bbbbbbbbb000',
+  caption: 'Hello World'
+};
 test('get all image of an item', t => {
   const itemKey = 'item-BlaBla';
   const imageIndexKey = `image-${STATE.ALIVE}-${itemKey}-${MockImageA.key}`;
@@ -65,7 +67,6 @@ test('get all image of an item', t => {
     });
   });
 });
-
 test('get an image', t => {
   clearDB().then(() => {
     return new Promise((rs, rj)=>{
@@ -94,5 +95,70 @@ test('get an image', t => {
   }).catch(() => {
     t.fail();
     t.end();
+  });
+});
+test('Post image', t => {
+  const expected = {
+    status: 200,
+    message: 'success',
+    isImageInS3: true
+  };
+  const req = httpMocks.createRequest({
+    method: 'POST',
+    url: '/images',
+    body: MockImageB
+  });
+  const res = httpMocks.createResponse();
+  new Promise((resolve, reject) => {
+    S3Utils.imgToBase64('src/test/node/test.png', (err, base64Img) => {
+      return (err) ? reject(err) : resolve(base64Img);
+    });
+  }).then((base64Img) => {
+    return new Promise((resolve, reject) => {
+      MockImageB.image = base64Img;
+      clearDB().then(initMock).then(resolve).catch(reject);
+    });
+  }).then(()=>{
+    return new Promise((resolve) => {
+      controller.post(req, res, resolve);
+    });
+  })
+  .then(()=>{
+    const status = res.statusCode;
+    const message = res._getData().message;
+    const key = res._getData().data;
+    const timeHash = KeyUtils.getTimeHash(key);
+    t.equal(status, expected.status, 'should be same status');
+    t.equal(message, expected.message, 'should be same message');
+    let error;
+    let originImage;
+    let idxImage;
+    testDB.createReadStream({
+      start: '\x00',
+      end: '\xFF'
+    }).on('data', (data) => {
+      if (KeyUtils.getTimeHash(data.key) === timeHash) {
+        if (KeyUtils.isOriginKey(data.key)) {
+          originImage = data.value;
+        } else {
+          idxImage = data.value;
+        }
+      }
+    }).on('error', (err) => {
+      error = err;
+    }).on('close', () => {
+      if (error) {
+        t.fail('database error');
+        t.end();
+        return;
+      }
+      t.equal(originImage.key, idxImage.key, 'Should be same key');
+      t.end();
+    });
+  })
+  .catch((err) => {
+    /* eslint-disable no-console */
+    console.log(err);
+    /* eslint-enable */
   });
 });

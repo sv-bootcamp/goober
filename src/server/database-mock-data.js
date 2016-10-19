@@ -11,7 +11,7 @@ export const mockItems = {
     startTime: '2016-10-13T01:11:46.851Z',
     endTime: '2016-10-15T01:11:46.851Z',
     key: 'item-8523910540005-b82e-473b-1234-ead0f190b000',
-    userKey: "user-8523574664000-b82e-473b-1234-ead0f54gvr00"
+    userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
   },
   'item-8523910540004-b82e-473b-1234-ead0f190b001': {
     title: 'Generation Beauty by ipsy 2016',
@@ -24,7 +24,7 @@ export const mockItems = {
     startTime: '2016-10-12T01:11:46.851Z',
     endTime: '2016-10-16T01:11:46.851Z',
     key: 'item-8523910540004-b82e-473b-1234-ead0f190b001',
-    userKey: "user-8523574664000-b82e-473b-1234-ead0f54gvr00"
+    userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
   },
   'item-8523910540000-b82e-473b-1234-ead0f190b005': {
     title: 'Union Square Public Toilet',
@@ -37,7 +37,7 @@ export const mockItems = {
     startTime: '2016-10-08T01:11:46.851Z',
     endTime: '2016-10-20T01:11:46.851Z',
     key: 'item-8523910540000-b82e-473b-1234-ead0f190b005',
-    userKey: "user-8523574664000-b82e-473b-1234-ead0f54gvr00"
+    userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
   },
   'item-8523910540001-b82e-473b-1234-ead0f190b004': {
     title: 'Cafe Free Wifi',
@@ -50,7 +50,7 @@ export const mockItems = {
     startTime: '2016-10-09T01:11:46.851Z',
     endTime: '2016-10-19T01:11:46.851Z',
     key: 'item-8523910540001-b82e-473b-1234-ead0f190b004',
-    userKey: "user-8523574664000-b82e-473b-1234-ead0f54gvr00"
+    userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
   },
   'item-8523910540003-b82e-473b-1234-ead0f190b002': {
     title: 'Fatal crash',
@@ -63,7 +63,7 @@ export const mockItems = {
     startTime: '2016-10-11T01:11:46.851Z',
     endTime: '2016-10-17T01:11:46.851Z',
     key: 'item-8523910540003-b82e-473b-1234-ead0f190b002',
-    userKey: "user-8523574664000-b82e-473b-1234-ead0f54gvr00"
+    userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
   },
   'item-8523910540002-b82e-473b-1234-ead0f190b003': {
     title: 'Magnitude 2.5 earthquake',
@@ -76,7 +76,7 @@ export const mockItems = {
     startTime: '2016-10-10T01:11:46.851Z',
     endTime: '2016-10-18T01:11:46.851Z',
     key: 'item-8523910540002-b82e-473b-1234-ead0f190b003',
-    userKey: "user-8523574664000-b82e-473b-1234-ead0f54gvr00"
+    userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
   }
 };
 
@@ -404,7 +404,7 @@ export const mockImages = {
     caption: 'testImage6Caption4',
     createdDate: '2016-10-14T07:34:50.064Z'
   }
-}
+};
 
 
 export const mockImageIndexies = {
@@ -480,5 +480,5 @@ export const mockImageIndexies = {
   'image-0-item-8523910540002-b82e-473b-1234-ead0f190b003-8523574664000-b82e-473b-1234-ead0f54gvr00': {
     key: 'image-8523574664000-b82e-473b-1234-ead0f54gvr00'
   }
-}
+};
  /* eslint-enable */
