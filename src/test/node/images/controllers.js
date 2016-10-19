@@ -105,7 +105,7 @@ test('Post image', t => {
   };
   const req = httpMocks.createRequest({
     method: 'POST',
-    url: '/iamges',
+    url: '/images',
     body: MockImageB
   });
   const res = httpMocks.createResponse();

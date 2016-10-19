@@ -97,7 +97,7 @@ export default {
     const idxKey = KeyUtils.getIdxKey(ENTITY.IMAGE, timeHash, req.body.itemKey);
     const s3 = new S3Connector();
 
-    const opt = {key: key, body: req.body.image};
+    const opt = {key, body: req.body.image};
     new Promise((resolve, reject) => {
       s3.putImage(opt, (err) => {
         return (err) ? reject(err) : resolve();
@@ -113,15 +113,15 @@ export default {
     .then((url) => {
       return new Promise((resolve, reject) => {
         const image = {
-          key: key,
-          url: url,
+          key,
+          url,
           userKey: req.body.userKey,
           caption: req.body.caption,
           createdDate: currentTime.toISOString()
         };
-        const idxImage = {key: key};
+        const idxImage = {key};
         const ops = [
-          {type: 'put', key: key, value: image},
+          {type: 'put', key, value: image},
           {type: 'put', key: idxKey, value: idxImage}
         ];
         db.batch(ops, (err) => {
