@@ -2,7 +2,7 @@ import test from 'tape';
 import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import testDB, {initMock, clearDB} from '../../../server/database';
-import {DEFAULT_PRECISON, KeyUtils}
+import {DEFAULT_PRECISON, KeyUtils, STATE, ENTITY}
         from '../../../server/key-utils';
 import uuid from 'uuid4';
 import {S3Connector, S3Utils} from '../../../server/aws-s3';
@@ -22,6 +22,10 @@ const itemAlaska = {
   lng: 126.9907941,
   address: 'Alaska',
   category: 'warning'
+};
+const imageRedSelo = {
+  caption: 'red-selo',
+  userKey: 'user1'
 };
 
 // test('get all items from database', t => {
@@ -84,36 +88,45 @@ const itemAlaska = {
 //   });
 // });
 test('get a item from database', t => {
-  const key = `item-${uuid()}`;
-  testDB.put(key, itemRedSelo, (err) => {
-    if (err) {
-      t.end(err);
-    }
-  });
-  const expected = JSON.parse(JSON.stringify(itemRedSelo));
-  expected.status = 200;
-  const req = httpMocks.createRequest({
-    method: 'GET',
-    url: `/items/${key}`,
-    params: {
-      id: `${key}`
-    }
-  });
+  const itemKey = `${ENTITY.ITEM}-key`;
+  const imageKey = `${ENTITY.IMAGE}-key`;
+  const imageIndexKey = `${ENTITY.IMAGE}-${STATE.ALIVE}-${itemKey}-${imageKey}`;
+  const expected = itemRedSelo;
+  expected.imageUrls = ['url-image-redselo'];
 
-  const res = httpMocks.createResponse();
-
-  ItemController.getById(req, res, () => {
-    const data = res._getData();
-    t.equal(res.statusCode, expected.status,
-      'should be same status');
-    t.equal(data.title, expected.title,
-      'should be same title');
-    testDB.del(`${key}`, (err) => {
-      if (err) {
-        t.end(err);
+  clearDB().then(() => {
+    return new Promise((resolve, reject)=>{
+      const opts = [];
+      opts.push({type: 'put', key: itemKey, value: itemRedSelo});
+      opts.push({type: 'put', key: imageKey, value: imageRedSelo});
+      opts.push({type: 'put', key: imageIndexKey, value: {key: imageKey}});
+      testDB.batch(opts, (err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve();
+      })
+    });
+  }).then(() => {
+    const req = httpMocks.createRequest({
+      method: 'GET',
+      url: `/items/${itemKey}`,
+      params: {
+        id: `${itemKey}`
       }
+    });
+    const res = httpMocks.createResponse();
+
+    ItemController.getById(req, res, () => {
+      const data = res._getData();
+      t.equal(data.title, expected.title, 'should be same title');
+      t.equal(data.imageUrls.length, expected.imageUrls.length, 'should be same length');
       t.end();
     });
+  }).catch(() => {
+    t.fail();
+    t.end();
   });
 });
 test('get by area from database', t => {
