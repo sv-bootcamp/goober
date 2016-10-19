@@ -198,7 +198,7 @@ export default {
       endTime: req.body.endTime,
       createdDate: currentTime.toISOString(),
       modifiedDate: currentTime.toISOString()
-    }
+    };
     const image = {
       key: imageKey,
       userKey: req.body.userKey,

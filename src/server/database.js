@@ -14,7 +14,7 @@ export const clearDB = () => {
         if (err) {
           return reject(err);
         }
-        return db.open(resolve);  
+        return db.open(resolve);
       });
     });
   });
@@ -68,7 +68,7 @@ export const initMock = () => {
         });
       }
     }
-    
+
     db.batch(ops, (err) => {
       if (err) {
         return reject(new Error(err));

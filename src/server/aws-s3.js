@@ -13,8 +13,10 @@ class MockS3 {
     this.endpoint.host = `s3.${awsConfig.region}.amazonaws.com`;
   }
 
-  getSignedUrl() {
-    return 'some-url';
+  getSignedUrl(method, params) {
+    // method is not used
+    params.method = method;
+    return `url-of-${params.Key}`;
   }
   
   getImageUrls(keys = [], cb = () => {}) {

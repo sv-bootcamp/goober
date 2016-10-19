@@ -7,5 +7,7 @@ import './server';
 import './key-utils';
 import './items/validator';
 import './items/controllers';
+import './images/models';
+import './images/controllers';
 import './database';
 import './aws-s3';

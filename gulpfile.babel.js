@@ -166,7 +166,10 @@ const lintReporter = (results) => {
 
 
 const apidocConfig = {
-  src: ['./src/server/routes', './src/server/items'],
+  src: [
+    './src/server/routes',
+    './src/server/items',
+    './src/server/images'],
   dest: 'doc/',
   debug: true,
   config: './'
