@@ -14,7 +14,9 @@ const itemRedSelo = {
   address: 'Red Selo',
   category: 'warning',
   userKey: `user-${uuid()}`,
-  caption: 'Sample image caption of itemRedSelo.'
+  caption: 'Sample image caption of itemRedSelo.',
+  startTime: '2016-10-13T01:11:46.851Z',
+  endTime: '2016-10-15T01:11:46.851Z'
 };
 const itemAlaska = {
   title: 'This is Alaska',
@@ -93,6 +95,7 @@ test('get a item from database', t => {
   const imageIndexKey = `${ENTITY.IMAGE}-${STATE.ALIVE}-${itemKey}-${imageKey}`;
   const expected = itemRedSelo;
   expected.imageUrls = ['url-image-redselo'];
+  expected.statusCode = 200;
 
   clearDB().then(() => {
     return new Promise((resolve, reject)=>{
@@ -120,6 +123,8 @@ test('get a item from database', t => {
 
     ItemController.getById(req, res, () => {
       const data = res._getData();
+      console.log(data);
+      t.equal(res.statusCode, expected.statusCode, 'should be same title');
       t.equal(data.title, expected.title, 'should be same title');
       t.equal(data.imageUrls.length, expected.imageUrls.length, 'should be same length');
       t.end();
