@@ -154,6 +154,7 @@ router.delete('/', ItemControllers.removeAll);
  * @apiSuccess {String} category category of the item.
  * @apiSuccess {String} startTime startTime
  * @apiSuccess {String} endTime endTime
+ * @apiSuccess {Array} imageUrls array of image urls
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -167,7 +168,8 @@ router.delete('/', ItemControllers.removeAll);
  *        "modifiedDate": '2016-10-04T04:00:00.578Z',
  *        "category"    : 'warning', 'event', 'facility'
  *        "startTime"   : '2016-10-04T04:00:00.578Z',
- *        "endTime"     : '2016-10-10T04:00:00.578Z'
+ *        "endTime"     : '2016-10-10T04:00:00.578Z',
+ *        "imageUrls"   : ['image-url', 'image-url', ..]
  *     }
  *
  * @apiError (Error 400) ItemNotFound The id of the Item was not found.

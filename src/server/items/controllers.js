@@ -1,4 +1,4 @@
-import db from '../database';
+import db, {fetchPrefix} from '../database';
 import {APIError} from '../ErrorHandler';
 import {KeyUtils, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
         UUID_START_POS, STATE, ENTITY, CATEGORY} from '../key-utils';
@@ -99,19 +99,34 @@ export default {
   },
   getById: (req, res, cb) => {
     const key = req.params.id;
-    db.get(key, (err, value) => {
-      if (err) {
-        if (err.notFound) {
-          return cb(new APIError(err, {
+    db.get(key, (errGet, value) => {
+      if (errGet) {
+        if (errGet.notFound) {
+          cb(new APIError(errGet, {
             statusCode: 400,
             message: 'Item was not found'
           }));
+          return;
         }
-        return cb(new APIError(err));
+        cb(new APIError(errGet));
+        return;
       }
-      value.id = key;
-      res.status(200).send(value);
-      return cb();
+      fetchPrefix(`${ENTITY.IMAGE}-${STATE.ALIVE}-${key}-`, (err, keys) => {
+        if (err) {
+          cb(new APIError(err));
+          return;
+        }
+        const conn = new S3Connector();
+        conn.getImageUrls(keys, (urlErr, imageUrls)=>{
+          if(urlErr){
+            return cb(new APIError(err));
+          }
+          value.id = key;
+          value.imageUrls = imageUrls;
+          res.status(200).send(value);
+          return cb();
+        });
+      });
     });
   },
   remove: (req, res, cb) => {
