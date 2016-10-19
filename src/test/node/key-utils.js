@@ -60,3 +60,18 @@ test('make time reversed', t => {
   t.equal(reversedTime, expected.reversedTime, 'should have same time');
   t.end();
 });
+
+test('distinguish expired date', t => {
+  const expiredDate = '1999-01-01T01:11:00.851Z';
+  const vaildDate = new Date().setDate(new Date().getDate()+1);
+  const expected = {
+    results: {
+      expiredDate : false,
+      vaildDate : true
+    }
+  };
+  t.equal(KeyUtils.isValid(expiredDate), expected.results.expiredDate, 'False when it is expired');
+  t.equal(KeyUtils.isValid(vaildDate), expected.results.vaildDate, 'True when it is valid');
+  t.end();
+});
+
