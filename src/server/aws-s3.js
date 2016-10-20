@@ -3,7 +3,7 @@ import config from 'config';
 import fs from 'fs';
 
 export const IMAGE_SIZE_PREFIX = {
-  THUMBNAIL : 'thumbnail'
+  THUMBNAIL: 'thumbnail'
 };
 
 class MockS3 {
@@ -16,17 +16,11 @@ class MockS3 {
     this.endpoint.protocol = 'https:';
     this.endpoint.host = `s3.${awsConfig.region}.amazonaws.com`;
   }
-
   getSignedUrl(method, params) {
     // method is not used
     params.method = method;
     return `url-of-${params.Key}`;
   }
-
-  getImageUrls(keys = []) {
-    return keys;
-  }
-
   putObject(param = {}, cb = () => {}) {
     if (!param.Bucket || !param.Key || !param.Body) {
       cb(new Error('Error, Invalid parameter'));
@@ -34,7 +28,6 @@ class MockS3 {
     }
     cb(null, {ETag: 'some-tag-code'});
   }
-
   deleteObject(params = {}, cb = () => {}) {
     cb(null, params);
   }
