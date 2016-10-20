@@ -1,4 +1,8 @@
 /* eslint-disable max-len */
+
+const initTime = new Date();
+const dayInMs = 86400000;
+
 export const mockItems = {
   'item-8523910540005-b82e-473b-1234-ead0f190b000': {
     title: 'Lion popup store',
@@ -9,7 +13,7 @@ export const mockItems = {
     modifiedDate: '2016-10-13T01:11:46.851Z',
     category: 'event',
     startTime: '2016-10-13T01:11:46.851Z',
-    endTime: '2016-10-15T01:11:46.851Z',
+    endTime: new Date(initTime.getTime() + 60000).toISOString(),
     key: 'item-8523910540005-b82e-473b-1234-ead0f190b000',
     userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
   },
@@ -22,7 +26,7 @@ export const mockItems = {
     modifiedDate: '2016-10-12T01:11:46.851Z',
     category: 'event',
     startTime: '2016-10-12T01:11:46.851Z',
-    endTime: '2016-10-16T01:11:46.851Z',
+    endTime: new Date(initTime.getTime() + dayInMs * 2).toISOString(),
     key: 'item-8523910540004-b82e-473b-1234-ead0f190b001',
     userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
   },
@@ -35,7 +39,7 @@ export const mockItems = {
     modifiedDate: '2016-10-08T01:11:46.851Z',
     category: 'facility',
     startTime: '2016-10-08T01:11:46.851Z',
-    endTime: '2016-10-20T01:11:46.851Z',
+    endTime: new Date(initTime.getTime() + dayInMs * 3).toISOString(),
     key: 'item-8523910540000-b82e-473b-1234-ead0f190b005',
     userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
   },
@@ -48,7 +52,7 @@ export const mockItems = {
     modifiedDate: '2016-10-09T01:11:46.851Z',
     category: 'facility',
     startTime: '2016-10-09T01:11:46.851Z',
-    endTime: '2016-10-19T01:11:46.851Z',
+    endTime: new Date(initTime.getTime() + dayInMs * 4).toISOString(),
     key: 'item-8523910540001-b82e-473b-1234-ead0f190b004',
     userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
   },
@@ -61,7 +65,7 @@ export const mockItems = {
     modifiedDate: '2016-10-11T01:11:46.851Z',
     category: 'warning',
     startTime: '2016-10-11T01:11:46.851Z',
-    endTime: '2016-10-17T01:11:46.851Z',
+    endTime: new Date(initTime.getTime() + dayInMs * 5).toISOString(),
     key: 'item-8523910540003-b82e-473b-1234-ead0f190b002',
     userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
   },
@@ -74,8 +78,21 @@ export const mockItems = {
     modifiedDate: '2016-10-10T01:11:46.851Z',
     category: 'warning',
     startTime: '2016-10-10T01:11:46.851Z',
-    endTime: '2016-10-18T01:11:46.851Z',
+    endTime: new Date(initTime.getTime() + dayInMs * 6).toISOString(),
     key: 'item-8523910540002-b82e-473b-1234-ead0f190b003',
+    userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
+  },
+  'item-8523910540006-b82e-473b-1234-ead0f190b006': {
+    title: 'Expired Item',
+    lat: 37.764375,
+    lng: -122.438096,
+    address: 'Expired Item Address',
+    createdDate: '2016-10-10T01:11:46.851Z',
+    modifiedDate: '2016-10-10T01:11:46.851Z',
+    category: 'warning',
+    startTime: '2016-10-10T01:11:46.851Z',
+    endTime: '1999-01-01T10:10:10.851Z',
+    key: 'item-8523910540006-b82e-473b-1234-ead0f190b006',
     userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00'
   }
 };
@@ -224,6 +241,30 @@ export const mockItemIndexies = {
   },
   'item-0-9-8523910540002--b82e-473b-1234-ead0f190b003': {
     key: 'item-8523910540002-b82e-473b-1234-ead0f190b003'
+  },
+  'item-0-9-8523910540006-b82e-473b-1234-ead0f190b006': {
+    key: 'item-8523910540006-b82e-473b-1234-ead0f190b006'
+  },
+  'item-0-9q-8523910540006-b82e-473b-1234-ead0f190b006': {
+    key: 'item-8523910540006-b82e-473b-1234-ead0f190b006'
+  },
+  'item-0-9q8-8523910540006-b82e-473b-1234-ead0f190b006': {
+    key: 'item-8523910540006-b82e-473b-1234-ead0f190b006'
+  },
+  'item-0-9q8y-8523910540006-b82e-473b-1234-ead0f190b006': {
+    key: 'item-8523910540006-b82e-473b-1234-ead0f190b006'
+  },
+  'item-0-9q8yv-8523910540006-b82e-473b-1234-ead0f190b006': {
+    key: 'item-8523910540006-b82e-473b-1234-ead0f190b006'
+  },
+  'item-0-9q8yvf-8523910540006-b82e-473b-1234-ead0f190b006': {
+    key: 'item-8523910540006-b82e-473b-1234-ead0f190b006'
+  },
+  'item-0-9q8yvfg-8523910540006-b82e-473b-1234-ead0f190b006': {
+    key: 'item-8523910540006-b82e-473b-1234-ead0f190b006'
+  },
+  'item-0-9q8yvfg3-8523910540006-b82e-473b-1234-ead0f190b006': {
+    key: 'item-8523910540006-b82e-473b-1234-ead0f190b006'
   }
 };
 

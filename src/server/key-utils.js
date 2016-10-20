@@ -101,11 +101,8 @@ export const KeyUtils = {
   calcPrecisionByZoom: (zoom) => {
     return Math.floor((zoom + 1) / 3);
   },
-  isValid: (endTime) => {
-    return (new Date().getTime() - new Date(endTime).getTime() < 0) ? true : false;
-  },
   parseState: (key) => {
-    return key.charAt(key.key.indexOf('-') + 1);
+    return key.charAt(key.indexOf('-') + 1);
   }
 };
 
