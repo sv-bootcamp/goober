@@ -2,7 +2,7 @@ import test from 'tape';
 import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import testDB, {initMock, clearDB} from '../../../server/database';
-import {DEFAULT_PRECISON, KeyUtils, STATE, ENTITY}
+import {DEFAULT_PRECISON, KeyUtils, STATE, ENTITY, STATE_CODE_POS}
         from '../../../server/key-utils';
 import uuid from 'uuid4';
 import {S3Utils} from '../../../server/aws-s3';
@@ -23,72 +23,60 @@ const itemAlaska = {
   lat: 37.565398,
   lng: 126.9907941,
   address: 'Alaska',
-  category: 'warning'
+  category: 'warning',
+  userKey: `user-${uuid()}`,
+  caption: 'Sample image caption of itemAlaska.',
+  startTime: '2016-10-13T01:11:46.851Z',
+  endTime: '2016-10-15T01:11:46.851Z'
 };
 const imageRedSelo = {
   caption: 'red-selo',
   userKey: 'user1'
 };
 
-// test('get all items from database', t => {
-//   let key1 = `item-${uuid()}`;
-//   let key2 = `item-${uuid()}`;
+test('get all items from database', t => {
+  let key1 = `item-${uuid()}`;
+  let key2 = `item-${uuid()}`;
 
-//   // https://github.com/Level/levelup#introduction
-//   // LevelDB stores entries sorted lexicographically by keys.
-//   if (key2 < key1) {
-//     const temp = key2;
-//     key2 = key1;
-//     key1 = temp;
-//   }
+  // https://github.com/Level/levelup#introduction
+  // LevelDB stores entries sorted lexicographically by keys.
+  if (key2 < key1) {
+    const temp = key2;
+    key2 = key1;
+    key1 = temp;
+  }
 
-//   const expected = {
-//     status: 200,
-//     items: [
-//       itemRedSelo,
-//       itemAlaska
-//     ]
-//   };
-//   testDB.createReadStream({
-//     start: 'item-',
-//     end: 'item-\xFF'
-//   }).on('data', (data) => {
-//     testDB.del(data.key, (err) => {
-//       if (err) {
-//         t.fail('database fault');
-//       }
-//     });
-//   }).on('close', () => {
-//     testDB.batch()
-//       .put(key1, itemRedSelo)
-//       .put(key2, itemAlaska)
-//       .write((err) => {
-//         if (err) {
-//           t.end(err);
-//         }
-//         const req = httpMocks.createRequest();
-//         const res = httpMocks.createResponse();
-//         ItemController.getAll(req, res, () => {
-//           const data = res._getData();
-//           t.equal(res.statusCode, expected.status,
-//             'should be same status');
-//           t.equal(data.items[0].title, expected.items[0].title,
-//             'should be same title');
-//           t.equal(data.items[1].title, expected.items[1].title,
-//             'should be same title');
-//           testDB.batch()
-//             .del(key1)
-//             .del(key2)
-//             .write((delErr) => {
-//               if (delErr) {
-//                 t.end(delErr);
-//               }
-//               t.end();
-//             });
-//         });
-//       });
-//   });
-// });
+  const expected = {
+    status: 200,
+    items: [itemRedSelo, itemAlaska]
+  };
+  const req = httpMocks.createRequest({
+    method: 'GET',
+    url: '/items'
+  });
+  const res = httpMocks.createResponse();
+  clearDB().then(() => {
+    const opt = [{ type: 'put', key: key1, value: itemRedSelo},
+      { type: 'put', key: key2, value: itemAlaska}];
+    testDB.batch(opt, (err) => {
+      if (err) {
+        t.fail(err);
+        t.end();
+        return;
+      }
+      ItemController.getAll(req, res, () => {
+        const data = res._getData();
+        t.equal(res.statusCode, expected.status,
+          'should be same status');
+        t.equal(data.items[0].title, expected.items[0].title,
+          'should be same title');
+        t.equal(data.items[1].title, expected.items[1].title,
+          'should be same title');
+        t.end();
+      });
+    });
+  });
+});
 test('get a item from database', t => {
   const itemKey = `${ENTITY.ITEM}-key`;
   const imageKey = `${ENTITY.IMAGE}-key`;
@@ -207,16 +195,17 @@ test('get by area from database', t => {
   });
 });
 test('add an item to database', t => {
+  const mockItem = JSON.parse(JSON.stringify(itemRedSelo));
   const expected = {
     status: 200,
     message: 'success',
-    address: itemRedSelo.address,
+    address: mockItem.address,
     idxItemsCnt: DEFAULT_PRECISON
   };
   const req = httpMocks.createRequest({
     method: 'POST',
     url: '/items',
-    body: itemRedSelo
+    body: mockItem
   });
   const res = httpMocks.createResponse();
   new Promise((resolve, reject) => {
@@ -226,7 +215,7 @@ test('add an item to database', t => {
   })
   .then((base64Img) => {
     return new Promise((resolve) => {
-      itemRedSelo.image = base64Img;
+      mockItem.image = base64Img;
       clearDB().then(resolve);
     });
   })
@@ -337,99 +326,76 @@ test('modify an item in database', t => {
     });
   });
 });
-/*
+
 test('delete an item from database', t => {
   const expected = {
     status: 200,
     message: 'success',
     itemCnt: 1,
     indexingItemCntBefore: DEFAULT_PRECISON,
-    statusCodeBefore: STATE.ALIVE,
-    statusCodeAfter: STATE.REMOVED
+    key: 'item-RedSelo',
+    title: itemRedSelo.title,
+    statusCode: STATE.REMOVED
   };
-  clearDB(()=>{
-    const addReq = httpMocks.createRequest({
-      method: 'POST',
-      url: '/items',
-      body: itemRedSelo
-    });
-    const addRes = httpMocks.createResponse();
-    ItemController.add(addReq, addRes, () => {
-      const key = addRes._getData().data;
-      let indexingItemsCnt = 0;
-      let itemCnt = 0;
-      let error;
-      let statusCode;
-      testDB.createReadStream({
-        start: '\x00',
-        end: '\xFF'
-      }).on('data', (data) => {
-        if (data.value.ref === key) {
-          indexingItemsCnt = indexingItemsCnt + 1;
-          statusCode = data.key.charAt(STATE_CODE_POS);
-          t.equal(statusCode, expected.statusCodeBefore
-          , `should be same status code[${indexingItemsCnt}]`);
-        } else if (data.value.description === itemRedSelo.description) {
-          itemCnt = itemCnt + 1;
+
+  clearDB().then(()=> {
+    return new Promise((resolve, reject) => {
+      testDB.put(expected.key, itemRedSelo, (err) => {
+        if (err) {
+          reject(err);
+          return;
         }
-      }).on('error', (err) => {
-        error = err;
-        t.fail('Error while reading from DB');
-        t.end(error);
-      }).on('close', () => {
-        if (error) {
-          t.fail('Error while reading from DB');
-          t.end(error);
-        } else {
-          t.equal(indexingItemsCnt, expected.indexingItemCntBefore,
-          'should be same indexing item counts');
-          t.equal(itemCnt, expected.itemCnt,
-          'should be same item count before delete');
-          const req = httpMocks.createRequest({
-            method: 'DELETE',
-            url: `/items/${key}`,
-            params: {
-              id: key
-            }
-          });
-          const res = httpMocks.createResponse();
-          ItemController.remove(req, res, () => {
-            const status = res.statusCode;
-            const message = res._getData().message;
-            t.equal(status, expected.status, 'should be same status');
-            t.equal(message, expected.message, 'should be same message');
-            itemCnt = 0;
-            testDB.createReadStream({
-              start: '\x00',
-              end: '\xFF'
-            }).on('data', (data) => {
-              if (data.value.ref === key) {
-                statusCode = data.key.charAt(STATE_CODE_POS);
-                t.equal(statusCode, expected.statusCodeAfter
-            , 'should be same status code after delete');
-              } else if (data.value.description === itemRedSelo.description) {
-                itemCnt = itemCnt + 1;
-              }
-            }).on('error', (err) => {
-              error = err;
-              t.fail('Error while reading from DB');
-              t.end(error);
-            }).on('close', () => {
-              if (!error) {
-                t.equal(itemCnt, expected.itemCnt
-                , 'should be same item counts after delete');
-                t.end();
-              } else {
-                t.end(error);
-              }
-            });
-          });
-        }
+        resolve();
       });
     });
+  }).then(() => {
+    const req = httpMocks.createRequest({
+      method: 'DELETE',
+      url: `/items/${expected.key}`,
+      params: {
+        id: expected.key
+      }
+    });
+    const res = httpMocks.createResponse();
+
+    return new Promise((resolve, reject)=> {
+      ItemController.remove(req, res, () => {
+        const status = res.statusCode;
+        const message = res._getData().message;
+        t.equal(status, expected.status, 'should be same status');
+        t.equal(message, expected.message, 'should be same message');
+        if (status !== expected.status || message !== expected.message) {
+          reject(new Error('Not equal with expected value'));
+          return;
+        }
+        resolve();
+      });
+    });
+  }).then(() => {
+    testDB.createReadStream({
+      start: '\x00',
+      end: '\xFF'
+    }).on('data', (data) => {
+      if (data.value.key === expected.key) {
+        // in case of index keys
+        const statusCode = data.key.charAt(STATE_CODE_POS);
+        t.equal(statusCode, expected.statusCode, 'should be same statusCode');
+      } else {
+        // in case of an original key
+        t.equal(data.value.title, expected.title);
+      }
+    }).on('error', (err) => {
+      t.fail('Error while reading from DB');
+      t.end(err);
+    }).on('close', () => {
+      t.end();
+    });
+  }).catch((err) => {
+    t.fail(err);
+    t.end();
   });
 });
-*/
+
 test('delete all item from database', t => {
   const redSeloKey = `item-${uuid()}`;
   const alaskaKey = `item-${uuid()}`;

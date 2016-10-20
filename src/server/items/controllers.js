@@ -158,7 +158,7 @@ export default {
         ops.push({
           type: 'put',
           key: deletedItemId,
-          value: {ref: key}
+          value: {key: key}
         });
         ops.push({
           type: 'del',
