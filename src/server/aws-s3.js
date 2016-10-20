@@ -21,6 +21,22 @@ class MockS3 {
     params.method = method;
     return `url-of-${params.Key}`;
   }
+  getImageUrl(key) {
+    return `http://example.url.amazon.com/-${key}`;
+  }
+  getImageUrls(keys) {
+    return keys.map((key) => {
+      return this.getImageUrl(key);
+    });
+  }
+  getPrefixedImageUrl(key, prefix) {
+    return this.getImageUrl(`${prefix}-${key}`);
+  }
+  getPrefixedImageUrls(keys, prefix) {
+    return keys.map((key) => {
+      this.getImageUrl(`${prefix}-${key}`);
+    });
+  }
   putObject(param = {}, cb = () => {}) {
     if (!param.Bucket || !param.Key || !param.Body) {
       cb(new Error('Error, Invalid parameter'));
@@ -80,7 +96,7 @@ export class S3Connector {
   getPrefixedImageUrl(key, prefix) {
     return this.getImageUrl(`${prefix}-${key}`);
   }
-  getPrefixedImageurls(keys, prefix) {
+  getPrefixedImageUrls(keys, prefix) {
     return this.getImageUrls(keys.map((key) => {
       return `${prefix}-${key}`;
     }));

@@ -106,6 +106,7 @@ test('get a item from database', t => {
       testDB.batch(opts, (err) => {
         if (err) {
           reject(err);
+          return;
         }
         resolve();
       })
