@@ -37,7 +37,7 @@ export default {
                 }).on('error', (imageErr) => {
                   imageReject(imageErr);
                 }).on('close', () => {
-                  if (isThumbnail) {
+                  if (isThumbnail === 'true') {
                     refData.imageUrls = 
                       s3Connector.getPrefixedImageUrls(images, IMAGE_SIZE_PREFIX.THUMBNAIL);
                   } else {
