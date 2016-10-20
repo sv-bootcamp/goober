@@ -109,7 +109,7 @@ test('get a item from database', t => {
           return;
         }
         resolve();
-      })
+      });
     });
   }).then(() => {
     const req = httpMocks.createRequest({
@@ -122,6 +122,7 @@ test('get a item from database', t => {
     const res = httpMocks.createResponse();
 
     ItemController.getById(req, res, () => {
+
       const data = res._getData();
       t.equal(res.statusCode, expected.statusCode, 'should be same title');
       t.equal(data.title, expected.title, 'should be same title');

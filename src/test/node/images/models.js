@@ -1,6 +1,5 @@
 import test from 'tape';
-import testDB, {clearDB} from '../../../server/database';
-import ImageManager from '../../../server/images/models';
+import testDB, {clearDB, fetchPrefix} from '../../../server/database';
 
 test('fetch prefix ImageManager', t => {
   const prefix = 'this-is-prefix';
@@ -29,7 +28,7 @@ test('fetch prefix ImageManager', t => {
         t.end();
         return;
       }
-      ImageManager.fetchPrefix(prefix, (err, value) => {
+      fetchPrefix(prefix, (err, value) => {
         if (err) {
           t.fail('fetchPrefix error');
           t.end();

@@ -203,13 +203,15 @@ router.get('/:id', ItemControllers.getById);
  *
  * @apiParamExample {json} Request-Example:
  *      {
+ *          "key"         : "item-unique-key"
  *          "title"       : "texttitle",
  *          "lat"         : 30.565398,
  *          "lng"         : 126.9907941,
  *          "address"     : "testAddress",
+ *          "userKey"     : 'user-unique-key'
  *          "category"    : 'warning', 'event', 'facility'
- *          "startTime"   : '2016-10-04T04:00:00.578Z',
- *          "endTime"     : '2016-10-10T04:00:00.578Z'
+ *          "createdDate" : '2016-10-04T04:00:00.578Z',
+ *          "modifiedDate": '2016-10-10T04:00:00.578Z'
  *          "startTime"   : '2016-10-04T04:00:00.578Z',
  *          "endTime"     : '2016-10-10T04:00:00.578Z'
  *      }

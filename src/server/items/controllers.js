@@ -38,7 +38,7 @@ export default {
                   imageReject(imageErr);
                 }).on('close', () => {
                   if (isThumbnail === 'true') {
-                    refData.imageUrls = 
+                    refData.imageUrls =
                       s3Connector.getPrefixedImageUrls(images, IMAGE_SIZE_PREFIX.THUMBNAIL);
                   } else {
                     refData.imageUrls = s3Connector.getImageUrls(images);
@@ -116,10 +116,14 @@ export default {
           cb(new APIError(err));
           return;
         }
+
+        const conn = new S3Connector();
+        const imageUrls = conn.getImageUrls(keys);
         value.id = key;
-        value.imageUrls = new S3Connector().getImageUrls(keys);
+        value.imageUrls = imageUrls;
         res.status(200).send(value);
         cb();
+        return;
       });
     });
   },
