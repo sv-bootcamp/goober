@@ -2,6 +2,10 @@ import AWS from 'aws-sdk';
 import config from 'config';
 import fs from 'fs';
 
+export const IMAGE_SIZE_PREFIX = {
+  THUMBNAIL : 'thumbnail'
+};
+
 class MockS3 {
   // We can trust AWS-sdk
   // This class is just for test
@@ -19,8 +23,8 @@ class MockS3 {
     return `url-of-${params.Key}`;
   }
 
-  getImageUrls(keys = [], cb = () => {}) {
-    cb(null, keys);
+  getImageUrls(keys = []) {
+    return keys;
   }
 
   putObject(param = {}, cb = () => {}) {
@@ -43,6 +47,7 @@ export const S3Utils = {
     });
   }
 };
+
 export class S3Connector {
   constructor() {
     if (process.env.NODE_ENV === 'test') {
@@ -63,53 +68,29 @@ export class S3Connector {
       this.s3instance = new AWS.S3();
     }
   }
-  getImageUrl(key, cb = () => {}) {
+  getImageUrl(key) {
     const params = {
       Bucket: config.awsImageBucket,
       Key: key,
       Expires: 120
     };
     const url = this.s3instance.getSignedUrl('getObject', params);
-    let error;
-    if (!url) {
-      error = new Error('No Url');
-    }
-    cb(error, url.split('?')[0]);
+    return url.split('?')[0];
   }
-  getImageUrls(keys = [], cb = () => {}) {
-    // input parameters
-    // keys = ['key1', 'key2'];
-    //
-    // callback parameters
-    // err : err
-    // data : array of url
-    if (keys.length === 0) {
-      cb(null, []);
-      return;
-    }
-    const promises = [];
+  getImageUrls(keys = []) {
     const urlList = [];
     for (const key of keys) {
-      promises.push(new Promise((resolve, reject) => {
-        const params = {
-          Bucket: config.awsImageBucket,
-          Key: key,
-          Expires: 120
-        };
-        const url = this.s3instance.getSignedUrl('getObject', params);
-        if (!url) {
-          reject('No url');
-        }
-        // remove query string
-        urlList.push(url.split('?')[0]);
-        resolve();
-      }));
+      urlList.push(this.getImageUrl(key));
     }
-    Promise.all(promises).then(() => {
-      cb(null, urlList);
-    }).catch((err) => {
-      cb(err);
-    });
+    return urlList;
+  }
+  getPrefixedImageUrl(key, prefix) {
+    return this.getImageUrl(`${prefix}-${key}`);
+  }
+  getPrefixedImageurls(keys, prefix) {
+    return this.getImageUrls(keys.map((key) => {
+      return `${prefix}-${key}`;
+    }));
   }
   putImage(opt = {}, cb = () => {}) {
     // input parameters

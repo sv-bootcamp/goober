@@ -5,7 +5,7 @@ import testDB, {initMock, clearDB} from '../../../server/database';
 import {DEFAULT_PRECISON, KeyUtils, STATE, ENTITY}
         from '../../../server/key-utils';
 import uuid from 'uuid4';
-import {S3Connector, S3Utils} from '../../../server/aws-s3';
+import {S3Utils} from '../../../server/aws-s3';
 
 const itemRedSelo = {
   title: 'This is Red Selo',
@@ -106,7 +106,6 @@ test('get a item from database', t => {
       testDB.batch(opts, (err) => {
         if (err) {
           reject(err);
-          return;
         }
         resolve();
       })
@@ -123,7 +122,6 @@ test('get a item from database', t => {
 
     ItemController.getById(req, res, () => {
       const data = res._getData();
-      console.log(data);
       t.equal(res.statusCode, expected.statusCode, 'should be same title');
       t.equal(data.title, expected.title, 'should be same title');
       t.equal(data.imageUrls.length, expected.imageUrls.length, 'should be same length');
@@ -271,27 +269,9 @@ test('add an item to database', t => {
         if (data.value.key !== key) {
           t.fail(`Indexing item's key is wrong : ${data.value.key}`);
           t.end();
-        }
-      // Case of origin image having information about image data(userKey, caption...).
+        }      // Case of origin image having information about image data(userKey, caption...).
       } else if (!isItem && isOriginKey) {
         addedImage = data.value;
-        new S3Connector().getImageUrl(data.key, (err, url) => {
-          if (err || !url) {
-            t.fail('Failed to get a image from database.');
-            t.end();
-          }
-        });
-      // Case of indexing image to search in levelDB.
-      } else if (!isItem && !isOriginKey) {
-        new S3Connector().getImageUrl(data.value.key, (err, url) => {
-          if (err || !url) {
-            t.fail('Failed to get a image from database.');
-            t.end();
-          }
-        });
-      } else {
-        t.fail(`Key is wrong : ${data.key}`);
-        t.end();
       }
     }).on('error', (err) => {
       error = err;

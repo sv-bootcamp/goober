@@ -60,18 +60,9 @@ test('test s3 get image', t => {
   const expected = {
     length: opt.length
   };
-  conn.getImageUrls(opt, (err, data) => {
-    if (err) {
-      /* eslint-disable no-console */
-      console.log(err);
-      /* eslint-enable */
-      t.fail('Error, getImageUrls');
-      t.end();
-      return;
-    }
-    t.equal(data.length, expected.length, 'should be same length');
-    t.end();
-  });
+  const data = conn.getImageUrls(opt);
+  t.equal(data.length, expected.length, 'should be same length');
+  t.end();
 });
 test('test s3 delete image', t => {
   const conn = new S3Connector();

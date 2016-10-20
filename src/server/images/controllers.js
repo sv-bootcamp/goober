@@ -29,16 +29,7 @@ export default {
         }));
       }
       Promise.all(promises).then(() => {
-        return new Promise((resolve, reject) => {
-          const conn = new S3Connector();
-          conn.getImageUrls(keys, (err, urls) => {
-            if (err) {
-              reject();
-              return;
-            }
-            resolve(urls);
-          });
-        });
+        return new S3Connector().getImageUrls(keys);
       }).then((urls)=>{
         ImageManager.fetchImage(keys, (err, values) => {
           if (err) {
@@ -78,15 +69,10 @@ export default {
           return;
         }
         const value = values[0];
-        const conn = new S3Connector();
-        conn.getImageUrl(image, (err, url) => {
-          if (err) {
-            return cb(new APIError(err));
-          }
-          value.url = url;
-          res.status(200).send(value);
-          return cb();
-        });
+        value.url = new S3Connector().getImageUrl(image);
+        res.status(200).send(value);
+        cb();
+        return;
       });
     }
   },
@@ -104,11 +90,7 @@ export default {
       });
     })
     .then(() => {
-      return new Promise((resolve, reject) => {
-        s3.getImageUrl(key, (err, url)=>{
-          return (err) ? reject(err) : resolve(url);
-        });
-      });
+      return s3.getImageUrl(key);
     })
     .then((url) => {
       return new Promise((resolve, reject) => {
