@@ -201,6 +201,7 @@ export default {
       title: req.body.title,
       lat: req.body.lat,
       lng: req.body.lng,
+      userKey: req.body.userKey,
       address: req.body.address,
       category: req.body.category,
       startTime: req.body.startTime,
