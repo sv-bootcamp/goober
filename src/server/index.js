@@ -14,7 +14,9 @@ export default (cb) => {
     /* eslint-enable */
   });
   app.use(bodyParser.urlencoded({extended: true}));
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({
+    limit: 1024 * 1024 * 10
+  }));
 
   app.use('/javascripts', express.static(path.join(__dirname, '../../dist-client/javascripts')));
   app.use('/stylesheets', express.static(path.join(__dirname, '../../dist-client/stylesheets')));
