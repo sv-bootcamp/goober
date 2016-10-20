@@ -29,8 +29,7 @@ export default {
         }));
       }
       Promise.all(promises).then(() => {
-        return new S3Connector().getImageUrls(keys);
-      }).then((urls)=>{
+        const urls = new S3Connector().getImageUrls(keys);
         ImageManager.fetchImage(keys, (err, values) => {
           if (err) {
             return cb(new APIError(err, {
@@ -90,9 +89,7 @@ export default {
       });
     })
     .then(() => {
-      return s3.getImageUrl(key);
-    })
-    .then((url) => {
+      const url = s3.getImageUrl(key);  
       return new Promise((resolve, reject) => {
         const image = {
           key,
