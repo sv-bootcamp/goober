@@ -89,7 +89,7 @@ export default {
       });
     })
     .then(() => {
-      const url = s3.getImageUrl(key);  
+      const url = s3.getImageUrl(key);
       return new Promise((resolve, reject) => {
         const image = {
           key,
