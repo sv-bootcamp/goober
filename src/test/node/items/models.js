@@ -72,11 +72,8 @@ test('remove indexing items', t => {
     });
   })
   .catch((err)=>{
-    /* eslint-disable no-console */
-    console.log(err);
     t.fail('Error while reading from DB');
-    t.end();
-    /* eslint-enable */
+    t.end(err);
   });
 });
 test('Check endTime value and chang indexing items', t => {
@@ -85,7 +82,6 @@ test('Check endTime value and chang indexing items', t => {
     numberOfIdxItems: DEFAULT_PRECISON
   };
   const expiredItem = mockItems[expiredItemKey];
-  console.log(expiredItem);
   const timeHash = KeyUtils.getTimeHash(expiredItemKey);
   new Promise((resolve) => {
     ItemManager.validChecker(expiredItem, (result)=>{
@@ -123,8 +119,7 @@ test('Check endTime value and chang indexing items', t => {
     t.end();
   })
   .catch((err)=>{
-    /* eslint-disable no-console */
-    console.log(err);
-    /* eslint-enable */
+    t.fail('Error while reading from DB');
+    t.end(err);
   });
 });
