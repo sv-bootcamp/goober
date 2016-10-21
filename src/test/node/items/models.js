@@ -76,7 +76,7 @@ test('remove indexing items', t => {
     t.end(err);
   });
 });
-test('Check endTime value and chang indexing items', t => {
+test('Check endTime value and change indexing items', t => {
   const expected = {
     result: false,
     numberOfIdxItems: DEFAULT_PRECISON

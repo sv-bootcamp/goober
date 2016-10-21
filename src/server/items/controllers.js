@@ -2,12 +2,8 @@ import db, {fetchPrefix} from '../database';
 import {APIError} from '../ErrorHandler';
 import {KeyUtils, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
         UUID_START_POS, STATE, ENTITY, CATEGORY} from '../key-utils';
-<<<<<<< fa88a4cf962369732bc4a0cf8f51189fc8c91a79
-import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
-=======
-import {S3Connector} from '../aws-s3';
 import ItemManager from './models';
->>>>>>>  apply removing expired item function in item get API
+import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
 
 export default {
   getAll: (req, res, cb) => {
@@ -31,28 +27,6 @@ export default {
               if (err) {
                 return;
               }
-<<<<<<< fa88a4cf962369732bc4a0cf8f51189fc8c91a79
-              imagePromises.push(new Promise((imageResolve, imageReject) => {
-                const images = [];
-                db.createReadStream({
-                  start: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-`,
-                  end: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-\xFF`
-                }).on('data', (imageIndex) => {
-                  images.push(imageIndex.value.key);
-                }).on('error', (imageErr) => {
-                  imageReject(imageErr);
-                }).on('close', () => {
-                  if (isThumbnail === 'true') {
-                    refData.imageUrls =
-                      s3Connector.getPrefixedImageUrls(images, IMAGE_SIZE_PREFIX.THUMBNAIL);
-                  } else {
-                    refData.imageUrls = s3Connector.getImageUrls(images);
-                  }
-                  items.push(refData);
-                  imageResolve();
-                });
-              }));
-=======
               ItemManager.validChecker(refData, (valid) => {
                 if (valid) {
                   imagePromises.push(new Promise((imageResolve, imageReject) => {
@@ -65,19 +39,18 @@ export default {
                     }).on('error', (imageErr) => {
                       imageReject(imageErr);
                     }).on('close', () => {
-                      s3Connector.getImageUrls(images, (urlErr, urlList)=>{
-                        if (!urlErr) {
-                          refData.imageUrls = urlList;
-                          items.push(refData);
-                          return imageResolve();
-                        }
-                        return imageReject(urlErr);
-                      });
+                      if (isThumbnail === 'true') {
+                        refData.imageUrls =
+                          s3Connector.getPrefixedImageUrls(images, IMAGE_SIZE_PREFIX.THUMBNAIL);
+                      } else {
+                        refData.imageUrls = s3Connector.getImageUrls(images);
+                      }
+                      items.push(refData);
+                      imageResolve();
                     });
                   }));
                 }
               });
->>>>>>>  apply removing expired item function in item get API
             });
           }).on('error', (err) => {
             reject(err);
@@ -152,15 +125,12 @@ export default {
         }
 
         const conn = new S3Connector();
-        conn.getImageUrls(keys, (urlErr, imageUrls)=>{
-          if (urlErr) {
-            return cb(new APIError(err));
-          }
-          value.id = key;
-          value.imageUrls = imageUrls;
-          res.status(200).send(value);
-          return cb();
-        });
+        const imageUrls = conn.getImageUrls(keys);
+        value.id = key;
+        value.imageUrls = imageUrls;
+        res.status(200).send(value);
+        cb();
+        return;
       });
     });
   },
