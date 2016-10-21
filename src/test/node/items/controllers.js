@@ -120,7 +120,6 @@ test('get a item from database', t => {
       }
     });
     const res = httpMocks.createResponse();
-
     ItemController.getById(req, res, () => {
       const data = res._getData();
       t.equal(res.statusCode, expected.statusCode, 'should be same title');
@@ -136,7 +135,6 @@ test('get a item from database', t => {
 test('get by area from database', t => {
   const expected = {
     status: 200,
-    message: 'success',
     items: [
       {
         key: 'item-8523910540000-b82e-473b-1234-ead0f190b005',

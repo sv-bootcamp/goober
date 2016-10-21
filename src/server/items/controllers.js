@@ -2,6 +2,7 @@ import db, {fetchPrefix} from '../database';
 import {APIError} from '../ErrorHandler';
 import {KeyUtils, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
         UUID_START_POS, STATE, ENTITY, CATEGORY} from '../key-utils';
+import ItemManager from './models';
 import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
 
 export default {
@@ -27,26 +28,30 @@ export default {
                 reject(err);
                 return;
               }
-              imagePromises.push(new Promise((imageResolve, imageReject) => {
-                const images = [];
-                db.createReadStream({
-                  start: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-`,
-                  end: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-\xFF`
-                }).on('data', (imageIndex) => {
-                  images.push(imageIndex.value.key);
-                }).on('error', (imageErr) => {
-                  imageReject(imageErr);
-                }).on('close', () => {
-                  if (isThumbnail === 'true') {
-                    refData.imageUrls =
-                      s3Connector.getPrefixedImageUrls(images, IMAGE_SIZE_PREFIX.THUMBNAIL);
-                  } else {
-                    refData.imageUrls = s3Connector.getImageUrls(images);
-                  }
-                  items.push(refData);
-                  imageResolve();
-                });
-              }));
+              ItemManager.validChecker(refData, (valid) => {
+                if (valid) {
+                  imagePromises.push(new Promise((imageResolve, imageReject) => {
+                    const images = [];
+                    db.createReadStream({
+                      start: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-`,
+                      end: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-\xFF`
+                    }).on('data', (imageIndex) => {
+                      images.push(imageIndex.value.key);
+                    }).on('error', (imageErr) => {
+                      imageReject(imageErr);
+                    }).on('close', () => {
+                      if (isThumbnail === 'true') {
+                        refData.imageUrls =
+                          s3Connector.getPrefixedImageUrls(images, IMAGE_SIZE_PREFIX.THUMBNAIL);
+                      } else {
+                        refData.imageUrls = s3Connector.getImageUrls(images);
+                      }
+                      items.push(refData);
+                      imageResolve();
+                    });
+                  }));
+                }
+              });
             });
           }).on('error', (err) => {
             reject(err);
@@ -84,8 +89,11 @@ export default {
       start: `${ENTITY.ITEM}-`,
       end: `${ENTITY.ITEM}-\xFF`
     }).on('data', (data) => {
-      data.value.key = data.key;
-      items.push(data.value);
+      ItemManager.validChecker(data.value, (valid) => {
+        if (valid) {
+          items.push(data.value);
+        }
+      });
     }).on('error', (err) => {
       error = err;
       return cb(new APIError(err));
@@ -279,4 +287,3 @@ export default {
     });
   }
 };
-

@@ -76,10 +76,10 @@ export const KeyUtils = {
     });
     return `${key}-${timeHash}`;
   },
-  getIdxKeys: (lat, lng, timeHash) => {
+  getIdxKeys: (lat, lng, timeHash, state = STATE.ALIVE) => {
     const keys = [];
     for (let i = 1; i <= DEFAULT_PRECISON; i = i + 1) {
-      keys.push(`item-${STATE.ALIVE}-${geohash.encode(lat, lng, i)}-${timeHash}`);
+      keys.push(`item-${state}-${geohash.encode(lat, lng, i)}-${timeHash}`);
     }
     return keys;
   },
@@ -100,6 +100,9 @@ export const KeyUtils = {
   },
   calcPrecisionByZoom: (zoom) => {
     return Math.floor((zoom + 1) / 3);
+  },
+  parseState: (key) => {
+    return key.charAt(key.indexOf('-') + 1);
   }
 };
 
