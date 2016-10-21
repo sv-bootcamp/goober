@@ -1,9 +1,9 @@
 import db from '../database';
-import {KeyUtils, STATE, DEFAULT_PRECISON} from '../key-utils';
+import {KeyUtils, STATE, CATEGORY, DEFAULT_PRECISON} from '../key-utils';
 
 export default class ItemManager {
   static validChecker(item, cb) {
-    if (this.isValid(item.endTime)) {
+    if (item.category === CATEGORY.FACILITY || this.isValid(item.endTime)) {
       cb(true);
       return;
     }

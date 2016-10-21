@@ -2,7 +2,7 @@ import test from 'tape';
 import testDB from '../../../server/database';
 import {KeyUtils, ENTITY, STATE, DEFAULT_PRECISON} from '../../../server/key-utils';
 import ItemManager from '../../../server/items/models';
-import {mockItems} from '../../../server/database-mock-data';
+import {mockItems, expiredItemKey} from '../../../server/database-mock-data';
 
 const testItem = {
   title: 'Lion popup store',
@@ -18,7 +18,7 @@ const testItem = {
   userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00',
   image: 'aaaaaa'
 };
-test('distinguish expired date', t => {
+test('validate expired date', t => {
   const expiredDate = '1999-01-01T01:11:00.851Z';
   const vaildDate = new Date().setDate(new Date().getDate() + 1);
   const expected = {
@@ -74,6 +74,8 @@ test('remove indexing items', t => {
   .catch((err)=>{
     /* eslint-disable no-console */
     console.log(err);
+    t.fail('Error while reading from DB');
+    t.end();
     /* eslint-enable */
   });
 });
@@ -82,8 +84,8 @@ test('Check endTime value and chang indexing items', t => {
     result: false,
     numberOfIdxItems: DEFAULT_PRECISON
   };
-  const expiredItemKey = 'item-8523910540006-b82e-473b-1234-ead0f190b006';
   const expiredItem = mockItems[expiredItemKey];
+  console.log(expiredItem);
   const timeHash = KeyUtils.getTimeHash(expiredItemKey);
   new Promise((resolve) => {
     ItemManager.validChecker(expiredItem, (result)=>{
