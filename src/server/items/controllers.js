@@ -25,6 +25,7 @@ export default {
           }).on('data', (data) => {
             db.get(data.value.key, (err, refData) => {
               if (err) {
+                reject(err);
                 return;
               }
               ItemManager.validChecker(refData, (valid) => {
