@@ -87,13 +87,13 @@ test('test get image url', t => {
   const imageKey = 'test-image-key';
   const expected = {
     imageUrl: 'url-of-test-image-key'
-  }
+  };
   const result = conn.getImageUrl(imageKey);
   t.equal(result, expected.imageUrl, 'should be same image url');
   t.end();
 });
 test('test get image urls', t => {
-  const conn= new S3Connector();
+  const conn = new S3Connector();
   const imageKeys = [
     'test-image-key1',
     'test-image-key2',
@@ -103,16 +103,16 @@ test('test get image urls', t => {
   ];
   const expected = {
     imageUrls: [
-    'url-of-test-image-key1',
-    'url-of-test-image-key2',
-    'url-of-test-image-key3',
-    'url-of-test-image-key4',
-    'url-of-test-image-key5'
+      'url-of-test-image-key1',
+      'url-of-test-image-key2',
+      'url-of-test-image-key3',
+      'url-of-test-image-key4',
+      'url-of-test-image-key5'
     ]
-  }
+  };
   const result = conn.getImageUrls(imageKeys);
-  for(let i = 0; i < result.length; i = i + 1){
-    t.equal(result[i], expected.imageUrls[i], 'should be same image urls');  
+  for (let i = 0; i < result.length; i = i + 1) {
+    t.equal(result[i], expected.imageUrls[i], 'should be same image urls');
   }
   t.end();
 });
@@ -121,13 +121,13 @@ test('test get thumbnail image url', t => {
   const imageKey = 'test-image-key';
   const expected = {
     imageUrl: `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key`
-  }
+  };
   const result = conn.getPrefixedImageUrl(imageKey, IMAGE_SIZE_PREFIX.THUMBNAIL);
   t.equal(result, expected.imageUrl, 'should be same image url');
   t.end();
 });
 test('test get image urls', t => {
-  const conn= new S3Connector();
+  const conn = new S3Connector();
   const imageKeys = [
     'test-image-key1',
     'test-image-key2',
@@ -137,16 +137,16 @@ test('test get image urls', t => {
   ];
   const expected = {
     imageUrls: [
-    `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key1`,
-    `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key2`,
-    `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key3`,
-    `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key4`,
-    `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key5`
+      `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key1`,
+      `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key2`,
+      `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key3`,
+      `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key4`,
+      `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key5`
     ]
-  }
+  };
   const result = conn.getPrefixedImageUrls(imageKeys, IMAGE_SIZE_PREFIX.THUMBNAIL);
-  for(let i = 0; i < result.length; i = i + 1){
-    t.equal(result[i], expected.imageUrls[i], 'should be same image urls');  
+  for (let i = 0; i < result.length; i = i + 1) {
+    t.equal(result[i], expected.imageUrls[i], 'should be same image urls');
   }
   t.end();
 });

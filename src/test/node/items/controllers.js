@@ -109,7 +109,7 @@ test('get a item from database', t => {
           return;
         }
         resolve();
-      })
+      });
     });
   }).then(() => {
     const req = httpMocks.createRequest({

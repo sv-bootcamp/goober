@@ -1,4 +1,4 @@
-import db from '../database';
+import db, {fetchPrefix} from '../database';
 import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import {APIError} from '../ErrorHandler';
@@ -16,13 +16,13 @@ export default {
       for (const state of checkState) {
         promises.push(new Promise((resolve, reject) => {
           const prefix = KeyUtils.getPrefix(ENTITY.IMAGE, state, item);
-          ImageManager.fetchPrefix(prefix, (err, data) => {
+          fetchPrefix(prefix, (err, data) => {
             if (err) {
               reject(err);
               return;
             }
-            data.map((key) => {
-              keys.push(key);
+            data.map((value) => {
+              keys.push(value.key);
             });
             resolve();
           });
@@ -89,7 +89,7 @@ export default {
       });
     })
     .then(() => {
-      const url = s3.getImageUrl(key);  
+      const url = s3.getImageUrl(key);
       return new Promise((resolve, reject) => {
         const image = {
           key,
