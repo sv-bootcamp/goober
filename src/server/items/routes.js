@@ -4,7 +4,7 @@ import ItemControllers from './controllers';
 const router = express.Router();
 
 /**
- * @api {get} /items?lat=37.768696&lng=-122.419495&zoom=14 Get All items
+ * @api {get} /items?lat=37.768696&lng=-122.419495&zoom=14&isThumbnail=true Get All items
  * @apiName getAllItem
  * @apiGroup Item
  *

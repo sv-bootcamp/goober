@@ -1,5 +1,5 @@
 import test from 'tape';
-import {S3Connector} from '../../server/aws-s3';
+import {S3Connector, IMAGE_SIZE_PREFIX} from '../../server/aws-s3';
 import fs from 'fs';
 import config from 'config';
 
@@ -60,18 +60,9 @@ test('test s3 get image', t => {
   const expected = {
     length: opt.length
   };
-  conn.getImageUrls(opt, (err, data) => {
-    if (err) {
-      /* eslint-disable no-console */
-      console.log(err);
-      /* eslint-enable */
-      t.fail('Error, getImageUrls');
-      t.end();
-      return;
-    }
-    t.equal(data.length, expected.length, 'should be same length');
-    t.end();
-  });
+  const data = conn.getImageUrls(opt);
+  t.equal(data.length, expected.length, 'should be same length');
+  t.end();
 });
 test('test s3 delete image', t => {
   const conn = new S3Connector();
@@ -90,4 +81,72 @@ test('test s3 delete image', t => {
     t.ok(true, 'image removed');
     t.end();
   });
+});
+test('test get image url', t => {
+  const conn = new S3Connector();
+  const imageKey = 'test-image-key';
+  const expected = {
+    imageUrl: 'url-of-test-image-key'
+  }
+  const result = conn.getImageUrl(imageKey);
+  t.equal(result, expected.imageUrl, 'should be same image url');
+  t.end();
+});
+test('test get image urls', t => {
+  const conn= new S3Connector();
+  const imageKeys = [
+    'test-image-key1',
+    'test-image-key2',
+    'test-image-key3',
+    'test-image-key4',
+    'test-image-key5'
+  ];
+  const expected = {
+    imageUrls: [
+    'url-of-test-image-key1',
+    'url-of-test-image-key2',
+    'url-of-test-image-key3',
+    'url-of-test-image-key4',
+    'url-of-test-image-key5'
+    ]
+  }
+  const result = conn.getImageUrls(imageKeys);
+  for(let i = 0; i < result.length; i = i + 1){
+    t.equal(result[i], expected.imageUrls[i], 'should be same image urls');  
+  }
+  t.end();
+});
+test('test get thumbnail image url', t => {
+  const conn = new S3Connector();
+  const imageKey = 'test-image-key';
+  const expected = {
+    imageUrl: `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key`
+  }
+  const result = conn.getPrefixedImageUrl(imageKey, IMAGE_SIZE_PREFIX.THUMBNAIL);
+  t.equal(result, expected.imageUrl, 'should be same image url');
+  t.end();
+});
+test('test get image urls', t => {
+  const conn= new S3Connector();
+  const imageKeys = [
+    'test-image-key1',
+    'test-image-key2',
+    'test-image-key3',
+    'test-image-key4',
+    'test-image-key5'
+  ];
+  const expected = {
+    imageUrls: [
+    `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key1`,
+    `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key2`,
+    `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key3`,
+    `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key4`,
+    `url-of-${IMAGE_SIZE_PREFIX.THUMBNAIL}-test-image-key5`
+    ]
+  }
+  const result = conn.getPrefixedImageUrls(imageKeys, IMAGE_SIZE_PREFIX.THUMBNAIL);
+  for(let i = 0; i < result.length; i = i + 1){
+    t.equal(result[i], expected.imageUrls[i], 'should be same image urls');  
+  }
+  t.end();
 });

@@ -2,11 +2,11 @@ import db, {fetchPrefix} from '../database';
 import {APIError} from '../ErrorHandler';
 import {KeyUtils, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
         UUID_START_POS, STATE, ENTITY, CATEGORY} from '../key-utils';
-import {S3Connector} from '../aws-s3';
+import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
 
 export default {
   getAll: (req, res, cb) => {
-    const {lat, lng, zoom} = req.query;
+    const {lat, lng, zoom, isThumbnail} = req.query;
     // getByArea
     if (lat && lng && zoom) {
       const precision = KeyUtils.calcPrecisionByZoom(Number(zoom));
@@ -37,14 +37,14 @@ export default {
                 }).on('error', (imageErr) => {
                   imageReject(imageErr);
                 }).on('close', () => {
-                  s3Connector.getImageUrls(images, (urlErr, urlList)=>{
-                    if (!urlErr) {
-                      refData.imageUrls = urlList;
-                      items.push(refData);
-                      return imageResolve();
-                    }
-                    return imageReject(urlErr);
-                  });
+                  if (isThumbnail === 'true') {
+                    refData.imageUrls = 
+                      s3Connector.getPrefixedImageUrls(images, IMAGE_SIZE_PREFIX.THUMBNAIL);
+                  } else {
+                    refData.imageUrls = s3Connector.getImageUrls(images);
+                  }
+                  items.push(refData);
+                  imageResolve();
                 });
               }));
             });
@@ -116,16 +116,10 @@ export default {
           cb(new APIError(err));
           return;
         }
-        const conn = new S3Connector();
-        conn.getImageUrls(keys, (urlErr, imageUrls)=>{
-          if(urlErr){
-            return cb(new APIError(err));
-          }
-          value.id = key;
-          value.imageUrls = imageUrls;
-          res.status(200).send(value);
-          return cb();
-        });
+        value.id = key;
+        value.imageUrls = new S3Connector().getImageUrls(keys);
+        res.status(200).send(value);
+        cb();
       });
     });
   },
