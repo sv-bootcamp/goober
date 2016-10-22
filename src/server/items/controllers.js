@@ -89,11 +89,10 @@ export default {
       start: `${ENTITY.ITEM}-`,
       end: `${ENTITY.ITEM}-\xFF`
     }).on('data', (data) => {
-      ItemManager.validChecker(data.value, (valid) => {
-        if (valid) {
-          items.push(data.value);
-        }
-      });
+      if (!KeyUtils.isOriginKey(data.key)) {
+        return;
+      }
+      items.push(data.value);
     }).on('error', (err) => {
       error = err;
       return cb(new APIError(err));
@@ -103,7 +102,6 @@ export default {
         cb();
       }
     });
-    return;
   },
   getById: (req, res, cb) => {
     const key = req.params.id;

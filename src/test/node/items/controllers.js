@@ -35,8 +35,8 @@ const imageRedSelo = {
 };
 
 test('get all items from database', t => {
-  let key1 = `item-${uuid()}`;
-  let key2 = `item-${uuid()}`;
+  let key1 = `item-${KeyUtils.genTimeHash(new Date())}`;
+  let key2 = `item-${KeyUtils.genTimeHash(new Date())}`;
 
   // https://github.com/Level/levelup#introduction
   // LevelDB stores entries sorted lexicographically by keys.
@@ -257,7 +257,8 @@ test('add an item to database', t => {
         if (data.value.key !== key) {
           t.fail(`Indexing item's key is wrong : ${data.value.key}`);
           t.end();
-        }      // Case of origin image having information about image data(userKey, caption...).
+        }
+        // Case of origin image having information about image data(userKey, caption...).
       } else if (!isItem && isOriginKey) {
         addedImage = data.value;
       }
