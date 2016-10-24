@@ -89,9 +89,6 @@ export default {
       start: `${ENTITY.ITEM}-`,
       end: `${ENTITY.ITEM}-\xFF`
     }).on('data', (data) => {
-      if (!KeyUtils.isOriginKey(data.key)) {
-        return;
-      }
       items.push(data.value);
     }).on('error', (err) => {
       error = err;
