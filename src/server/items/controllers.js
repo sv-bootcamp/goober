@@ -89,11 +89,7 @@ export default {
       start: `${ENTITY.ITEM}-`,
       end: `${ENTITY.ITEM}-\xFF`
     }).on('data', (data) => {
-      ItemManager.validChecker(data.value, (valid) => {
-        if (valid) {
-          items.push(data.value);
-        }
-      });
+      items.push(data.value);
     }).on('error', (err) => {
       error = err;
       return cb(new APIError(err));
@@ -103,7 +99,6 @@ export default {
         cb();
       }
     });
-    return;
   },
   getById: (req, res, cb) => {
     const key = req.params.id;
@@ -158,7 +153,7 @@ export default {
         ops.push({
           type: 'put',
           key: deletedItemId,
-          value: {ref: key}
+          value: {key: key}
         });
         ops.push({
           type: 'del',
