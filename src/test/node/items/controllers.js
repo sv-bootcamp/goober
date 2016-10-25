@@ -230,7 +230,7 @@ test('add an item to database', t => {
     const status = res.statusCode;
     const message = res._getData().message;
     const key = res._getData().data;
-    const timeHash = KeyUtils.getTimeHash(key);
+    const timeHash = KeyUtils.parseTimeHash(key);
     t.equal(status, expected.status, 'should be same status');
     t.equal(message, expected.message, 'should be same message');
     let error;
@@ -241,8 +241,8 @@ test('add an item to database', t => {
       start: '\x00',
       end: '\xFF'
     }).on('data', (data) => {
-      if (KeyUtils.getTimeHash(data.key) !== timeHash) {
-        t.fail(`TimeHash is wrong : ${KeyUtils.getTimeHash(data.key)}`);
+      if (KeyUtils.parseTimeHash(data.key) !== timeHash) {
+        t.fail(`TimeHash is wrong : ${KeyUtils.parseTimeHash(data.key)}`);
         t.end();
       }
       const isOriginKey = KeyUtils.isOriginKey(data.key);

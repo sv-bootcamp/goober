@@ -37,7 +37,7 @@ test('remove indexing items', t => {
     numberOfIdxItems: DEFAULT_PRECISON,
     statusAfter: STATE.REMOVED
   };
-  const timeHash = KeyUtils.getTimeHash(testItem.key);
+  const timeHash = KeyUtils.parseTimeHash(testItem.key);
   const idxItems = [];
   new Promise((resolve, reject) => {
     ItemManager.changeState(testItem, STATE.REMOVED, (err) => {
@@ -82,7 +82,7 @@ test('Check endTime value and change indexing items', t => {
     numberOfIdxItems: DEFAULT_PRECISON
   };
   const expiredItem = mockItems[expiredItemKey];
-  const timeHash = KeyUtils.getTimeHash(expiredItemKey);
+  const timeHash = KeyUtils.parseTimeHash(expiredItemKey);
   new Promise((resolve) => {
     ItemManager.validChecker(expiredItem, (result)=>{
       t.equal(result, expected.result, 'should be same result');

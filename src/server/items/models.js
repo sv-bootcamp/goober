@@ -11,7 +11,7 @@ export default class ItemManager {
     ItemManager.changeState(item, STATE.EXPIRED);
   }
   static changeState(item, newState, cb = () => {}) {
-    const timeHash = KeyUtils.getTimeHash(item.key);
+    const timeHash = KeyUtils.parseTimeHash(item.key);
     const ops = [];
     for (const state in STATE) {
       if (STATE.hasOwnProperty(state)) {

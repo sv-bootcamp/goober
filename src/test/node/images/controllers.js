@@ -127,7 +127,7 @@ test('Post image', t => {
     const status = res.statusCode;
     const message = res._getData().message;
     const key = res._getData().data;
-    const timeHash = KeyUtils.getTimeHash(key);
+    const timeHash = KeyUtils.parseTimeHash(key);
     t.equal(status, expected.status, 'should be same status');
     t.equal(message, expected.message, 'should be same message');
     let error;
@@ -137,7 +137,7 @@ test('Post image', t => {
       start: '\x00',
       end: '\xFF'
     }).on('data', (data) => {
-      if (KeyUtils.getTimeHash(data.key) === timeHash) {
+      if (KeyUtils.parseTimeHash(data.key) === timeHash) {
         if (KeyUtils.isOriginKey(data.key)) {
           originImage = data.value;
         } else {
