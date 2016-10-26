@@ -37,7 +37,6 @@ export const mockItems = {
     createdDate: '2016-10-08T01:11:46.851Z',
     modifiedDate: '2016-10-08T01:11:46.851Z',
     category: 'facility',
-    startTime: '2016-10-08T01:11:46.851Z',
     key: 'item-8523910540000-dd3860f5-b82e-473b-1234-ead0f190b005',
     userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
   },
@@ -49,7 +48,6 @@ export const mockItems = {
     createdDate: '2016-10-09T01:11:46.851Z',
     modifiedDate: '2016-10-09T01:11:46.851Z',
     category: 'facility',
-    startTime: '2016-10-09T01:11:46.851Z',
     key: 'item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004',
     userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
   },
