@@ -93,6 +93,11 @@ test('Check endTime value and change indexing items', t => {
     });
   })
   .then(()=>{
+    return new Promise((resolve) => {
+      setTimeout(resolve, 2000);
+    });
+  })
+  .then(()=>{
     return new Promise((resolve, reject) => {
       let error;
       let changedItemsCnt = 0;
