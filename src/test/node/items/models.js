@@ -93,6 +93,12 @@ test('Check endTime value and change indexing items', t => {
     });
   })
   .then(()=>{
+    /* eslint-disable max-len */
+    /*
+      validChecker function implements changing state code of indexing item asynchronously if it's invalid.
+      this implementation is runned after callback to prevent perfomance issue in item get API so needs delay for test
+    */
+    /* eslint-enable */
     return new Promise((resolve) => {
       setTimeout(resolve, 2000);
     });
