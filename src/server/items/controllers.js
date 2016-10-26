@@ -114,12 +114,16 @@ export default {
         cb(new APIError(errGet));
         return;
       }
-      fetchPrefix(`${ENTITY.IMAGE}-${STATE.ALIVE}-${key}-`, (err, keys) => {
+      fetchPrefix(`${ENTITY.IMAGE}-${STATE.ALIVE}-${key}-`, (err, values) => {
         if (err) {
           cb(new APIError(err));
           return;
         }
 
+        const keys = [];
+        values.map((obj) => {
+          keys.push(obj.key);
+        });
         const conn = new S3Connector();
         const imageUrls = conn.getImageUrls(keys);
         value.id = key;
