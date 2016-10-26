@@ -13,3 +13,5 @@ import './images/controllers';
 import './users/controllers';
 import './database';
 import './aws-s3';
+import './items/models';
+import './users/controllers';
