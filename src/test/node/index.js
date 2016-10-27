@@ -13,5 +13,6 @@ import './images/controllers';
 import './users/controllers';
 import './database';
 import './aws-s3';
+import './auth-token';
 import './items/models';
 import './users/controllers';
