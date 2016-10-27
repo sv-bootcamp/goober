@@ -1,5 +1,5 @@
 import test from 'tape';
-import testDB from '../../../server/database';
+import testDB, {initMock, clearDB} from '../../../server/database';
 import {KeyUtils, ENTITY, STATE, DEFAULT_PRECISON} from '../../../server/key-utils';
 import ItemManager from '../../../server/items/models';
 import {mockItems, expiredItemKey} from '../../../server/database-mock-data';
@@ -83,10 +83,24 @@ test('Check endTime value and change indexing items', t => {
   };
   const expiredItem = mockItems[expiredItemKey];
   const timeHash = KeyUtils.getTimeHash(expiredItemKey);
-  new Promise((resolve) => {
-    ItemManager.validChecker(expiredItem, (result)=>{
-      t.equal(result, expected.result, 'should be same result');
-      resolve();
+  let itemCnt = 0;
+  clearDB().then(initMock).then(()=>{
+    return new Promise((resolve) => {
+      ItemManager.validChecker(expiredItem, (result)=>{
+        t.equal(result, expected.result, 'should be same result');
+        resolve();
+      });
+    });
+  })
+  .then(()=>{
+    /* eslint-disable max-len */
+    /*
+      validChecker function implements changing state code of indexing item asynchronously if it's invalid.
+      this implementation is runned after callback to prevent perfomance issue in item get API so needs delay for test
+    */
+    /* eslint-enable */
+    return new Promise((resolve) => {
+      setTimeout(resolve, 2000);
     });
   })
   .then(()=>{
@@ -97,6 +111,7 @@ test('Check endTime value and change indexing items', t => {
         start: `${ENTITY.ITEM}-`,
         end: `${ENTITY.ITEM}-\xFF`
       }).on('data', (data) => {
+        itemCnt = itemCnt + 1;
         if (data.key.includes(timeHash) && !KeyUtils.isOriginKey(data.key)) {
           if (KeyUtils.parseState(data.key) !== STATE.EXPIRED) {
             t.fail(`This key's staus is wrong : ${data.key}(expeted:${STATE.EXPIRED}`);
@@ -114,7 +129,7 @@ test('Check endTime value and change indexing items', t => {
   })
   .then((changedItemsCnt)=>{
     t.equal(changedItemsCnt, expected.numberOfIdxItems,
-     'should be same number of indexing items');
+     `should be same number of indexing items (all item conunt : ${itemCnt})`);
     t.pass('all item keys are changed successfully');
     t.end();
   })
