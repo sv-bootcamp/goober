@@ -10,9 +10,9 @@ export const ENTITY = {
   IMAGE: 'image',
   COMMENT: 'comment',
   USER: 'user',
-  CREATED_POST: 'created-post',
-  SAVED_POST: 'saved-post',
-  REACT_POST: 'react-post'
+  CREATED_POST: 'createdPosts',
+  SAVED_POST: 'savedPosts',
+  REACT_POST: 'reactPosts'
 };
 export const CATEGORY = {
   EVENT: 'event',
