@@ -58,7 +58,6 @@ export default {
         return (err) ? reject(err) : resolve();
       });
     }).then(() => {
-      console.log(db.isOpen());
       return new Promise((resolve, reject) => {
         db.batch(dbOps, (err) => {
           return (err) ? reject(err) : resolve();
