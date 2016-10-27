@@ -22,7 +22,6 @@ export default {
     });
   },
   post(req, res, cb) {
-    console.log('post in');
     const currentTime = new Date();
     const timeHash = KeyUtils.genTimeHash(currentTime);
     const key = `${ENTITY.USER}-${timeHash}`;
@@ -32,7 +31,7 @@ export default {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
-      image: req.body.image
+      imageUrl: req.body.image
     };
     const idxUser = {
       key: key
