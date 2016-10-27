@@ -2,7 +2,7 @@ import levelup from 'levelup';
 import leveldown from 'leveldown';
 import config from 'config';
 import { mockItems, mockItemIndexies, mockImages, mockImageIndexies,
-        mockUsers} from './database-mock-data';
+        mockUsers, mockCreatedPosts} from './database-mock-data';
 
 const db = levelup(config.database, {valueEncoding: 'json'});
 export default db;
@@ -86,7 +86,15 @@ export const initMock = () => {
         });
       }
     }
-
+    for (const key in mockCreatedPosts) {
+      if (mockCreatedPosts.hasOwnProperty(key)) {
+        ops.push({
+          type: 'put',
+          key,
+          value: mockCreatedPosts[key]
+        });
+      }
+    }
     db.batch(ops, (err) => {
       if (err) {
         return reject(new Error(err));

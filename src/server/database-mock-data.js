@@ -14,7 +14,7 @@ export const mockItems = {
     startTime: '2016-10-13T01:11:46.851Z',
     endTime: new Date(initTime.getTime() + 60000).toISOString(),
     key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
-    userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
+    userKey: 'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000'
   },
   'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001': {
     title: 'Generation Beauty by ipsy 2016',
@@ -27,7 +27,7 @@ export const mockItems = {
     startTime: '2016-10-12T01:11:46.851Z',
     endTime: new Date(initTime.getTime() + dayInMs * 2).toISOString(),
     key: 'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001',
-    userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
+    userKey: 'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000'
   },
   'item-8523910540000-dd3860f5-b82e-473b-1234-ead0f190b005': {
     title: 'Union Square Public Toilet',
@@ -79,6 +79,7 @@ export const mockItems = {
   }
 };
 export const expiredItemKey = 'item-8523910540006-dd3860f5-b82e-473b-1234-ead0f190b006';
+export const mockUserKey = 'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000';
 export const constexpiredItem = {
   title: 'Expired Item',
   lat: 37.764375,
@@ -266,10 +267,26 @@ export const mockItemIndexies = {
 };
 
 export const mockUsers = {
-  'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000': {
+  'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr01': {
     key: 'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000',
     userName: 'Patrick Shim',
     createdDate: '2016-10-14T07:30:38.064Z'
+  }
+};
+export const mockUser = {
+  key: mockUserKey,
+  userName: 'Moongchi Jeong',
+  createdDate: '2016-10-10T07:30:38.064Z'
+};
+mockUsers[mockUserKey] = mockUser;
+
+export const mockCreatedPosts = {
+  'createdPosts-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000': {
+    key: 'createdPosts-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000',
+    itemKeys: [
+      'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+      'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001'
+    ]
   }
 };
 

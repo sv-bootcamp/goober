@@ -11,5 +11,6 @@ import './items/models';
 import './images/models';
 import './images/controllers';
 import './users/controllers';
+import './PostManager';
 import './database';
 import './aws-s3';
