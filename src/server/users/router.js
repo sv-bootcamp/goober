@@ -18,7 +18,7 @@ const router = express.Router();
  *        key: 'user-unique-key',
  *        name: 'test-user',
  *        email: 'test@email.com',
- *        imagePath: 'url-of-image'
+ *        imageUrl: 'url-of-image'
  *     }
  *
  * @apiError (Error 500) Internal Server Error.

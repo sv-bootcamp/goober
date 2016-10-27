@@ -8,7 +8,7 @@ const mockUser = {
   name: 'test-user',
   email: 'test@email.com',
   password: 'secret-password',
-  imagePath: 'url-of-image'
+  imageUrl: 'url-of-image'
 };
 
 test('get a user from database', t => {
