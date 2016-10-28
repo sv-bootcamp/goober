@@ -32,7 +32,7 @@ test('isPostType : check post type string', t => {
 test('add created posts with user key', t => {
   const timeHash = KeyUtils.genTimeHash(new Date());
   new Promise((resolve, reject) => {
-    PostManager.addPost(ENTITY.CREATED_POST, mockItem, timeHash, (err, key)=>{
+    PostManager.addPost(ENTITY.CREATED_POST, ENTITY.ITEM, mockItem, timeHash, (err, key)=>{
       return (err) ? reject(err) : resolve(key);
     });
   }).then((key)=>{

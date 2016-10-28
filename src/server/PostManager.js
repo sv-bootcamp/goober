@@ -13,15 +13,19 @@ export default class PostManager {
     }
     return false;
   }
-  static addPost(postType, post, timeHash, cb) {
+  static addPost(postType, entity, post, timeHash, cb) {
     if (!this.isPostType(postType)) {
       return cb(new Error(('invalid post type.')), null);
     }
     if (!post.key || !post.userKey) {
-      return cb(new Error(('key and userKey are undefined)')));
+      return cb(new Error(('key and userKey are undefined)'), null));
+    }
+    if (entity !== ENTITY.ITEM && entity !== ENTITY.IMAGE) {
+      return cb(new Error(('invalid entity'), null));
     }
     const idxKey = KeyUtils.getIdxKey(postType, timeHash, post.userKey);
     const idxPost = {
+      entity: entity,
       key: post.key
     };
     console.log(idxKey);
