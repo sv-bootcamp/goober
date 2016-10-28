@@ -56,7 +56,7 @@ export const KeyUtils = {
   isOriginKey: (key) => {
     return ((key.match(/-/g) || []).length === DELIMITER_NUM_IN_KEY) ? true : false;
   },
-  getTimeHash: (key) => {
+  parseTimeHash: (key) => {
     return key.substring(key.length - TIMEHASH_LENGTH, key.length);
   },
   getReversedTime: (time = new Date()) => {
