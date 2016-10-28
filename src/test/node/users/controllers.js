@@ -56,7 +56,7 @@ test('add a user to database', t => {
     const status = res.statusCode;
     const message = res._getData().message;
     const key = res._getData().data;
-    const timeHash = KeyUtils.getTimeHash(key);
+    const timeHash = KeyUtils.parseTimeHash(key);
     t.equal(status, expected.status, 'should be same status');
     t.equal(message, expected.message, 'should be same message');
     let error;
