@@ -35,4 +35,4 @@ class AuthToken {
   }
 }
 
-export default AuthToken = new AuthToken(SECRET_KEY);
+export default AuthToken = new AuthToken();
