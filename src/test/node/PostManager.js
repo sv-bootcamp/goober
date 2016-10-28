@@ -18,7 +18,7 @@ export const mockItem = {
 };
 test('isPostType : check post type string', t => {
   const failCase = 'createpost';
-  const successCase = 'createdPosts';
+  const successCase = 'createdPost';
   const expected = {
     failCaseResult: false,
     successCaseResult: true

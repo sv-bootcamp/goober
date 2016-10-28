@@ -13,17 +13,19 @@ export default class PostManager {
     }
     return false;
   }
-  static addPost(postType, item, timeHash, cb) {
+  static addPost(postType, post, timeHash, cb) {
     if (!this.isPostType(postType)) {
       return cb(new Error(('invalid post type.')), null);
     }
-    if (!item.key || !item.userKey) {
+    if (!post.key || !post.userKey) {
       return cb(new Error(('key and userKey are undefined)')));
     }
-    const idxKey = KeyUtils.getIdxKey(postType, timeHash, item.userKey);
+    const idxKey = KeyUtils.getIdxKey(postType, timeHash, post.userKey);
     const idxPost = {
-      key: item.key
+      key: post.key
     };
+    console.log(idxKey);
+    console.log(idxPost);
     return db.put(idxKey, idxPost, (err) => {
       if (err) {
         return cb(new Error('error while putting in DB'), null);
