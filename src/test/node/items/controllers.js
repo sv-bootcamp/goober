@@ -179,12 +179,10 @@ test('get by area from database', t => {
   clearDB().then(initMock).then(()=>{
     ItemController.getAll(req, res, () => {
       t.equal(res.statusCode, expected.status, 'should be same status');
-      const items = res._getData().items.sort((a, b) => {
-        return a.key > b.key;
-      });
-      expected.items = expected.items.sort((a, b) => {
-        return a.key > b.key;
-      });
+      const items = res._getData().items;
+      if (items.length === 0) {
+        t.fail('respone data is empty');
+      }
       for (let j = 0; j < items.length; j = j + 1) {
         t.equal(items[j].id, expected.items[j].id, 'should be same id');
         t.equal(items[j].imageUrls.length, expected.items[j].imageUrls.length,

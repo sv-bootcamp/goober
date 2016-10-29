@@ -2,6 +2,7 @@ import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
 import {KeyUtils, ENTITY} from '../../../server/key-utils';
 import UserManager, {CreatedPostManager, SavedPostManager} from '../../../server/users/models';
+import {mockUsers, mockCreatedPosts} from '../../../server/database-mock-data';
 
 const mockItem = {
   title: 'mock item',
@@ -103,5 +104,24 @@ test('modify a user(UserManager.modifyUser)', t => {
   }).catch((err)=>{
     t.fail();
     t.end(err);
+  });
+});
+test('get created post keys of a user', t => {
+  const testUser = mockUsers[0].value;
+  const expected = {
+    // get a number of posts of test user
+    length: mockCreatedPosts.filter((post)=>{
+      return (post.key.includes(testUser.key)) ? true : false;
+    }).length
+  };
+  UserManager.getPostKeys(ENTITY.CREATED_POST, testUser.key, (err, values) => {
+    if (err) {
+      t.fail('Error while reading from DB');
+      t.end();
+      return;
+    }
+    t.equal(values.length, expected.length,
+      'should be same number of size');
+    t.end();
   });
 });

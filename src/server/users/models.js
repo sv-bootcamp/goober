@@ -1,6 +1,42 @@
-import db from '../database';
-import {KeyUtils, ENTITY} from '../../server/key-utils';
+import db, {fetchPrefix} from '../database';
+import {KeyUtils, ENTITY, STATE} from '../../server/key-utils';
 
+export default class UserManager {
+  static modifyUser(key, value, cb) {
+    return new Promise((resolve, reject) => {
+      db.get(key, (err) => {
+        return (err) ? reject(err) : resolve();
+      });
+    }).then(()=>{
+      return new Promise((resolve, reject) => {
+        db.put(key, value, (err) => {
+          return (err) ? reject(err) : resolve();
+        });
+      });
+    }).then(()=>{
+      return cb(null);
+    }).catch((err)=>{
+      if (err.NotFound) {
+        return new Error('Not found : invalid key');
+      }
+      return new Error(err);
+    });
+  }
+  static isPostType(postType) {
+    if (postType === ENTITY.CREATED_POST
+     || postType === ENTITY.SAVED_POST
+     || postType === ENTITY.REACT_POST) {
+      return true;
+    }
+    return false;
+  }
+  static getPostKeys(postType, userKey, cb) {
+    const prefix = `${postType}-${STATE.ALIVE}-${userKey}`;
+    fetchPrefix(prefix, (err, keyData) => {
+      cb(err, keyData);
+    });
+  }
+}
 export class CreatedPostManager {
   static addCreatedPost(entity, entityKey, userKey, timeHash, cb) {
     if (entity !== ENTITY.ITEM && entity !== ENTITY.IMAGE) {
@@ -30,28 +66,6 @@ export class SavedPostManager {
         return cb(new Error('error while putting in DB'), null);
       }
       return cb(null, idxKey);
-    });
-  }
-}
-export default class UserManager {
-  static modifyUser(key, value, cb) {
-    return new Promise((resolve, reject) => {
-      db.get(key, (err) => {
-        return (err) ? reject(err) : resolve();
-      });
-    }).then(()=>{
-      return new Promise((resolve, reject) => {
-        db.put(key, value, (err) => {
-          return (err) ? reject(err) : resolve();
-        });
-      });
-    }).then(()=>{
-      return cb(null);
-    }).catch((err)=>{
-      if (err.NotFound) {
-        return new Error('Not found : invalid key');
-      }
-      return new Error(err);
     });
   }
 }

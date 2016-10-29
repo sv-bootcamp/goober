@@ -2,11 +2,10 @@ import levelup from 'levelup';
 import leveldown from 'leveldown';
 import config from 'config';
 import { mockItems, mockItemIndexies, mockImages, mockImageIndexies,
-        mockUsers} from './database-mock-data';
+        mockUsers, mockCreatedPosts} from './database-mock-data';
 
 const db = levelup(config.database, {valueEncoding: 'json'});
 export default db;
-
 export const clearDB = () => {
   return new Promise((resolve, reject) => {
     db.close(() => {
@@ -39,13 +38,14 @@ export const fetchPrefix = (prefix, cb) => {
 };
 
 export const initMock = () => {
-  return new Promise((resolve, reject)=>{
+  return new Promise((resolve, reject) => {
     const arrs = [];
     const ops = [];
-    arrs.push(mockItems, mockItemIndexies, mockImages, mockImageIndexies, mockUsers);
-    arrs.map((arr)=>{
-      arr.map((obj)=>{
-        ops.push({type: 'put', key: obj.key, value: obj.value});
+    arrs.push(mockItems, mockItemIndexies, mockImages, mockImageIndexies, mockUsers,
+      mockCreatedPosts);
+    arrs.map((arr) => {
+      arr.map((obj) => {
+        ops.push({ type: 'put', key: obj.key, value: obj.value });
       });
     });
     db.batch(ops, (err) => {
