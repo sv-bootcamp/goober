@@ -16,23 +16,31 @@ export const mockItem = {
   key: 'item-8520000000000-mockitem-aaaa-aaaa-1234-mockitemuuid',
   userKey: 'user-8550000000000-mockuser-zzzz-zzzz-1234-mockuseruuid'
 };
-test('isPostType : check post type string', t => {
-  const failCase = 'createpost';
-  const successCase = 'createdPost';
-  const expected = {
-    failCaseResult: false,
-    successCaseResult: true
-  };
-  t.equal(PostManager.isPostType(failCase), expected.failCaseResult,
-    'should be same result (false)');
-  t.equal(PostManager.isPostType(successCase), expected.successCaseResult,
-    'should be same result (true)');
-  t.end();
-});
 test('add created posts with user key', t => {
   const timeHash = KeyUtils.genTimeHash(new Date());
   new Promise((resolve, reject) => {
-    PostManager.addPost(ENTITY.CREATED_POST, ENTITY.ITEM, mockItem, timeHash, (err, key)=>{
+    PostManager.addCreatedPost(ENTITY.ITEM, mockItem.key, mockItem.userKey, timeHash, (err, key)=>{
+      return (err) ? reject(err) : resolve(key);
+    });
+  }).then((key)=>{
+    return new Promise((resolve, reject) => {
+      testDB.get(key, (err, item) => {
+        return (err) ? reject(err) : resolve(item);
+      });
+    });
+  }).then((item)=>{
+    t.equal(item.key, mockItem.key, 'should be same key');
+    t.end();
+  }).catch((err)=>{
+    t.fail(err);
+    t.end();
+  });
+});
+
+test('add saved posts with user key', t => {
+  const timeHash = KeyUtils.genTimeHash(new Date());
+  new Promise((resolve, reject) => {
+    PostManager.addSavedPost(mockItem.key, mockItem.userKey, timeHash, (err, key)=>{
       return (err) ? reject(err) : resolve(key);
     });
   }).then((key)=>{
