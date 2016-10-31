@@ -8,7 +8,7 @@ export default class CreatedPostManager {
     }
     const idxKey = KeyUtils.getIdxKey(ENTITY.CREATED_POST, timeHash, userKey);
     const idxPost = {
-      entity: entity,
+      entity,
       key: entityKey
     };
     return db.put(idxKey, idxPost, (err) => {
