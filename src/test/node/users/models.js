@@ -85,8 +85,8 @@ test('modify a user(UserManager.modifyUser)', t => {
       });
     });
   }).then(()=>{
-    testDB.get(mockUser.key, (err, value) => {
-      return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
+      testDB.get(mockUser.key, (err, value) => {
         if (err) {
           reject(err);
         }
