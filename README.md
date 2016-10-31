@@ -35,11 +35,11 @@ For update docker image of EC2 instance follow description below
 
 * Run server
 
-        docker run -p 80:5000 <IMAGEID> &
+        docker run -p 80:5000 <IMAGE-ID> &
 
 * Stop server
 
-        docker stop <IMAGEID>
+        docker stop <CONTAINER-ID>
 
 * Show running docker containers
 
