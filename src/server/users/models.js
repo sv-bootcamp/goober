@@ -1,4 +1,4 @@
-import db from '../../server/database';
+import db from '../database';
 import {KeyUtils, ENTITY} from '../../server/key-utils';
 
 export class CreatedPostManager {
@@ -30,6 +30,28 @@ export class SavedPostManager {
         return cb(new Error('error while putting in DB'), null);
       }
       return cb(null, idxKey);
+    });
+  }
+}
+export default class UserManager {
+  static modifyUser(userKey, UserObject, cb) {
+    return new Promise((resolve, reject) => {
+      db.get(userKey, (err) => {
+        return (err) ? reject(err) : resolve();
+      });
+    }).then(()=>{
+      return new Promise((resolve, reject) => {
+        db.put(userKey, UserObject, (err) => {
+          return (err) ? reject(err) : resolve();
+        });
+      });
+    }).then(()=>{
+      return cb(null);
+    }).catch((err)=>{
+      if (err.NotFound) {
+        return new Error('Not found : invalid key');
+      }
+      return new Error('Error while putting in DB');
     });
   }
 }
