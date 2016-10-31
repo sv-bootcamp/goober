@@ -3,7 +3,6 @@ import {KeyUtils, ENTITY} from '../../server/key-utils';
 
 export class CreatedPostManager {
   static addCreatedPost(entity, entityKey, userKey, timeHash, cb) {
-    console.log('model');
     if (entity !== ENTITY.ITEM && entity !== ENTITY.IMAGE) {
       return cb(new Error(('invalid entity'), null));
     }
@@ -12,8 +11,6 @@ export class CreatedPostManager {
       entity,
       key: entityKey
     };
-    console.log(idxKey);
-    console.log(idxPost);
     return db.put(idxKey, idxPost, (err) => {
       if (err) {
         return cb(new Error('error while putting in DB'), null);
@@ -36,6 +33,3 @@ export class SavedPostManager {
     });
   }
 }
-
-
-
