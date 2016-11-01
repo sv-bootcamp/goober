@@ -3,5 +3,7 @@
   "port": 5000,
   "database": "test-db",
   "awsConfig": "config/aws.json.example",
-  "awsImageBucket": "goober-item-image-test"
+  "awsImageBucket": "goober-item-image-test",
+  "JWT_SECRET_KEY": "jwtSecretKey",
+  "JWT_TOKEN_EXPIRE": "1 days"
 }
