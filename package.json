@@ -20,7 +20,7 @@
     "build": "gulp build",
     "build-production": "NODE_ENV=production npm run build",
     "server": "gulp server",
-    "postinstall": "npm install --only=dev && gulp apidoc"
+    "postinstall": "gulp apidoc"
   },
   "pre-commit": [
     "test"
