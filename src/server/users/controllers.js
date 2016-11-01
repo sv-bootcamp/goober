@@ -2,6 +2,8 @@ import {KeyUtils, ENTITY, STATE} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import db from '../database';
 import {APIError} from '../ErrorHandler';
+import {CreatedPostManager, SavedPostManager} from './models';
+
 export default {
   get(req, res, cb) {
     const key = req.params.id;
@@ -68,6 +70,35 @@ export default {
       return cb();
     }).catch((err) => {
       return cb(new APIError(err, {statusCode: err.statusCode, message: err.message}));
+    });
+  },
+  addCreatedPost(req, res, cb) {
+    const currentTime = new Date();
+    const timeHash = KeyUtils.genTimeHash(currentTime);
+    CreatedPostManager.addCreatedPost(req.body.entity, req.body.entityKey, req.body.userKey,
+    timeHash, (err, idxKey) => {
+      if (err) {
+        return cb(new APIError(err));
+      }
+      res.status(200).send({
+        message: 'success',
+        data: idxKey
+      });
+      return cb();
+    });  
+  },
+  addSavedPost(req, res, cb) {
+    const currentTime = new Date();
+    const timeHash = KeyUtils.genTimeHash(currentTime);
+    SavedPostManager.addSavedPost(req.body.entityKey, req.body.userKey, timeHash, (err, idxKey) => {
+      if (err) {
+        return cb(new APIError(err));
+      }
+      res.status(200).send({
+        message: 'success',
+        data: idxKey
+      });
+      return cb();
     });
   }
 };
