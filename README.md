@@ -46,10 +46,14 @@ For update docker image of EC2 instance follow description below
         docker ps        docker ps -a 
 
 * Remove image or container
+
         docker rmi <IMAGE-ID>         docker rm <CONTAINER-ID>
 
-* Attach, Restart 
+* Attach, Restart
+
         docker attach <CONTAINER-ID>        docker restart <CONTAINER-ID>
 
 * Show log
+
         docker logs <CONTAINER-ID>
+
