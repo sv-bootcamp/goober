@@ -121,7 +121,7 @@ test('get created post keys of a user', t => {
       return;
     }
     t.equal(values.length, expected.length,
-      'should be same number of size');
+      `should be same number of size : ${values.length}`);
     t.end();
   });
 });
