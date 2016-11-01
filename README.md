@@ -33,14 +33,23 @@ For update docker image of EC2 instance follow description below
         7eec34458203: Pull complete
         .......................
 
-* Run server
+* Run new container
 
         docker run -p 80:5000 <IMAGE-ID> &
 
-* Stop server
+* Stop container
 
         docker stop <CONTAINER-ID>
 
-* Show running docker containers
+* Show running or all docker containers
 
-        docker ps
+        docker ps        docker ps -a 
+
+* Remove image or container
+        docker rmi <IMAGE-ID>         docker rm <CONTAINER-ID>
+
+* Attach, Restart 
+        docker attach <CONTAINER-ID>        docker restart <CONTAINER-ID>
+
+* Show log
+        docker logs <CONTAINER-ID>
