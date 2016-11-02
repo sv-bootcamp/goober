@@ -1,8 +1,8 @@
 import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
 import {KeyUtils, ENTITY, STATE, DEFAULT_PRECISON} from '../../../server/key-utils';
-import ItemManager from '../../../server/items/models';
 import {expiredItem} from '../../../server/database-mock-data';
+import ItemManager, {STATE_STRING} from '../../../server/items/models';
 
 const testItem = {
   title: 'Lion popup store',
@@ -14,8 +14,9 @@ const testItem = {
   category: 'event',
   startTime: '2016-10-13T01:11:46.851Z',
   endTime: '2016-10-15T01:11:46.851Z',
-  key: 'item-8523910540005-edddd-473b-1234-ead0f190b000',
-  userKey: 'user-8523574664000-b82e-473b-1234-ead0f54gvr00',
+  state: STATE_STRING[STATE.ALIVE],
+  key: 'item-8523910540005-dddddddd-dddd-473b-1234-ead0f190b000',
+  userKey: 'user-8523574664000-zzzzzzzz-b82e-473b-1234-ead0f54gvr00',
   image: 'aaaaaa'
 };
 test('validate expired date', t => {
@@ -35,7 +36,8 @@ test('validate expired date', t => {
 test('remove indexing items', t => {
   const expected = {
     numberOfIdxItems: DEFAULT_PRECISON,
-    statusAfter: STATE.REMOVED
+    stateAfter: STATE.REMOVED,
+    stateString: STATE_STRING[STATE.REMOVED]
   };
   const timeHash = KeyUtils.parseTimeHash(testItem.key);
   const idxItems = [];
@@ -51,11 +53,14 @@ test('remove indexing items', t => {
       end: `${ENTITY.ITEM}-\xFF`
     }).on('data', (data) => {
       if (data.key.includes(timeHash) && !KeyUtils.isOriginKey(data.key)) {
-        if (KeyUtils.parseState(data.key) !== expected.statusAfter) {
-          t.fail(`This key's staus is wrong : ${data.key}(expeted:${expected.statusAfter})`);
+        if (KeyUtils.parseState(data.key) !== expected.stateAfter) {
+          t.fail(`This key's staus is wrong : ${data.key}(expeted:${expected.stateAfter})`);
           t.end();
         }
         idxItems.push(data.value);
+      } else if (data.key.includes(timeHash) && KeyUtils.isOriginKey(data.key)) {
+        t.equal(data.value.state, expected.stateString,
+         `should be same state : ${expected.stateString}`);
       }
     }).on('error', (err) => {
       error = err;
@@ -79,7 +84,8 @@ test('remove indexing items', t => {
 test('Check endTime value and change indexing items', t => {
   const expected = {
     result: false,
-    numberOfIdxItems: DEFAULT_PRECISON
+    numberOfIdxItems: DEFAULT_PRECISON,
+    stateString: STATE_STRING[STATE.EXPIRED]
   };
   const timeHash = KeyUtils.parseTimeHash(expiredItem.key);
   let itemCnt = 0;
@@ -117,6 +123,9 @@ test('Check endTime value and change indexing items', t => {
             t.end();
           }
           changedItemsCnt = changedItemsCnt + 1;
+        } else if (data.key.includes(timeHash) && KeyUtils.isOriginKey(data.key)) {
+          t.equal(data.value.state, expected.stateString,
+          `should be same state : ${expected.stateString}`);
         }
         return;
       }).on('error', (err) => {

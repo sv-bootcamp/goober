@@ -1,6 +1,11 @@
 import db from '../database';
 import {KeyUtils, STATE, CATEGORY, DEFAULT_PRECISON} from '../key-utils';
 
+export const STATE_STRING = {
+  [STATE.ALIVE]: 'alive',
+  [STATE.EXPIRED]: 'expired',
+  [STATE.REMOVED]: 'removed'
+};
 export default class ItemManager {
   static validChecker(item, cb) {
     if (item.category === CATEGORY.FACILITY || this.isValid(item.endTime)) {
@@ -12,7 +17,10 @@ export default class ItemManager {
   }
   static changeState(item, newState, cb = () => {}) {
     const timeHash = KeyUtils.parseTimeHash(item.key);
-    const ops = [];
+    item.state = STATE_STRING[newState];
+    const ops = [
+      {type: 'put', key: item.key, value: item}
+    ];
     for (const state in STATE) {
       if (STATE.hasOwnProperty(state)) {
         const idxKeys = KeyUtils.getIdxKeys(item.lat, item.lng, timeHash, STATE[state]);
@@ -32,3 +40,4 @@ export default class ItemManager {
     return (new Date().getTime() - new Date(endTime).getTime() < 0) ? true : false;
   }
 }
+

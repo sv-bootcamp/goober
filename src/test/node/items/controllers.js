@@ -219,7 +219,7 @@ test('add an item to database', t => {
   })
   .then(()=>{
     return new Promise((resolve) => {
-      ItemController.addItem(req, res, ()=>{
+      ItemController.add(req, res, ()=>{
         resolve();
       });
     });

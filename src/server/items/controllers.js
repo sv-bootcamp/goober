@@ -2,7 +2,7 @@ import db, {fetchPrefix} from '../database';
 import {APIError} from '../ErrorHandler';
 import {KeyUtils, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
         UUID_START_POS, STATE, ENTITY, CATEGORY} from '../key-utils';
-import ItemManager from './models';
+import ItemManager, {STATE_STRING} from './models';
 import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
 
 export default {
@@ -200,7 +200,7 @@ export default {
       return cb();
     });
   },
-  addItem: (req, res, cb) => {
+  add: (req, res, cb) => {
     const currentTime = new Date();
     const timeHash = KeyUtils.genTimeHash(currentTime);
     const key = `${ENTITY.ITEM}-${timeHash}`;
@@ -217,6 +217,7 @@ export default {
       category: req.body.category,
       startTime: req.body.startTime,
       endTime: req.body.endTime,
+      state: STATE_STRING[STATE.ALIVE],
       createdDate: currentTime.toISOString(),
       modifiedDate: currentTime.toISOString()
     };

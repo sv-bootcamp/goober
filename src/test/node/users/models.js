@@ -1,8 +1,9 @@
 import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
-import {KeyUtils, ENTITY} from '../../../server/key-utils';
+import {KeyUtils, ENTITY, STATE} from '../../../server/key-utils';
 import UserManager, {CreatedPostManager, SavedPostManager} from '../../../server/users/models';
 import {mockUsers, mockCreatedPosts} from '../../../server/database-mock-data';
+import {STATE_STRING} from '../../../server/items/models';
 
 const mockItem = {
   title: 'mock item',
@@ -14,6 +15,7 @@ const mockItem = {
   category: 'warning',
   startTime: '2016-10-10T01:11:46.851Z',
   endTime: '2017-01-01T10:10:10.851Z',
+  state: STATE_STRING[STATE.ALIVE],
   key: 'item-8520000000000-mockitem-aaaa-aaaa-1234-mockitemuuid',
   userKey: 'user-8550000000000-mockuser-zzzz-zzzz-1234-mockuseruuid'
 };
