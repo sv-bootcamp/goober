@@ -89,6 +89,7 @@ test('modify a user(UserManager.modifyUser)', t => {
       testDB.get(mockUser.key, (err, value) => {
         if (err) {
           reject(err);
+          return;
         }
         t.equal(value.key, modifedUser.key, 'should be same key');
         t.equal(value.name, modifedUser.name, 'should be same name');

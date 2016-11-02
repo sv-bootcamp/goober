@@ -34,14 +34,14 @@ export class SavedPostManager {
   }
 }
 export default class UserManager {
-  static modifyUser(userKey, UserObject, cb) {
+  static modifyUser(key, value, cb) {
     return new Promise((resolve, reject) => {
-      db.get(userKey, (err) => {
+      db.get(key, (err) => {
         return (err) ? reject(err) : resolve();
       });
     }).then(()=>{
       return new Promise((resolve, reject) => {
-        db.put(userKey, UserObject, (err) => {
+        db.put(key, value, (err) => {
           return (err) ? reject(err) : resolve();
         });
       });
