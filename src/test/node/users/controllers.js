@@ -3,17 +3,16 @@ import testDB, {initMock, clearDB} from '../../../server/database';
 import httpMocks from 'node-mocks-http';
 import Controller from '../../../server/users/controllers';
 import {KeyUtils, ENTITY} from '../../../server/key-utils';
-
-const mockUser = {
-  key: 'user-unique-key',
-  name: 'test-user',
-  email: 'test@email.com',
-  password: 'secret-password',
-  imageUrl: 'url-of-image'
-};
+import jwt, {TOKEN_TYPE} from '../../../server/auth-token';
 
 test('get a user from database', t => {
-  const expected = mockUser;
+  const expected = {
+    key: 'user-unique-key',
+    name: 'test-user',
+    email: 'test@email.com',
+    password: 'secret-password',
+    imageUrl: 'url-of-image'
+  };
   testDB.put(expected.key, expected, (err) => {
     if (err) {
       t.fail(err);
@@ -37,6 +36,13 @@ test('get a user from database', t => {
   });
 });
 test('add a user to database', t => {
+  const mockUser = {
+    key: 'user-unique-key',
+    name: 'test-user',
+    email: 'test@email.com',
+    password: 'secret-password',
+    imageUrl: 'url-of-image'
+  };
   const expected = {
     status: 200,
     message: 'success',
@@ -91,4 +97,64 @@ test('add a user to database', t => {
     t.fail('Error while reading from DB');
     t.end(err);
   });
+});
+
+test('signup as a anonymous user to database', t => {
+
+  const mockUser = {
+      userType: 'anonymous',
+      secret: 'anonymousSecret'
+  };
+
+  const req = httpMocks.createRequest({
+    method: 'POST',
+    url: '/users/signup',
+    body: mockUser
+  });
+
+  const res = httpMocks.createResponse();
+
+  clearDB()
+    .then(() => {
+      Controller.signup(req, res, () => {
+        const data = res._getData();
+        t.ok(jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken), 'should be valid access token');
+        t.ok(jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken), 'should be valid refresh token');
+        t.end();
+      });
+    })
+    .catch(err => {
+      t.fail(err);
+      t.end();
+    })
+});
+
+test('signup as a facebook user to database', t => {
+
+  const mockUser = {
+    userType: 'facebook',
+    facebookToken: 'facebookSecret'
+  };
+
+  const req = httpMocks.createRequest({
+    method: 'POST',
+    url: '/users/signup',
+    body: mockUser
+  });
+  const res = httpMocks.createResponse();
+
+  clearDB()
+    .then(() => {
+      Controller.signup(req, res, () => {
+        const data = res._getData();
+        t.ok(jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken), 'should be valid access token');
+        t.ok(jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken), 'should be valid refresh token');
+        t.end();
+      });
+    })
+    .catch(err => {
+      t.fail(err);
+      t.end();
+    })
+
 });

@@ -12,6 +12,8 @@ import './images/models';
 import './images/controllers';
 import './users/controllers';
 import './users/models';
+import './auth/models';
+import './auth/controllers';
 import './database';
 import './aws-s3';
 import './auth-token';

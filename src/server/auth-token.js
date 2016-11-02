@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import config from 'config';
+import {APIError} from './ErrorHandler';
 
 export const TOKEN_TYPE = {
   ACCESS: 'ACCESS',
@@ -26,6 +27,7 @@ class AuthToken {
 
   encode(type, payload) {
     return new Promise((resolve) => {
+      payload.type = type;
       jwt.sign(payload, SECRET_KEY[type], { expiresIn: TOKEN_EXPIRE[type]}, (err, token) => {
         if (err) {
           throw err;
@@ -46,6 +48,21 @@ class AuthToken {
     });
   }
 
+  authenticate(req, res, next){
+    const bearerToken = req.headers.authorization;
+    const jwtToken = bearerToken.split(' ')[1];
+    this.decode(TOKEN_TYPE.ACCESS, jwtToken)
+    .then(payload => {
+      req.headers.userKey = payload.user;
+      next();
+    })
+    .catch(err => {
+      next(new APIError(err, {
+        statusCode: 400,
+        message: err.message
+      }));
+    });
+  }
 }
 
 export default AuthToken = new AuthToken();

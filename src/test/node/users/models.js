@@ -1,14 +1,13 @@
 import test from 'tape';
 import testDB, {clearDB} from '../../../server/database';
-// import httpMocks from 'node-mocks-http';
-import userModel, {USER_TYPE} from '../../../server/users/models';
+import UserModel, {USER_TYPE} from '../../../server/users/models';
 import {ENTITY} from '../../../server/key-utils';
 
 test('generate user key', t => {
   const expected = {
     prefix: 'user'
   };
-  const userKey = userModel.genUserKey();
+  const userKey = UserModel.genUserKey();
   const prefix = userKey.split('-')[0];
   t.equal(prefix, expected.prefix, 'should be same prefix user');
   t.end();
@@ -16,7 +15,7 @@ test('generate user key', t => {
 
 test('add user', t => {
   const mockUser = {
-    key : userModel.genUserKey(),
+    key : UserModel.genUserKey(),
     secret: 'userSecret'
   };
   const expected = {
@@ -25,7 +24,7 @@ test('add user', t => {
 
   clearDB()
     .then(() => {
-      return userModel.addUser(expected.value.key, expected.value);
+      return UserModel.addUser(expected.value.key, expected.value);
     })
     .then(() => {
       testDB.get(expected.value.key, (err, data) => {
@@ -46,7 +45,7 @@ test('add Anonymous user', t => {
 
   clearDB()
     .then(() => {
-      return userModel.addAnonymousUser(mockUser);
+      return UserModel.addAnonymousUser(mockUser);
     })
     .catch((err) => {
       t.fail('Error while add Anonymous User to DB');
@@ -78,10 +77,9 @@ test('add Facebook user', t => {
     type: USER_TYPE.FACEBOOK,
     value: mockUser
   };
-
   clearDB()
     .then(() => {
-      return userModel.addFacebookUser(mockUser);
+      return UserModel.addFacebookUser(mockUser);
     })
     .then(() => {
       let savedUser;

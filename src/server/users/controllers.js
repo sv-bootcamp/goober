@@ -2,7 +2,7 @@ import {KeyUtils, ENTITY, STATE} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import db from './../database';
 import {APIError} from './../ErrorHandler';
-import jwt, {TOKEN_TYPE} from './../auth-token';
+import AuthModel from './../auth/models';
 import UserModel from './models';
 export default {
   get(req, res, cb) {
@@ -88,12 +88,9 @@ export default {
     }
 
     addUser
-      .then(UserModel.getTokenSet)
-      .then((tokenSet)=>{
-        res.send({
-          accessToken: tokenSet[0],
-          refreshToken: tokenSet[1]
-        });
+      .then(AuthModel.encodeTokenSet)
+      .then((tokenSet) => {
+        res.send(tokenSet);
         next();
       })
       .catch((err) => {
@@ -102,30 +99,5 @@ export default {
           message: err.message
         }));
       });
-  },
-  refreshToken: (req , res, next) => {
-    jwt.decode(req.body.refreshToken)
-      .then((decoded) => {
-        if (decoded.type === TOKEN_TYPE.REFRESH) {
-          res.send(UserModel.getTokenSet(decoded.user));
-          return next();
-        }
-        return next(new APIError(new Error(), {
-          status: 400,
-          message: 'Not a valid token type'
-        }));
-      })
-      .catch(err => {
-        if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
-          return next(new APIError(err, {
-            statusCode: 400,
-            message: 'Not a valid refresh token'
-          }));
-        }
-        return next(new APIError(err, {
-          statusCode: 500,
-          message: err.message
-        }));
-      })
   }
 };
