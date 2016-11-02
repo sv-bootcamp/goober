@@ -4,6 +4,8 @@
   "database": "test-db",
   "awsConfig": "config/aws.json.example",
   "awsImageBucket": "goober-item-image-test",
-  "JWT_SECRET_KEY": "jwtSecretKey",
-  "JWT_TOKEN_EXPIRE": "1 days"
+  "ACCESS_SECRET_KEY": "jwtSecretKey",
+  "ACCESS_TOKEN_EXPIRE": "1 days",
+  "REFRESH_SECRET_KEY": "jwtSecretKey",
+  "REFRESH_TOKEN_EXPIRE": "6 days"
 }

@@ -1,7 +1,9 @@
 import {KeyUtils, ENTITY, STATE} from '../key-utils';
 import {S3Connector} from '../aws-s3';
-import db from '../database';
-import {APIError} from '../ErrorHandler';
+import db from './../database';
+import {APIError} from './../ErrorHandler';
+import jwt, {TOKEN_TYPE} from './../auth-token';
+import UserModel from './models';
 export default {
   get(req, res, cb) {
     const key = req.params.id;
@@ -69,5 +71,61 @@ export default {
     }).catch((err) => {
       return cb(new APIError(err, {statusCode: err.statusCode, message: err.message}));
     });
-  }
+  },
+  signup: (req, res, next) => {
+    const {userType} = req.body;
+    let addUser;
+
+    switch (userType) {
+      case 'anonymous':
+        addUser = UserModel.addAnonymousUser(req.body);
+        break;
+      case 'facebook':
+        addUser = UserModel.addFacebookUser(req.body);
+        break;
+      default:
+        break;
+    }
+
+    addUser
+      .then(UserModel.getTokenSet)
+      .then((tokenSet)=>{
+        res.send({
+          accessToken: tokenSet[0],
+          refreshToken: tokenSet[1]
+        });
+        next();
+      })
+      .catch((err) => {
+        next(new APIError(err, {
+          statusCode: 500,
+          message: err.message
+        }));
+      });
+  },
+  refreshToken: (req , res, next) => {
+    jwt.decode(req.body.refreshToken)
+      .then((decoded) => {
+        if (decoded.type === TOKEN_TYPE.REFRESH) {
+          res.send(UserModel.getTokenSet(decoded.user));
+          return next();
+        }
+        return next(new APIError(new Error(), {
+          status: 400,
+          message: 'Not a valid token type'
+        }));
+      })
+      .catch(err => {
+        if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
+          return next(new APIError(err, {
+            statusCode: 400,
+            message: 'Not a valid refresh token'
+          }));
+        }
+        return next(new APIError(err, {
+          statusCode: 500,
+          message: err.message
+        }));
+      })
+  },
 };

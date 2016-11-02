@@ -66,4 +66,6 @@ router.get('/:id', controller.get);
  */
 router.post('/', controller.post);
 
+router.post('/signup', controller.signup);
+
 export default router;
