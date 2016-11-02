@@ -127,5 +127,5 @@ export default {
           message: err.message
         }));
       })
-  },
+  }
 };
