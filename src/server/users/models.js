@@ -51,7 +51,7 @@ export default class UserManager {
       if (err.NotFound) {
         return new Error('Not found : invalid key');
       }
-      return new Error('Error while putting in DB');
+      return new Error(err);
     });
   }
 }
