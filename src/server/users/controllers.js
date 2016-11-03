@@ -1,9 +1,8 @@
-import {KeyUtils, ENTITY, STATE} from '../key-utils';
-import {S3Connector} from '../aws-s3';
+import { KeyUtils, ENTITY, STATE } from '../key-utils';
+import { S3Connector } from '../aws-s3';
 import db from '../database';
-import {APIError} from '../ErrorHandler';
-import {CreatedPostManager, SavedPostManager} from './models';
-
+import { APIError } from '../ErrorHandler';
+import { CreatedPostManager, SavedPostManager } from './models';
 export default {
   get(req, res, cb) {
     const key = req.params.id;
@@ -48,12 +47,12 @@ export default {
     const idxImage = {
       key: imageKey
     };
-    const imageOpt = {key: imageKey, body: req.body.imageUrl};
+    const imageOpt = { key: imageKey, body: req.body.imageUrl };
     const dbOps = [
-      {type: 'put', key: key, value: user},
-      {type: 'put', key: idxKey, value: idxUser},
-      {type: 'put', key: imageKey, value: image},
-      {type: 'put', key: imageIdxKey, value: idxImage}
+      { type: 'put', key: key, value: user },
+      { type: 'put', key: idxKey, value: idxUser },
+      { type: 'put', key: imageKey, value: image },
+      { type: 'put', key: imageIdxKey, value: idxImage }
     ];
     new Promise((resolve, reject) => {
       new S3Connector().putImage(imageOpt, (err) => {
@@ -66,15 +65,14 @@ export default {
         });
       });
     }).then(() => {
-      res.status(200).send({message: 'success', data: key });
+      res.status(200).send({ message: 'success', data: key });
       return cb();
     }).catch((err) => {
-      return cb(new APIError(err, {statusCode: err.statusCode, message: err.message}));
+      return cb(new APIError(err, { statusCode: err.statusCode, message: err.message }));
     });
   },
   addCreatedPost(req, res, cb) {
-    const currentTime = new Date();
-    const timeHash = KeyUtils.genTimeHash(currentTime);
+    const timeHash = KeyUtils.genTimeHash();
     CreatedPostManager.addCreatedPost(req.body.entity, req.body.entityKey, req.body.userKey,
     timeHash, (err, idxKey) => {
       if (err) {
@@ -85,11 +83,10 @@ export default {
         data: idxKey
       });
       return cb();
-    });  
+    });
   },
   addSavedPost(req, res, cb) {
-    const currentTime = new Date();
-    const timeHash = KeyUtils.genTimeHash(currentTime);
+    const timeHash = KeyUtils.genTimeHash();
     SavedPostManager.addSavedPost(req.body.entityKey, req.body.userKey, timeHash, (err, idxKey) => {
       if (err) {
         return cb(new APIError(err));
