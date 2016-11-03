@@ -15,9 +15,9 @@ class AuthToken {
   encode(payload) {
     return new Promise((resolve, reject) => {
       jwt.sign(payload, SECRET_KEY, { expiresIn: TOKEN_EXPIRE}, (err, token) => {
-          if (err) {
-            return reject(err);
-          }
+        if (err) {
+          return reject(err);
+        }
         return resolve(token);
       });
     });
@@ -30,7 +30,7 @@ class AuthToken {
           return reject(err);
         }
         return resolve(payload);
-      })
+      });
     });
   }
 }
