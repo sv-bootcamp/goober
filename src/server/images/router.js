@@ -68,7 +68,7 @@ const router = express.Router();
 router.get('/', controller.get);
 
 /**
- * @api {add} /image Add an image
+ * @api {add} /images Add an image
  * @apiName addAnImage
  * @apiGroup Image
  *

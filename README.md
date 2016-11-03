@@ -35,7 +35,7 @@ For update docker image of EC2 instance follow description below
 
 * Run new container
 
-        docker run -p 80:5000 <IMAGE-ID> &
+        docker run -p 80:5000 --env-file env.list <IMAGE-ID> &
 
 * Stop container
 

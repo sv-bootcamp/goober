@@ -4,10 +4,10 @@ import AuthToken from '../../server/auth-token';
 test('test auto token instance', t => {
   const payload = {
     name: 'goober'
-  }
+  };
   const expected = {
     payload
-  }
+  };
   AuthToken.encode(payload)
     .then(AuthToken.decode)
     .then((decoded) => {
