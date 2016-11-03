@@ -2,7 +2,7 @@ import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
 import {KeyUtils, ENTITY, STATE, DEFAULT_PRECISON} from '../../../server/key-utils';
 import ItemManager from '../../../server/items/models';
-import {mockItems, expiredItemKey} from '../../../server/database-mock-data';
+import {expiredItem} from '../../../server/database-mock-data';
 
 const testItem = {
   title: 'Lion popup store',
@@ -81,12 +81,11 @@ test('Check endTime value and change indexing items', t => {
     result: false,
     numberOfIdxItems: DEFAULT_PRECISON
   };
-  const expiredItem = mockItems[expiredItemKey];
-  const timeHash = KeyUtils.parseTimeHash(expiredItemKey);
+  const timeHash = KeyUtils.parseTimeHash(expiredItem.key);
   let itemCnt = 0;
   clearDB().then(initMock).then(()=>{
     return new Promise((resolve) => {
-      ItemManager.validChecker(expiredItem, (result)=>{
+      ItemManager.validChecker(expiredItem.value, (result)=>{
         t.equal(result, expected.result, 'should be same result');
         resolve();
       });
