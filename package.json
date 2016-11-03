@@ -19,7 +19,8 @@
     "watch": "gulp watch",
     "build": "gulp build",
     "build-production": "NODE_ENV=production npm run build",
-    "server": "gulp server"
+    "server": "gulp server",
+    "postinstall": "gulp apidoc"
   },
   "pre-commit": [
     "test"
