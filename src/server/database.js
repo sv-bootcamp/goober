@@ -40,40 +40,12 @@ export const fetchPrefix = (prefix, cb) => {
 
 export const initMock = () => {
   return new Promise((resolve, reject)=>{
+    const arrs = [];
     const ops = [];
-    mockItems.map((obj)=>{
-      ops.push({
-        type: 'put',
-        key: obj.key,
-        value: obj.value
-      });
-    });
-    mockItemIndexies.map((obj)=>{
-      ops.push({
-        type: 'put',
-        key: obj.key,
-        value: obj.value
-      });
-    });
-    mockImages.map((obj)=>{
-      ops.push({
-        type: 'put',
-        key: obj.key,
-        value: obj.value
-      });
-    });
-    mockImageIndexies.map((obj)=>{
-      ops.push({
-        type: 'put',
-        key: obj.key,
-        value: obj.value
-      });
-    });
-    mockUsers.map((obj)=>{
-      ops.push({
-        type: 'put',
-        key: obj.key,
-        value: obj.value
+    arrs.push(mockItems, mockItemIndexies, mockImages, mockImageIndexies, mockUsers);
+    arrs.map((arr)=>{
+      arr.map((obj)=>{
+        ops.push({type: 'put', key: obj.key, value: obj.value});
       });
     });
     db.batch(ops, (err) => {
