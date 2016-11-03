@@ -14,4 +14,4 @@ ENV NODE_ENV development
 
 EXPOSE 5000
 
-CMD ["npm", "run", "server"]
+CMD ["npm", "run", "watch"]
