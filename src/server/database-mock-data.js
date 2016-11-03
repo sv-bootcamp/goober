@@ -17,7 +17,7 @@ export const mockItems = [
       startTime: '2016-10-13T01:11:46.851Z',
       endTime: new Date(initTime.getTime() + 60000).toISOString(),
       key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
-      userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
+      userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid'
     }
   },
   {
@@ -33,7 +33,7 @@ export const mockItems = [
       startTime: '2016-10-12T01:11:46.851Z',
       endTime: new Date(initTime.getTime() + dayInMs * 2).toISOString(),
       key: 'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001',
-      userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
+      userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid'
     }
   },
   {
@@ -113,7 +113,7 @@ export const expiredItem = {
   }
 };
 expiredItem.value.key = expiredItem.key;
-
+mockItems.push(expiredItem);
 export const mockItemIndexies = [
   {
     key: 'item-0-9130b273-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
@@ -340,8 +340,15 @@ export const mockItemIndexies = [
     value: {key: expiredItem.key}
   }
 ];
-
 export const mockUsers = [
+  {
+    key: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
+    value: {
+      key: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
+      userName: 'Moongchi jeong',
+      createdDate: '2007-11-22T07:30:38.064Z'
+    }
+  },
   {
     key: 'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000',
     value: {
@@ -351,13 +358,36 @@ export const mockUsers = [
     }
   }
 ];
+export const mockCreatedPosts = [
+  {
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz0',
+    value: {
+      type: 'item',
+      key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'
+    }
+  },
+  {
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz1',
+    value: {
+      type: 'item',
+      key: 'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001'
+    }
+  },
+  {
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz2',
+    value: {
+      type: 'image',
+      key: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000'
+    }
+  }
+];
 export const mockImages = [
   {
     key: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {
       key: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',
       itemKey: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
-      userKey: 'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000',
+      userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
       caption: 'testImage1Caption1',
       createdDate: '2016-10-14T07:30:38.064Z'
     }
