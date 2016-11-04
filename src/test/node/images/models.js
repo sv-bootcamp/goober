@@ -1,7 +1,7 @@
 import test from 'tape';
 import testDB, {clearDB, initMock, fetchPrefix} from '../../../server/database';
 import ImageManager from '../../../server/images/models';
-import {mockImages} from '../../../server/database-mock-data';
+import {mockImages, mockItems} from '../../../server/database-mock-data';
 test('fetch prefix ImageManager', t => {
   const prefix = 'this-is-prefix';
   const keys = [
@@ -41,17 +41,11 @@ test('fetch prefix ImageManager', t => {
     });
   });
 });
-
 test('get Image Urls using itemKey', t => {
-  const testItemKey = 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000';
-  let expectedImgCnt = 0;
-  for (const imageKey in mockImages) {
-    if (mockImages.hasOwnProperty(imageKey)) {
-      if (mockImages[imageKey].itemKey === testItemKey) {
-        expectedImgCnt = expectedImgCnt + 1;
-      }
-    }
-  }
+  const testItemKey = mockItems[0].key;
+  const expectedImgCnt = mockImages.filter((mockImage) => {
+    return (mockImage.value.itemKey === testItemKey) ? true : false;
+  }).length;
   t.notEqual(expectedImgCnt, 0, `number of images of test Key : ${expectedImgCnt}`);
   clearDB().then(initMock).then(()=>{
     ImageManager.getImages(testItemKey, (err, urls)=>{
