@@ -1,8 +1,8 @@
 import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
-import {KeyUtils, ENTITY, STATE, DEFAULT_PRECISON} from '../../../server/key-utils';
 import {expiredItem} from '../../../server/database-mock-data';
 import ItemManager, {STATE_STRING} from '../../../server/items/models';
+import {KeyUtils, ENTITY, STATE, DEFAULT_PRECISON, CATEGORY} from '../../../server/key-utils';
 
 const testItem = {
   title: 'Lion popup store',
@@ -11,7 +11,7 @@ const testItem = {
   address: '310 Dolores St, San Francisco, CA 94110, USA',
   createdDate: '2016-10-13T01:11:46.851Z',
   modifiedDate: '2016-10-13T01:11:46.851Z',
-  category: 'event',
+  category: CATEGORY.EVENT,
   startTime: '2016-10-13T01:11:46.851Z',
   endTime: '2016-10-15T01:11:46.851Z',
   state: STATE_STRING[STATE.ALIVE],
@@ -117,12 +117,14 @@ test('Check endTime value and change indexing items', t => {
         end: `${ENTITY.ITEM}-\xFF`
       }).on('data', (data) => {
         itemCnt = itemCnt + 1;
+        // in case of indexing keys
         if (data.key.includes(timeHash) && !KeyUtils.isOriginKey(data.key)) {
           if (KeyUtils.parseState(data.key) !== STATE.EXPIRED) {
             t.fail(`This key's staus is wrong : ${data.key}(expeted:${STATE.EXPIRED}`);
             t.end();
           }
           changedItemsCnt = changedItemsCnt + 1;
+        // in case of original key
         } else if (data.key.includes(timeHash) && KeyUtils.isOriginKey(data.key)) {
           t.equal(data.value.state, expected.stateString,
           `should be same state : ${expected.stateString}`);

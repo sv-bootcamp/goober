@@ -104,6 +104,10 @@ export const KeyUtils = {
   },
   parseState: (key) => {
     return key.charAt(key.indexOf('-') + 1);
+  },
+  replaceState: (key, newState) => {
+    return key.substring(0, key.indexOf('-') + 1) + newState +
+      key.substring(key.indexOf('-') + 2, key.length);
   }
 };
 

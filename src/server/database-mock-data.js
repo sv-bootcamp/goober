@@ -123,31 +123,31 @@ expiredItem.value.key = expiredItem.key;
 mockItems.push(expiredItem);
 export const mockItemIndexies = [
   {
-    key: 'item-0-9130b273-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q8yy1qj-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
-    key: 'item-0-9130b27-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q8yy1q-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
-    key: 'item-0-9130b2-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q8yy1-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
-    key: 'item-0-9130b-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q8yy-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
-    key: 'item-0-9130-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q8y-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
-    key: 'item-0-913-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q8-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
-    key: 'item-0-91-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {

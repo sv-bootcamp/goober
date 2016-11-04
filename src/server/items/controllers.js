@@ -1,7 +1,6 @@
 import db, {fetchPrefix} from '../database';
 import {APIError} from '../ErrorHandler';
-import {KeyUtils, Timestamp, DEFAULT_PRECISON, GEOHASH_START_POS, GEOHASH_END_POS,
-        UUID_START_POS, STATE, ENTITY, CATEGORY} from '../key-utils';
+import {KeyUtils, STATE, ENTITY, CATEGORY} from '../key-utils';
 import ItemManager, {STATE_STRING} from './models';
 import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
 
@@ -135,10 +134,10 @@ export default {
     });
   },
   remove: (req, res, cb) => {
+    const TARGET_STATE = [STATE.ALIVE, STATE.EXPIRED];
     const key = req.params.id;
-    const itemGeohash = key.substring(GEOHASH_START_POS, GEOHASH_END_POS + 1);
-    const itemUuid = key.substring(UUID_START_POS, key.length);
-    db.get(key, (getErr, value) => {
+    const timeHash = KeyUtils.parseTimeHash(key);
+    db.get(key, (getErr, item) => {
       if (getErr) {
         if (getErr.notFound) {
           return cb(new APIError(getErr, {
@@ -148,23 +147,17 @@ export default {
         }
         return cb(new APIError(getErr));
       }
-      const item = value;
-      const TimeStamp = new Timestamp(item.createdDate).getTimestamp();
-      const ops = [];
-      for (let i = 0; i < DEFAULT_PRECISON; i = i + 1) {
-        const ghSubstr = itemGeohash.substring(0, i + 1);
-        const deletedItemId = `item-${STATE.REMOVED}-${ghSubstr}-${TimeStamp}-${itemUuid}`;
-        ops.push({
-          type: 'put',
-          key: deletedItemId,
-          value: {key: key}
+      item.state = STATE_STRING[STATE.REMOVED];
+      const idxKeys = KeyUtils.getIdxKeys(item.lat, item.lng, timeHash, STATE.REMOVED);
+      const ops = [
+        {type: 'put', key: key, value: item}
+      ];
+      idxKeys.map((idxKey)=>{
+        ops.push({type: 'put', key: idxKey, value: {key: key}});
+        TARGET_STATE.map(state=>{
+          ops.push({type: 'del', key: KeyUtils.replaceState(idxKey, state)});
         });
-        ops.push({
-          type: 'del',
-          key: `item-${STATE.ALIVE}-${ghSubstr}-${TimeStamp}-${itemUuid}`
-        });
-        ops.push({type: 'del', key: `item-${STATE.EXPIRED}-${ghSubstr}-${TimeStamp}-${itemUuid}`});
-      }
+      });
       return db.batch(ops, (itemErr) => {
         if (itemErr) {
           return cb(new APIError(itemErr));

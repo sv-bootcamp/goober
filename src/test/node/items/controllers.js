@@ -2,10 +2,12 @@ import test from 'tape';
 import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import testDB, {initMock, clearDB} from '../../../server/database';
-import {DEFAULT_PRECISON, KeyUtils, STATE, ENTITY, STATE_CODE_POS}
+import {DEFAULT_PRECISON, KeyUtils, STATE, ENTITY}
         from '../../../server/key-utils';
 import uuid from 'uuid4';
 import {S3Utils} from '../../../server/aws-s3';
+import {STATE_STRING} from '../../../server/items/models';
+import {mockItems} from '../../../server/database-mock-data';
 
 const itemRedSelo = {
   title: 'This is Red Selo',
@@ -16,7 +18,8 @@ const itemRedSelo = {
   userKey: `user-${uuid()}`,
   caption: 'Sample image caption of itemRedSelo.',
   startTime: '2016-10-13T01:11:46.851Z',
-  endTime: '2016-10-15T01:11:46.851Z'
+  endTime: '2016-10-15T01:11:46.851Z',
+  state: STATE_STRING[STATE.ALIVE]
 };
 const itemAlaska = {
   title: 'This is Alaska',
@@ -27,7 +30,8 @@ const itemAlaska = {
   userKey: `user-${uuid()}`,
   caption: 'Sample image caption of itemAlaska.',
   startTime: '2016-10-13T01:11:46.851Z',
-  endTime: '2016-10-15T01:11:46.851Z'
+  endTime: '2016-10-15T01:11:46.851Z',
+  state: STATE_STRING[STATE.ALIVE]
 };
 const imageRedSelo = {
   caption: 'red-selo',
@@ -125,48 +129,57 @@ test('get by area from database', t => {
     status: 200,
     items: [
       {
-        key: 'item-8523910540000-b82e-473b-1234-ead0f190b005',
+        key: 'item-8523910540000-dd3860f5-b82e-473b-1234-ead0f190b005',
         imageUrls: [
-          'image-8523569763000-b82e-473b-1234-ead0fzr0b000',
-          'image-8523569764000-b82e-473b-1234-ead0fts0bze0',
-          'image-8523569765000-b82e-473b-1234-eaaedts43200',
-          'image-8523569766000-b82e-473b-1234-ead0f54g2500'
+          'image-8523569763000-dd3860f5-b82e-473b-1234-ead0fzr0b000',
+          'image-8523569764000-dd3860f5-b82e-473b-1234-ead0fts0bze0',
+          'image-8523569765000-dd3860f5-b82e-473b-1234-eaaedts43200',
+          'image-8523569766000-dd3860f5-b82e-473b-1234-ead0f54g2500'
         ]
       },
       {
-        key: 'item-8523910540001-b82e-473b-1234-ead0f190b004',
+        key: 'item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004',
         imageUrls: [
-          'image-8523569763000-b82e-473b-1234-ead0f190b000',
-          'image-8523569764000-b82e-473b-1234-ead0fts0aed0',
-          'image-8523569765000-b82e-473b-1234-ead0fts43200',
-          'image-8523569766000-b82e-473b-1234-ead0ar4gvr00'
+          'image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000',
+          'image-8523569764000-dd3860f5-b82e-473b-1234-ead0fts0aed0',
+          'image-8523569765000-dd3860f5-b82e-473b-1234-ead0fts43200',
+          'image-8523569766000-dd3860f5-b82e-473b-1234-ead0ar4gvr00'
         ]
       },
       {
-        key: 'item-8523910540002-b82e-473b-1234-ead0f190b003',
+        key: 'item-8523910540002-dd3860f5-b82e-473b-1234-ead0f190b003',
         imageUrls: [
-          'image-8523570564200-b82e-473b-1234-ead0f190b000',
-          'image-8523570664000-b82e-473b-1234-ead0fts0b000',
-          'image-8523571664000-b82e-473b-1234-ead0fts43200',
-          'image-8523574664000-b82e-473b-1234-ead0f54gvr00'
+          'image-8523570564200-dd3860f5-b82e-473b-1234-ead0f190b000',
+          'image-8523570664000-dd3860f5-b82e-473b-1234-ead0fts0b000',
+          'image-8523571664000-dd3860f5-b82e-473b-1234-ead0fts43200',
+          'image-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
         ]
       },
       {
-        key: 'item-8523910540003-b82e-473b-1234-ead0f190b002',
+        key: 'item-8523910540003-dd3860f5-b82e-473b-1234-ead0f190b002',
         imageUrls: [
-          'image-8523569763000-b82e-473b-1234-ead0f190baec',
-          'image-8523569764000-b82e-473b-1234-ead0fts0b000',
-          'image-8523569765000-b82e-473b-1234-ead0ftae3200',
-          'image-8523569766000-b82e-473b-1234-ead0f54gvrze'
+          'image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190baec',
+          'image-8523569764000-dd3860f5-b82e-473b-1234-ead0fts0b000',
+          'image-8523569765000-dd3860f5-b82e-473b-1234-ead0ftae3200',
+          'image-8523569766000-dd3860f5-b82e-473b-1234-ead0f54gvrze'
         ]
       },
       {
-        key: 'item-8523910540004-b82e-473b-1234-ead0f190b001',
+        key: 'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001',
         imageUrls: [
-          'image-8523569763000-b82e-473b-1234-ead0f190ae00',
-          'image-8523569764000-b82e-4zeb-1234-ead0fts0b000',
-          'image-8523569765000-b82e-473b-1234-ead0fts43ze0',
-          'image-8523569766000-bree-473b-1234-ead0f54gvr00'
+          'image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190ae00',
+          'image-8523569764000-dd3860f5-b82e-4zeb-1234-ead0fts0b000',
+          'image-8523569765000-dd3860f5-b82e-473b-1234-ead0fts43ze0',
+          'image-8523569766000-dd3860f5-bree-473b-1234-ead0f54gvr00'
+        ]
+      },
+      {
+        key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+        imageUrls: [
+          'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',
+          'image-8523569761934-dd3860f5-b82e-473b-1234-ead0fts0b000',
+          'image-8523569761934-dd3860f5-b82e-473b-1234-ead0fts43200',
+          'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f54gvr00'
         ]
       }
     ]
@@ -325,38 +338,28 @@ test('modify an item in database', t => {
     });
   });
 });
-
 test('delete an item from database', t => {
+  const testItem = mockItems[0].value;
+  const timeHash = KeyUtils.parseTimeHash(testItem.key);
   const expected = {
     status: 200,
     message: 'success',
     itemCnt: 1,
     indexingItemCntBefore: DEFAULT_PRECISON,
-    key: 'item-RedSelo',
-    title: itemRedSelo.title,
-    statusCode: STATE.REMOVED
+    key: testItem.key,
+    title: testItem.title,
+    stateCode: STATE.REMOVED,
+    stateString: STATE_STRING[STATE.REMOVED]
   };
-
-  clearDB().then(()=> {
-    return new Promise((resolve, reject) => {
-      testDB.put(expected.key, itemRedSelo, (err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve();
-      });
-    });
-  }).then(() => {
-    const req = httpMocks.createRequest({
-      method: 'DELETE',
-      url: `/items/${expected.key}`,
-      params: {
-        id: expected.key
-      }
-    });
-    const res = httpMocks.createResponse();
-
+  const req = httpMocks.createRequest({
+    method: 'DELETE',
+    url: `/items/${expected.key}`,
+    params: {
+      id: expected.key
+    }
+  });
+  const res = httpMocks.createResponse();
+  clearDB().then(initMock).then(()=>{
     return new Promise((resolve, reject)=> {
       ItemController.remove(req, res, () => {
         const status = res.statusCode;
@@ -369,29 +372,34 @@ test('delete an item from database', t => {
         }
         resolve();
       });
-    });
-  }).then(() => {
-    testDB.createReadStream({
-      start: '\x00',
-      end: '\xFF'
-    }).on('data', (data) => {
-      if (data.value.key === expected.key) {
-        // in case of index keys
-        const statusCode = data.key.charAt(STATE_CODE_POS);
-        t.equal(statusCode, expected.statusCode, 'should be same statusCode');
-      } else {
-        // in case of an original key
-        t.equal(data.value.title, expected.title);
-      }
-    }).on('error', (err) => {
-      t.fail('Error while reading from DB');
+    }).then(()=>{
+      testDB.createReadStream({
+        start: 'item-\x00',
+        end: 'item-\xFF'
+      }).on('data', (data) => {
+        if (data.key.includes(timeHash)) {
+          if (KeyUtils.isOriginKey(data.key)) {
+            // in case of an original key
+            t.equal(data.value.title, expected.title, 'should be same title');
+            t.equal(data.value.state, expected.stateString,
+            `should be same state : ${expected.stateString}`);
+          } else {
+            // in case of indexing keys
+            const stateCode = KeyUtils.parseState(data.key);
+            t.equal(stateCode, expected.stateCode, 'should be same stateCode');
+            t.equal(data.value.key, expected.key, 'should be same key');
+          }
+        }
+      }).on('error', (err) => {
+        t.fail('Error while reading from DB');
+        t.end(err);
+      }).on('close', () => {
+        t.end();
+      });
+    }).catch((err)=>{
+      t.fail();
       t.end(err);
-    }).on('close', () => {
-      t.end();
     });
-  }).catch((err) => {
-    t.fail(err);
-    t.end();
   });
 });
 

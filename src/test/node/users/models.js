@@ -1,8 +1,8 @@
 import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
-import {KeyUtils, ENTITY, STATE} from '../../../server/key-utils';
 import UserManager, {CreatedPostManager, SavedPostManager} from '../../../server/users/models';
 import {mockUsers, mockCreatedPosts} from '../../../server/database-mock-data';
+import {KeyUtils, ENTITY, STATE, CATEGORY} from '../../../server/key-utils';
 import {STATE_STRING} from '../../../server/items/models';
 
 const mockItem = {
@@ -12,7 +12,7 @@ const mockItem = {
   address: 'address of mock item',
   createdDate: '2016-10-10T01:11:46.851Z',
   modifiedDate: '2016-10-10T01:11:46.851Z',
-  category: 'warning',
+  category: CATEGORY.WARNING,
   startTime: '2016-10-10T01:11:46.851Z',
   endTime: '2017-01-01T10:10:10.851Z',
   state: STATE_STRING[STATE.ALIVE],
