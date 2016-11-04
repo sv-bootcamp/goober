@@ -374,8 +374,8 @@ test('delete an item from database', t => {
       });
     }).then(()=>{
       testDB.createReadStream({
-        start: 'item-\x00',
-        end: 'item-\xFF'
+        start: `${ENTITY.ITEM}-\x00`,
+        end: `${ENTITY.ITEM}-\xFF`
       }).on('data', (data) => {
         if (data.key.includes(timeHash)) {
           if (KeyUtils.isOriginKey(data.key)) {
