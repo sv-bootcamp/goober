@@ -1,7 +1,8 @@
 import db, {fetchPrefix} from '../database';
-import {ENTITY, STATE, KeyUtils} from '../key-utils';
+import {KeyUtils} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import {APIError} from '../ErrorHandler';
+import {ENTITY, STATE} from '../constants';
 import ImageManager from './models';
 
 export default {

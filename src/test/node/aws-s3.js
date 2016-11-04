@@ -1,8 +1,8 @@
 import test from 'tape';
-import {S3Connector, IMAGE_SIZE_PREFIX} from '../../server/aws-s3';
+import {S3Connector} from '../../server/aws-s3';
 import fs from 'fs';
 import config from 'config';
-
+import {IMAGE_SIZE_PREFIX} from '../../server/constants';
 test('test aws instance', t => {
   fs.readFile(`${config.awsConfig}`, 'utf8', (err, json) => {
     if (err) {

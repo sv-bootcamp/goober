@@ -1,6 +1,6 @@
 import db, {fetchPrefix} from '../database';
-import {KeyUtils, ENTITY, STATE} from '../../server/key-utils';
-
+import {KeyUtils} from '../../server/key-utils';
+import {ENTITY, STATE} from '../constants';
 export default class UserManager {
   static modifyUser(key, value, cb) {
     return new Promise((resolve, reject) => {

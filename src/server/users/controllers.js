@@ -1,5 +1,6 @@
-import { KeyUtils, ENTITY, STATE } from '../key-utils';
-import { S3Connector } from '../aws-s3';
+import {KeyUtils} from '../key-utils';
+import {ENTITY, STATE} from '../constants';
+import {S3Connector} from '../aws-s3';
 import db from '../database';
 import { APIError } from '../ErrorHandler';
 import { CreatedPostManager, SavedPostManager } from './models';

@@ -1,5 +1,6 @@
 import test from 'tape';
-import {STATE, KeyUtils} from '../../../server/key-utils';
+import {KeyUtils} from '../../../server/key-utils';
+import {STATE} from '../../../server/constants';
 import testDB, {clearDB, initMock} from '../../../server/database';
 import controller from '../../../server/images/controllers';
 import httpMocks from 'node-mocks-http';

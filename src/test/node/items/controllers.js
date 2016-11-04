@@ -2,11 +2,10 @@ import test from 'tape';
 import ItemController from '../../../server/items/controllers';
 import httpMocks from 'node-mocks-http';
 import testDB, {initMock, clearDB} from '../../../server/database';
-import {DEFAULT_PRECISON, KeyUtils, STATE, ENTITY}
-        from '../../../server/key-utils';
+import {KeyUtils} from '../../../server/key-utils';
+import {DEFAULT_PRECISON, STATE, ENTITY, STATE_STRING} from '../../../server/constants';
 import uuid from 'uuid4';
 import {S3Utils} from '../../../server/aws-s3';
-import {STATE_STRING} from '../../../server/items/models';
 import {mockItems} from '../../../server/database-mock-data';
 
 const itemRedSelo = {
