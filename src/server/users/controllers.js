@@ -2,8 +2,8 @@ import {KeyUtils, ENTITY, STATE} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import db from './../database';
 import {APIError} from './../ErrorHandler';
-import AuthModel, {CreatedPostManager, SavedPostManager} from './../auth/models';
-import UserModel from './models';
+import AuthModel from './../auth/models';
+import UserModel, {CreatedPostManager, SavedPostManager} from './models';
 import uuid from 'uuid4';
 
 export default {

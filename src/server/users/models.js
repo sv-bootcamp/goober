@@ -29,7 +29,7 @@ const UserManager = {
     });
   },
   addAnonymousUser: (data) => {
-    const userKey = UserModel.genUserKey();
+    const userKey = UserManager.genUserKey();
     const userValue = {
       type: USER_TYPE.ANONYMOUS,
       name: 'guest',
@@ -38,11 +38,11 @@ const UserManager = {
     return bcrypt.hash(data.secret)
       .then(hash => {
         userValue.secret = hash;
-        return UserModel.addUser(userKey, userValue);
+        return UserManager.addUser(userKey, userValue);
       });
   },
   addFacebookUser: (data) => {
-    const userKey = UserModel.genUserKey();
+    const userKey = UserManager.genUserKey();
     const userValue = {
       type: USER_TYPE.FACEBOOK,
       key: userKey,
@@ -51,7 +51,7 @@ const UserManager = {
 
     // @TODO get facebook info using facebook graphAPI and save it.
 
-    return UserModel.addUser(userKey, userValue);
+    return UserManager.addUser(userKey, userValue);
   },
   genUserKey: () => {
     const timeHash = KeyUtils.genTimeHash();
