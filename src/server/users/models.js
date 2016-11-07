@@ -1,14 +1,12 @@
 import {KeyUtils} from './../key-utils';
+import bcrypt from './../bcrypt';
 import db from './../database';
 
 export const USER_TYPE = {
-  ANONYMOUS: 2,
+  ANONYMOUS: 0,
   FACEBOOK: 1
 };
 
-/*
-  @TODO you need to add bcrypt to save user secret
- */
 const UserModel = {
   addUser: (key, value) => {
     return new Promise((resolve, reject) => {
@@ -20,14 +18,28 @@ const UserModel = {
       });
     });
   },
+  getUser: (key) => {
+    return new Promise((resolve, reject) => {
+      db.get(key, (err, data) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(data);
+      });
+    });
+  },
   addAnonymousUser: (data) => {
     const userKey = UserModel.genUserKey();
     const userValue = {
       type: USER_TYPE.ANONYMOUS,
-      key: userKey,
-      secret: data.secret
+      name: 'guest',
+      key: userKey
     };
-    return UserModel.addUser(userKey, userValue);
+    return bcrypt.hash(data.secret)
+      .then(hash => {
+        userValue.secret = hash;
+        return UserModel.addUser(userKey, userValue);
+      });
   },
   addFacebookUser: (data) => {
     const userKey = UserModel.genUserKey();

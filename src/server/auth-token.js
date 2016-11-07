@@ -13,7 +13,7 @@ const TOKEN_EXPIRE = {
 };
 
 const SECRET_KEY = {
-  ACCESS:  process.env.ACCESS_SECRET_KEY || config.ACCESS_SECRET_KEY,
+  ACCESS: process.env.ACCESS_SECRET_KEY || config.ACCESS_SECRET_KEY,
   REFRESH: process.env.REFRESH_SECRET_KEY || config.REFRESH_SECRET_KEY
 };
 
@@ -28,7 +28,7 @@ class AuthToken {
   encode(type, payload) {
     return new Promise((resolve) => {
       payload.type = type;
-      jwt.sign(payload, SECRET_KEY[type], { expiresIn: TOKEN_EXPIRE[type]}, (err, token) => {
+      jwt.sign(payload, SECRET_KEY[type], {expiresIn: TOKEN_EXPIRE[type]}, (err, token) => {
         if (err) {
           throw err;
         }
@@ -44,11 +44,11 @@ class AuthToken {
           throw err;
         }
         return resolve(payload);
-      })
+      });
     });
   }
 
-  authenticate(req, res, next){
+  authenticate(req, res, next) {
     const bearerToken = req.headers.authorization;
     const jwtToken = bearerToken.split(' ')[1];
     this.decode(TOKEN_TYPE.ACCESS, jwtToken)

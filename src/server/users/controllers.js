@@ -4,6 +4,8 @@ import db from './../database';
 import {APIError} from './../ErrorHandler';
 import AuthModel from './../auth/models';
 import UserModel from './models';
+import uuid from 'uuid4';
+
 export default {
   get(req, res, cb) {
     const key = req.params.id;
@@ -77,27 +79,46 @@ export default {
     let addUser;
 
     switch (userType) {
-      case 'anonymous':
-        addUser = UserModel.addAnonymousUser(req.body);
-        break;
-      case 'facebook':
-        addUser = UserModel.addFacebookUser(req.body);
-        break;
-      default:
-        break;
+    case 'anonymous':
+      req.body.secret = uuid();
+      addUser = UserModel.addAnonymousUser(req.body);
+      break;
+    case 'facebook':
+      addUser = UserModel.addFacebookUser(req.body);
+      break;
+    default:
+      break;
     }
 
+    let userSecret;
     addUser
-      .then(AuthModel.encodeTokenSet)
-      .then((tokenSet) => {
-        res.send(tokenSet);
-        next();
-      })
-      .catch((err) => {
-        next(new APIError(err, {
-          statusCode: 500,
-          message: err.message
-        }));
-      });
+    .then((userKey) => {
+      switch (userType) {
+      case 'anonymous':
+        return UserModel.getUser(userKey)
+          .then(data => {
+            userSecret = data.secret;
+            return userKey;
+          });
+      case 'facebook':
+        return userKey;
+      default:
+        return userKey;
+      }
+    })
+    .then(AuthModel.encodeTokenSet)
+    .then((tokenSet) => {
+      if (userSecret) {
+        tokenSet.secret = userSecret;
+      }
+      res.send(tokenSet);
+      next();
+    })
+    .catch((err) => {
+      next(new APIError(err, {
+        statusCode: 500,
+        message: err.message
+      }));
+    });
   }
 };

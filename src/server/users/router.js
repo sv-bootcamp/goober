@@ -66,6 +66,38 @@ router.get('/:id', controller.get);
  */
 router.post('/', controller.post);
 
+/**
+ * @api {add} /users/signup signup user
+ * @apiName signupUser
+ * @apiGroup User
+ *
+ * @apiParam {String} userType user type; anonymous, facebook
+ * @apiParam {String} facebookToken facebook token
+ * @apiParamExample {json} Request-Example:
+ *      {
+ *          "userType"      : "facebook",
+ *          "facebookToken" :	"facebookToken"
+ *      }
+ *
+ * @apiSuccess {String} accessToken access token
+ * @apiSuccess {String} refreshToken refresh token
+ * @apiSuccess {String} [secret] user secret
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "accessToken"  : "accessToken",
+ *       "refreshToken" : "refreshToken",
+ *       "secret"       : "userSecret"
+ *     }
+ *
+ * @apiError (Error 500) error The id of the error occured while putting a user in DB
+ * @apiErrorExample {json} Database-Error-Response:
+ *     HTTP/1.1 500 Internal Server Error
+ *     {
+ *       error: "error message ..."
+ *     }
+ */
 router.post('/signup', controller.signup);
 
 export default router;

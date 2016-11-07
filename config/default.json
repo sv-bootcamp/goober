@@ -17,5 +17,6 @@
   "ACCESS_SECRET_KEY": "jwtSecretKey",
   "ACCESS_TOKEN_EXPIRE": "1 days",
   "REFRESH_SECRET_KEY": "jwtSecretKey",
-  "REFRESH_TOKEN_EXPIRE": "6 days"
+  "REFRESH_TOKEN_EXPIRE": "6 days",
+  "SALT_ROUNDS": 8
 }

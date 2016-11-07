@@ -100,10 +100,9 @@ test('add a user to database', t => {
 });
 
 test('signup as a anonymous user to database', t => {
-
   const mockUser = {
-      userType: 'anonymous',
-      secret: 'anonymousSecret'
+    userType: 'anonymous',
+    secret: 'anonymousSecret'
   };
 
   const req = httpMocks.createRequest({
@@ -115,22 +114,21 @@ test('signup as a anonymous user to database', t => {
   const res = httpMocks.createResponse();
 
   clearDB()
-    .then(() => {
-      Controller.signup(req, res, () => {
-        const data = res._getData();
-        t.ok(jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken), 'should be valid access token');
-        t.ok(jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken), 'should be valid refresh token');
-        t.end();
-      });
-    })
-    .catch(err => {
-      t.fail(err);
+  .then(() => {
+    Controller.signup(req, res, () => {
+      const data = res._getData();
+      t.ok(jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken), 'should be valid access token');
+      t.ok(jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken), 'should be valid refresh token');
       t.end();
-    })
+    });
+  })
+  .catch(err => {
+    t.fail(err);
+    t.end();
+  });
 });
 
 test('signup as a facebook user to database', t => {
-
   const mockUser = {
     userType: 'facebook',
     facebookToken: 'facebookSecret'
@@ -144,17 +142,16 @@ test('signup as a facebook user to database', t => {
   const res = httpMocks.createResponse();
 
   clearDB()
-    .then(() => {
-      Controller.signup(req, res, () => {
-        const data = res._getData();
-        t.ok(jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken), 'should be valid access token');
-        t.ok(jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken), 'should be valid refresh token');
-        t.end();
-      });
-    })
-    .catch(err => {
-      t.fail(err);
+  .then(() => {
+    Controller.signup(req, res, () => {
+      const data = res._getData();
+      t.ok(jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken), 'should be valid access token');
+      t.ok(jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken), 'should be valid refresh token');
       t.end();
-    })
-
+    });
+  })
+  .catch(err => {
+    t.fail(err);
+    t.end();
+  });
 });

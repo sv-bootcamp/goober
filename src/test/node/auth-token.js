@@ -24,7 +24,6 @@ test('test token instance', t => {
 });
 
 test('test authenticate user', t => {
-
   const mockUser = {
     user: 'mockUserKey'
   };
@@ -33,7 +32,6 @@ test('test authenticate user', t => {
   };
   AuthToken.encode(TOKEN_TYPE.ACCESS, mockUser)
     .then((accessToken) => {
-
       const req = httpMocks.createRequest({
         method: 'POST',
         url: '/users',
