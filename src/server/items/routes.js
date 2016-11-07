@@ -109,7 +109,7 @@ router.get('/', ItemControllers.getAll);
  *       error: "error message ..."
  *     }
  */
-router.post('/', ItemControllers.addItem);
+router.post('/', ItemControllers.add);
 
 router.put('/', (req, res, next) => {
   next();

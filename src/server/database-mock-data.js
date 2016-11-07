@@ -16,6 +16,7 @@ export const mockItems = [
       category: 'event',
       startTime: '2016-10-13T01:11:46.851Z',
       endTime: new Date(initTime.getTime() + 60000).toISOString(),
+      state: 'alive',
       key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
       userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid'
     }
@@ -32,6 +33,7 @@ export const mockItems = [
       category: 'event',
       startTime: '2016-10-12T01:11:46.851Z',
       endTime: new Date(initTime.getTime() + dayInMs * 2).toISOString(),
+      state: 'alive',
       key: 'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001',
       userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid'
     }
@@ -46,6 +48,7 @@ export const mockItems = [
       createdDate: '2016-10-08T01:11:46.851Z',
       modifiedDate: '2016-10-08T01:11:46.851Z',
       category: 'facility',
+      state: 'alive',
       key: 'item-8523910540000-dd3860f5-b82e-473b-1234-ead0f190b005',
       userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
     }
@@ -60,6 +63,7 @@ export const mockItems = [
       createdDate: '2016-10-09T01:11:46.851Z',
       modifiedDate: '2016-10-09T01:11:46.851Z',
       category: 'facility',
+      state: 'alive',
       key: 'item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004',
       userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
     }
@@ -76,6 +80,7 @@ export const mockItems = [
       category: 'warning',
       startTime: '2016-10-11T01:11:46.851Z',
       endTime: new Date(initTime.getTime() + dayInMs * 5).toISOString(),
+      state: 'alive',
       key: 'item-8523910540003-dd3860f5-b82e-473b-1234-ead0f190b002',
       userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
     }
@@ -92,6 +97,7 @@ export const mockItems = [
       category: 'warning',
       startTime: '2016-10-10T01:11:46.851Z',
       endTime: new Date(initTime.getTime() + dayInMs * 6).toISOString(),
+      state: 'alive',
       key: 'item-8523910540002-dd3860f5-b82e-473b-1234-ead0f190b003',
       userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
     }
@@ -108,6 +114,7 @@ export const expiredItem = {
     modifiedDate: '2016-10-10T01:11:46.851Z',
     category: 'warning',
     startTime: '2016-10-10T01:11:46.851Z',
+    state: 'alive',
     endTime: '1999-01-01T10:10:10.851Z',
     userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
   }
@@ -116,31 +123,31 @@ expiredItem.value.key = expiredItem.key;
 mockItems.push(expiredItem);
 export const mockItemIndexies = [
   {
-    key: 'item-0-9130b273-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q8yy1qj-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
-    key: 'item-0-9130b27-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q8yy1q-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
-    key: 'item-0-9130b2-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q8yy1-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
-    key: 'item-0-9130b-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q8yy-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
-    key: 'item-0-9130-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q8y-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
-    key: 'item-0-913-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q8-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
-    key: 'item-0-91-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'item-0-9q-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
