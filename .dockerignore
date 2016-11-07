@@ -42,8 +42,8 @@ jspm_packages
 dist-client
 dist-server
 dist-test
-/.idea/
-.idea/
+/*.idea/
+.idea/*
 example-project.iml
 /config/local.json
 
@@ -57,5 +57,10 @@ goober-db
 # AWS config
 config/aws.json
 
-# EC2 pem
-*.pem
+# github
+.git
+.lgtm
+.editorconfig
+.travis.yml
+
+

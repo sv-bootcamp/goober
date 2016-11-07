@@ -2,11 +2,10 @@ import levelup from 'levelup';
 import leveldown from 'leveldown';
 import config from 'config';
 import { mockItems, mockItemIndexies, mockImages, mockImageIndexies,
-        mockUsers} from './database-mock-data';
+        mockUsers, mockCreatedPosts} from './database-mock-data';
 
 const db = levelup(config.database, {valueEncoding: 'json'});
 export default db;
-
 export const clearDB = () => {
   return new Promise((resolve, reject) => {
     db.close(() => {
@@ -39,54 +38,16 @@ export const fetchPrefix = (prefix, cb) => {
 };
 
 export const initMock = () => {
-  return new Promise((resolve, reject)=>{
+  return new Promise((resolve, reject) => {
+    const arrs = [];
     const ops = [];
-    for (const key in mockItems) {
-      if (mockItems.hasOwnProperty(key)) {
-        ops.push({
-          type: 'put',
-          key,
-          value: mockItems[key]
-        });
-      }
-    }
-    for (const key in mockItemIndexies) {
-      if (mockItemIndexies.hasOwnProperty(key)) {
-        ops.push({
-          type: 'put',
-          key,
-          value: mockItemIndexies[key]
-        });
-      }
-    }
-    for (const key in mockImages) {
-      if (mockImages.hasOwnProperty(key)) {
-        ops.push({
-          type: 'put',
-          key,
-          value: mockImages[key]
-        });
-      }
-    }
-    for (const key in mockImageIndexies) {
-      if (mockImageIndexies.hasOwnProperty(key)) {
-        ops.push({
-          type: 'put',
-          key,
-          value: mockImageIndexies[key]
-        });
-      }
-    }
-    for (const key in mockUsers) {
-      if (mockUsers.hasOwnProperty(key)) {
-        ops.push({
-          type: 'put',
-          key,
-          value: mockUsers[key]
-        });
-      }
-    }
-
+    arrs.push(mockItems, mockItemIndexies, mockImages, mockImageIndexies, mockUsers,
+      mockCreatedPosts);
+    arrs.map((arr) => {
+      arr.map((obj) => {
+        ops.push({ type: 'put', key: obj.key, value: obj.value });
+      });
+    });
     db.batch(ops, (err) => {
       if (err) {
         return reject(new Error(err));

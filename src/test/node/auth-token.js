@@ -2,7 +2,7 @@ import test from 'tape';
 import httpMocks from 'node-mocks-http';
 import AuthToken, {TOKEN_TYPE} from '../../server/auth-token';
 
-test('test token instance', t => {
+test('test auto token instance', t => {
   const payload = {
     name: 'goober'
   };
@@ -22,7 +22,6 @@ test('test token instance', t => {
       t.end();
     });
 });
-
 test('test authenticate user', t => {
   const mockUser = {
     user: 'mockUserKey'

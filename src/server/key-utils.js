@@ -4,15 +4,16 @@ import uuid from 'uuid4';
 export const MAX_TIME = 10000000000000;
 export const DEFAULT_PRECISON = 8;
 export const STATE = {ALIVE: '0', EXPIRED: '1', REMOVED: '2'};
+
 export const ENTITY = {
   ITEM: 'item',
   REPORT: 'report',
   IMAGE: 'image',
   COMMENT: 'comment',
   USER: 'user',
-  CREATED_POST: 'created-post',
-  SAVED_POST: 'saved-post',
-  REACT_POST: 'react-post'
+  CREATED_POST: 'createdPost',
+  SAVED_POST: 'savedPost',
+  REACT_POST: 'reactPost'
 };
 export const CATEGORY = {
   EVENT: 'event',
@@ -103,6 +104,10 @@ export const KeyUtils = {
   },
   parseState: (key) => {
     return key.charAt(key.indexOf('-') + 1);
+  },
+  replaceState: (key, newState) => {
+    return key.substring(0, key.indexOf('-') + 1) + newState +
+      key.substring(key.indexOf('-') + 2, key.length);
   }
 };
 
