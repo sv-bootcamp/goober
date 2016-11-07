@@ -1,9 +1,9 @@
 import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
+import {KeyUtils} from '../../../server/key-utils';
 import UserManager, {CreatedPostManager, SavedPostManager} from '../../../server/users/models';
 import {mockUsers, mockCreatedPosts} from '../../../server/database-mock-data';
-import {KeyUtils, ENTITY, STATE, CATEGORY} from '../../../server/key-utils';
-import {STATE_STRING} from '../../../server/items/models';
+import {ENTITY, STATE_STRING, CATEGORY, STATE} from '../../../server/constants';
 
 const mockItem = {
   title: 'mock item',

@@ -1,8 +1,9 @@
 import db, {fetchPrefix} from '../database';
 import {APIError} from '../ErrorHandler';
-import {KeyUtils, STATE, ENTITY, CATEGORY} from '../key-utils';
-import ItemManager, {STATE_STRING} from './models';
-import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
+import {KeyUtils} from '../key-utils';
+import {STATE_STRING, STATE, ENTITY, CATEGORY, IMAGE_SIZE_PREFIX} from '../constants';
+import ItemManager from './models';
+import {S3Connector} from '../aws-s3';
 
 export default {
   getAll: (req, res, cb) => {

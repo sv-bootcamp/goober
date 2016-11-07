@@ -2,10 +2,6 @@ import AWS from 'aws-sdk';
 import config from 'config';
 import fs from 'fs';
 
-export const IMAGE_SIZE_PREFIX = {
-  THUMBNAIL: 'thumbnail'
-};
-
 class MockS3 {
   // We can trust AWS-sdk
   // This class is just for test

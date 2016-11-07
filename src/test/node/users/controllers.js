@@ -2,8 +2,8 @@ import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
 import httpMocks from 'node-mocks-http';
 import Controller from '../../../server/users/controllers';
-import {KeyUtils, ENTITY} from '../../../server/key-utils';
-
+import {KeyUtils} from '../../../server/key-utils';
+import {ENTITY} from '../../../server/constants';
 const mockUser = {
   key: 'user-unique-key',
   name: 'test-user',

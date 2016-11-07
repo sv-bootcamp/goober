@@ -1,8 +1,9 @@
 import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
+import {KeyUtils} from '../../../server/key-utils';
+import {ENTITY, STATE, DEFAULT_PRECISON, CATEGORY, STATE_STRING} from '../../../server/constants';
+import ItemManager from '../../../server/items/models';
 import {expiredItem} from '../../../server/database-mock-data';
-import ItemManager, {STATE_STRING} from '../../../server/items/models';
-import {KeyUtils, ENTITY, STATE, DEFAULT_PRECISON, CATEGORY} from '../../../server/key-utils';
 
 const testItem = {
   title: 'Lion popup store',
