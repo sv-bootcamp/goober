@@ -2,10 +2,12 @@ import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
 import {mockUsers, mockCreatedPosts} from '../../../server/database-mock-data';
 import UserModel, {USER_TYPE} from '../../../server/users/models';
-import UserManager, {CreatedPostManager, SavedPostManager} from '../../../server/users/models';
+import UserManager, {CreatedPostManager, SavedPostManager, FacebookManager}
+  from '../../../server/users/models';
 import {KeyUtils, ENTITY, STATE, CATEGORY} from '../../../server/key-utils';
 import bcrypt from './../../../server/bcrypt';
 import {STATE_STRING} from '../../../server/items/models';
+import config from 'config';
 
 test('generate user key', t => {
   const expected = {
@@ -75,7 +77,7 @@ test('add Anonymous user', t => {
 
 test('add Facebook user', t => {
   const mockUser = {
-    facebookToken: 'facebookToken'
+    facebookToken: config.FACEBOOK_TEST_ACCESS_TOKEN
   };
   const expected = {
     type: USER_TYPE.FACEBOOK,
@@ -224,4 +226,32 @@ test('get created post keys of a user', t => {
       `should be same number of size : ${values.length}`);
     t.end();
   });
+});
+test('get user profile', t => {
+  const mockAccessToken = config.FACEBOOK_TEST_ACCESS_TOKEN;
+  const expected = {
+    name: 'Open Graph Test User'
+  };
+  FacebookManager.getProfile(mockAccessToken)
+  .then((profile) => {
+    t.equal(profile.name, expected.name, 'should be same name');
+    t.end();
+  })
+  .catch(err => {
+    t.fail();
+    t.end(err);
+  });
+});
+
+test('get user profile image', t => {
+  const mockId = config.FACEBOOK_TEST_ID;
+  FacebookManager.getProfileImage(mockId)
+    .then((imageData) => {
+      t.ok(imageData, 'facebook profile image ok');
+      t.end();
+    })
+    .catch(err => {
+      t.fail();
+      t.end(err);
+    });
 });

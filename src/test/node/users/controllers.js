@@ -4,6 +4,7 @@ import httpMocks from 'node-mocks-http';
 import Controller from '../../../server/users/controllers';
 import {KeyUtils, ENTITY} from '../../../server/key-utils';
 import jwt, {TOKEN_TYPE} from '../../../server/auth-token';
+import config from 'config';
 
 test('get a user from database', t => {
   const expected = {
@@ -174,7 +175,7 @@ test('add created post using user controller', t => {
 test('signup as a facebook user to database', t => {
   const mockUser = {
     userType: 'facebook',
-    facebookToken: 'facebookSecret'
+    facebookToken: config.FACEBOOK_TEST_ACCESS_TOKEN
   };
 
   const req = httpMocks.createRequest({

@@ -1,6 +1,31 @@
 import {KeyUtils, ENTITY, STATE} from './../key-utils';
 import bcrypt from './../bcrypt';
 import db, {fetchPrefix} from '../database';
+import request from 'request-promise';
+
+const FACEBOOK_BASE_URL = 'https://graph.facebook.com';
+const FACEBOOK_USER_PROFILE_URL = '/me';
+const FACEBOOK_PROFILE_IMAGE_URL = '/picture';
+
+export const FacebookManager = {
+  getProfile: (accessToken) => {
+    return request({
+      uri: `${FACEBOOK_BASE_URL}${FACEBOOK_USER_PROFILE_URL}`,
+      qs: {
+        fields: 'name,email,verified',
+        access_token: accessToken
+      },
+      json: true
+    });
+  },
+  getProfileImage: (id) => {
+    return request({
+      uri: `${FACEBOOK_BASE_URL}/${id}${FACEBOOK_PROFILE_IMAGE_URL}`,
+      qs: { type: 'large', redirect: 0 },
+      json: true
+    });
+  }
+};
 
 export const USER_TYPE = {
   ANONYMOUS: 0,
@@ -49,9 +74,18 @@ const UserManager = {
       facebookToken: data.facebookToken
     };
 
-    // @TODO get facebook info using facebook graphAPI and save it.
-
-    return UserManager.addUser(userKey, userValue);
+    return FacebookManager.getProfile(data.facebookToken)
+      .then(profile => {
+        userValue.name = profile.name;
+        userValue.email = profile.email;
+        userValue.facebookId = profile.id;
+        return profile.id;
+      })
+      .then(FacebookManager.getProfileImage)
+      .then(profileImg => {
+        userValue.profileImgUrl = profileImg.data.url;
+        return UserManager.addUser(userKey, userValue);
+      });
   },
   genUserKey: () => {
     const timeHash = KeyUtils.genTimeHash();
