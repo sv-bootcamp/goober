@@ -40,6 +40,37 @@ test('add user', t => {
   });
 });
 
+test('get user', t => {
+  const mockUser = {
+    key: UserModel.genUserKey(),
+    secret: 'userSecret'
+  };
+  const expected = {
+    value: mockUser
+  };
+
+  clearDB()
+    .then(() => {
+      return new Promise((resolve, reject) => {
+        testDB.put(mockUser.key, mockUser, (err) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(mockUser.key);
+        });
+      })
+    })
+    .then(UserModel.getUser)
+    .then(data => {
+      t.equal(data.secret, expected.value.secret, 'should have same secret');
+      t.end();
+    })
+    .catch(err => {
+      t.fail();
+      t.end(err);
+    });
+});
+
 test('add Anonymous user', t => {
   const mockUser = {
     secret: 'userSecret'

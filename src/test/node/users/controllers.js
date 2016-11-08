@@ -118,9 +118,17 @@ test('signup as a anonymous user to database', t => {
     .then(() => {
       Controller.signup(req, res, () => {
         const data = res._getData();
-        t.ok(jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken), 'should be valid access token');
-        t.ok(jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken), 'should be valid refresh token');
-        t.end();
+        return jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken)
+          .then((decodedAccessToken) => {
+            t.ok(decodedAccessToken, 'should be valid access token');
+          })
+          .then(() => {
+            return jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken)
+          })
+          .then(decodedRefreshToken => {
+            t.ok(decodedRefreshToken, 'should be valid refresh token');
+            t.end();
+          });
       });
     })
     .catch(err => {
