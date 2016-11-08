@@ -1,9 +1,11 @@
 import test from 'tape';
 import jwt, {TOKEN_TYPE} from './../../../server/auth-token';
 import AuthModel from '../../../server/auth/models';
-import {USER_TYPE} from '../../../server/users/models';
+import {STATE, ENTITY} from '../../../server/key-utils';
+import {FacebookManager, USER_TYPE} from '../../../server/users/models';
 import bcrypt from '../../../server/bcrypt';
 import db, {clearDB} from '../../../server/database';
+import config from 'config';
 
 test('get token set', t => {
   const mockUserKey = 'userKey';
@@ -40,6 +42,8 @@ test('grant anonymous user', t => {
     key: 'userKey',
     type: USER_TYPE.ANONYMOUS
   };
+  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.ANONYMOUS}-${mockUserSecret}`;
+
   bcrypt.hash(mockUserSecret)
     .then(hash => {
       mockUser.secret = hash;
@@ -56,7 +60,17 @@ test('grant anonymous user', t => {
       });
     })
     .then(() => {
-      return AuthModel.grantAnonymous(mockUser.key, mockUserSecret);
+      return new Promise((resolve, reject) => {
+        db.put(mockUserIdxKey, {key: mockUser.key}, err => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve();
+        });
+      });
+    })
+    .then(() => {
+      return AuthModel.grantAnonymous(mockUserSecret);
     })
     .then(userKey => {
       t.equal(userKey, mockUser.key, 'should be same user key');
@@ -71,8 +85,11 @@ test('grant facebook user', t => {
   const mockUser = {
     key: 'userKey',
     type: USER_TYPE.FACEBOOK,
-    facebookToken: 'userFacebookToken'
+    facebookId: config.FACEBOOK_TEST_ID
   };
+  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}`+
+    `-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
+
   clearDB()
     .then(() => {
       return new Promise((resolve, reject) => {
@@ -85,7 +102,18 @@ test('grant facebook user', t => {
       });
     })
     .then(() => {
-      return AuthModel.grantFacebook(mockUser.key, mockUser.facebookToken);
+      return new Promise((resolve, reject) => {
+        db.put(mockUserIdxKey, {key: mockUser.key}, err => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve();
+        });
+      });
+    })
+    .then(FacebookManager.getTestAccessToken)
+    .then(mockFacebookToken => {
+      return AuthModel.grantFacebook(mockFacebookToken);
     })
     .then(userKey => {
       t.equal(userKey, mockUser.key, 'should be same user key');

@@ -2,6 +2,7 @@ import {KeyUtils, ENTITY, STATE} from './../key-utils';
 import bcrypt from './../bcrypt';
 import db, {fetchPrefix} from '../database';
 import request from 'request-promise';
+import config from 'config';
 
 const FACEBOOK_BASE_URL = 'https://graph.facebook.com';
 const FACEBOOK_USER_PROFILE_URL = '/me';
@@ -18,12 +19,31 @@ export const FacebookManager = {
       json: true
     });
   },
+  getId: (accessToken) => {
+    return FacebookManager.getProfile(accessToken)
+      .then(profile => {
+        return profile.id
+      });
+  },
   getProfileImage: (id) => {
     return request({
       uri: `${FACEBOOK_BASE_URL}/${id}${FACEBOOK_PROFILE_IMAGE_URL}`,
       qs: { type: 'large', redirect: 0 },
       json: true
     });
+  },
+  getTestAccessToken: () => {
+    const APP_ID = process.env.FACEBOOK_APP_ID || config.FACEBOOK_APP_ID;
+    const APP_ACCESS_TOKEN = process.env.FACEBOOK_APP_ACCESS_TOKEN
+      || config.FACEBOOK_APP_ACCESS_TOKEN;
+    return request({
+      uri: `${FACEBOOK_BASE_URL}/v2.8/${APP_ID}/accounts/test-users`,
+      qs: { access_token: APP_ACCESS_TOKEN },
+      json: true
+    })
+    .then(res => {
+      return res.data[0].access_token;
+    })
   }
 };
 
@@ -64,32 +84,63 @@ const UserManager = {
       .then(hash => {
         userValue.secret = hash;
         return UserManager.addUser(userKey, userValue);
+      })
+      .then(key => {
+        const userIdx = UserManager.getUserIndexKey({
+          userType: USER_TYPE.ANONYMOUS,
+          secret: data.secret
+        });
+        return UserManager.addUser(userIdx, {key});
       });
   },
   addFacebookUser: (data) => {
+    /*
+      This method is called when facebook user sign up.
+      It save user data(name, email, facebook) from facebook graph API.
+      Also saved in db as 'user-timehash' and index like 'user-0-facebook-0000000(facebookId)'
+      Likewise any other index, it only contains original user key in it.
+     */
     const userKey = UserManager.genUserKey();
     const userValue = {
       type: USER_TYPE.FACEBOOK,
-      key: userKey,
-      facebookToken: data.facebookToken
+      key: userKey
     };
-
+    let facebookId;
     return FacebookManager.getProfile(data.facebookToken)
       .then(profile => {
         userValue.name = profile.name;
         userValue.email = profile.email;
         userValue.facebookId = profile.id;
+        facebookId = profile.id;
         return profile.id;
       })
       .then(FacebookManager.getProfileImage)
       .then(profileImg => {
         userValue.profileImgUrl = profileImg.data.url;
-        return UserManager.addUser(userKey, userValue);
+        return UserManager.addUser(userKey, userValue)
+      })
+      .then(key => {
+        const userIdx = UserManager.getUserIndexKey({
+          userType: USER_TYPE.FACEBOOK,
+          facebookId: facebookId
+        });
+        return UserManager.addUser(userIdx, {key});
       });
   },
   genUserKey: () => {
     const timeHash = KeyUtils.genTimeHash();
     return `user-${timeHash}`;
+  },
+  getUserIndexKey: (params) => {
+    switch (params.userType) {
+    case USER_TYPE.ANONYMOUS:
+      return `${ENTITY.USER}-${params.state || STATE.ALIVE}-${ENTITY.ANONYMOUS}-${params.secret}`;
+    case USER_TYPE.FACEBOOK:
+      return `${ENTITY.USER}-${params.state || STATE.ALIVE}`+
+        `-${ENTITY.FACEBOOK}-${params.facebookId}`;
+    default:
+      return null;
+    }
   },
   modifyUser: (key, value, cb) => {
     return new Promise((resolve, reject) => {

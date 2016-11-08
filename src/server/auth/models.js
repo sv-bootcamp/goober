@@ -1,6 +1,6 @@
 import jwt, {TOKEN_TYPE} from './../auth-token';
-import bcrypt from './../bcrypt';
-import UserModel from './../users/models';
+import UserModel, {FacebookManager, USER_TYPE} from './../users/models';
+
 
 export const GRANT_TYPE = {
   ANONYMOUS: 'anonymous',
@@ -25,40 +25,28 @@ const AuthModel = {
         };
       });
   },
-  grantAnonymous: (userKey, userSecret) => {
-    return new Promise((resolve, reject) => {
-      UserModel.getUser(userKey)
+  grantAnonymous: (userSecret) => {
+    const idxKey = UserModel.getUserIndexKey({
+      userType: USER_TYPE.ANONYMOUS,
+      secret: userSecret
+    });
+    return UserModel.getUser(idxKey)
       .then(data => {
-        return bcrypt.compare(userSecret, data.secret);
-      })
-      .then(res => {
-        if (res) {
-          return resolve(userKey);
-        }
-        return reject(new Error('notgranted'));
-      })
-      .catch(err => {
-        reject(err);
+        return data.key;
       });
-    });
   },
-  grantFacebook: (userKey, facebookToken) => {
-    return new Promise((resolve, reject) => {
-      UserModel.getUser(userKey)
-      .then((data) => {
-        // @TODO encrypt facebook Token
-        return data.facebookToken === facebookToken;
+  grantFacebook: (facebookToken) => {
+    return FacebookManager.getId(facebookToken)
+      .then(id => {
+        return UserModel.getUserIndexKey({
+          userType: USER_TYPE.FACEBOOK,
+          facebookId: id
+        });
       })
-      .then(res => {
-        if (res) {
-          return resolve(userKey);
-        }
-        return reject(new Error('notgranted'));
-      })
-      .catch(err => {
-        reject(err);
+      .then(UserModel.getUser)
+      .then(ref => {
+        return ref.key;
       });
-    });
   }
 };
 export default AuthModel;

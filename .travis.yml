@@ -1,6 +1,10 @@
 language: node_js
 node_js:
   - "6"
+addons:
+  apt:
+    packages:
+    - gcc-4.8
 before_script:
   - npm install
   - echo '{}' > config/local.json

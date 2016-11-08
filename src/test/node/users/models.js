@@ -76,15 +76,15 @@ test('add Anonymous user', t => {
 });
 
 test('add Facebook user', t => {
-  const mockUser = {
-    facebookToken: config.FACEBOOK_TEST_ACCESS_TOKEN
-  };
   const expected = {
-    type: USER_TYPE.FACEBOOK,
-    value: mockUser
+    type: USER_TYPE.FACEBOOK
   };
   clearDB()
-    .then(() => {
+    .then(FacebookManager.getTestAccessToken)
+    .then(mockFacebookToken => {
+      const mockUser = {
+        facebookToken: mockFacebookToken
+      };
       return UserModel.addFacebookUser(mockUser);
     })
     .then(() => {
@@ -99,8 +99,6 @@ test('add Facebook user', t => {
         t.end(err);
       }).on('close', () => {
         t.equal(savedUser.type, expected.type, 'should have same user type facebook');
-        t.equal(savedUser.facebookToken, expected.value.facebookToken,
-          'should have same facebookToken');
         t.end();
       });
     });
@@ -228,19 +226,20 @@ test('get created post keys of a user', t => {
   });
 });
 test('get user profile', t => {
-  const mockAccessToken = config.FACEBOOK_TEST_ACCESS_TOKEN;
   const expected = {
     name: 'Open Graph Test User'
   };
-  FacebookManager.getProfile(mockAccessToken)
-  .then((profile) => {
-    t.equal(profile.name, expected.name, 'should be same name');
-    t.end();
-  })
-  .catch(err => {
-    t.fail();
-    t.end(err);
-  });
+
+  FacebookManager.getTestAccessToken()
+    .then(FacebookManager.getProfile)
+    .then((profile) => {
+      t.equal(profile.name, expected.name, 'should be same name');
+      t.end();
+    })
+    .catch(err => {
+      t.fail();
+      t.end(err);
+    });
 });
 
 test('get user profile image', t => {

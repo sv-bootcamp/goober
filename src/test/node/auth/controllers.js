@@ -2,10 +2,12 @@ import test from 'tape';
 import jwt, {TOKEN_TYPE} from './../../../server/auth-token';
 import AuthController from '../../../server/auth/controllers';
 import {GRANT_TYPE} from '../../../server/auth/models';
-import {USER_TYPE} from '../../../server/users/models';
+import {FacebookManager, USER_TYPE} from '../../../server/users/models';
+import {STATE, ENTITY} from '../../../server/key-utils';
 import db, {clearDB} from '../../../server/database';
 import bcrypt from '../../../server/bcrypt';
 import httpMocks from 'node-mocks-http';
+import config from 'config';
 
 test('refresh token', t => {
   const mockUser = {
@@ -55,12 +57,14 @@ test('refresh token', t => {
       });
     });
 });
-test('grant anonymous user', t => {
+test('grant anonymous user in userController', t => {
   const mockUserSecret = 'userSecret';
   const mockUser = {
     key: 'userKey',
     type: USER_TYPE.ANONYMOUS
   };
+  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.ANONYMOUS}-${mockUserSecret}`;
+
   const expected = {
     accessToken: {
       type: TOKEN_TYPE.ACCESS,
@@ -71,6 +75,7 @@ test('grant anonymous user', t => {
       user: mockUser.key
     }
   };
+
   bcrypt.hash(mockUserSecret)
     .then(hash => {
       mockUser.secret = hash;
@@ -87,21 +92,33 @@ test('grant anonymous user', t => {
       });
     })
     .then(() => {
+      return new Promise((resolve, reject) => {
+        db.put(mockUserIdxKey, {key: mockUser.key}, err => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve();
+        });
+      });
+    })
+    .then(() => {
       const req = httpMocks.createRequest({
         method: 'POST',
         url: '/auth/grant',
         body: {
           grantType: GRANT_TYPE.ANONYMOUS,
-          userKey: mockUser.key,
           userSecret: mockUserSecret
         }
       });
       const res = httpMocks.createResponse();
-      return AuthController.grant(req, res, () => {
+      return AuthController.grant(req, res, (err) => {
+        if (err) {
+          return t.end(err);
+        }
         const tokenSet = res._getData();
         const accessToken = jwt.decode(TOKEN_TYPE.ACCESS, tokenSet.accessToken);
         const refreshToken = jwt.decode(TOKEN_TYPE.REFRESH, tokenSet.refreshToken);
-        Promise.all([accessToken, refreshToken])
+        return Promise.all([accessToken, refreshToken])
           .then(decodedSet => {
             const decodedAccessToken = decodedSet[0];
             const decodedRefreshToken = decodedSet[1];
@@ -115,10 +132,6 @@ test('grant anonymous user', t => {
               'should be same user');
             t.end();
           })
-          .catch(err => {
-            t.fail(err);
-            t.end();
-          });
       });
     })
     .catch(err => {
@@ -130,8 +143,10 @@ test('grant facebook user', t => {
   const mockUser = {
     key: 'userKey',
     type: USER_TYPE.FACEBOOK,
-    facebookToken: 'userFacebookToken'
+    facebookId: config.FACEBOOK_TEST_ID
   };
+  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}`+
+    `-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
   const expected = {
     accessToken: {
       type: TOKEN_TYPE.ACCESS,
@@ -154,13 +169,23 @@ test('grant facebook user', t => {
       });
     })
     .then(() => {
+      return new Promise((resolve, reject) => {
+        db.put(mockUserIdxKey, {key: mockUser.key}, err => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve();
+        });
+      });
+    })
+    .then(FacebookManager.getTestAccessToken)
+    .then(mockFacebookToken => {
       const req = httpMocks.createRequest({
         method: 'POST',
         url: '/auth/grant',
         body: {
           grantType: GRANT_TYPE.FACEBOOK,
-          userKey: mockUser.key,
-          facebookToken: mockUser.facebookToken
+          facebookToken: mockFacebookToken
         }
       });
       const res = httpMocks.createResponse();
@@ -193,38 +218,3 @@ test('grant facebook user', t => {
       t.end(err);
     });
 });
-
-// grant: (req, res, next) => {
-//   const {grantType} = req.body;
-//   let grant;
-//   switch(grantType) {
-//     case GRANT_TYPE.ANONYMOUS:
-//       grant = AuthModel.grantAnonymous(req.body.userKey, req.body.userSecret);
-//       break;
-//     case GRANT_TYPE.FACEBOOK:
-//       grant = AuthModel.grantFacebook(req.body.userKey, req.body.facebookToken);
-//       break;
-//     default:
-//       break;
-//   }
-//
-//   grant
-//     .then((userKey) => {
-//       res.send(AuthModel.encodeTokenSet(userKey));
-//       return next();
-//     })
-//     .catch(err => {
-//       if(err.message === 'notgranted') {
-//         return next(new APIError(err, {
-//           statusCode: 400,
-//           message: err.message
-//         }))
-//       }
-//       return next(
-//         new APIError(err, {
-//           statusCode: 500,
-//           message: err.message
-//         })
-//       );
-//     });
-// }

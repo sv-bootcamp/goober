@@ -26,11 +26,11 @@ class AuthToken {
   constructor() {}
 
   encode(type, payload) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       payload.type = type;
       jwt.sign(payload, SECRET_KEY[type], {expiresIn: TOKEN_EXPIRE[type]}, (err, token) => {
         if (err) {
-          throw err;
+          return reject(err);
         }
         return resolve(token);
       });
@@ -38,10 +38,10 @@ class AuthToken {
   }
 
   decode(type, token) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       jwt.verify(token, SECRET_KEY[type], (err, payload) => {
         if (err) {
-          throw err;
+          return reject(err);
         }
         return resolve(payload);
       });

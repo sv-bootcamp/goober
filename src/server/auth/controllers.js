@@ -29,10 +29,10 @@ export default {
     let grant;
     switch (grantType) {
     case GRANT_TYPE.ANONYMOUS:
-      grant = AuthModel.grantAnonymous(req.body.userKey, req.body.userSecret);
+      grant = AuthModel.grantAnonymous(req.body.userSecret);
       break;
     case GRANT_TYPE.FACEBOOK:
-      grant = AuthModel.grantFacebook(req.body.userKey, req.body.facebookToken);
+      grant = AuthModel.grantFacebook(req.body.facebookToken);
       break;
     default:
       break;
@@ -45,10 +45,10 @@ export default {
       return next();
     })
     .catch(err => {
-      if (err.message === 'notgranted') {
+      if (err.notFound) {
         return next(new APIError(err, {
           statusCode: 400,
-          message: err.message
+          message: 'wrong secret'
         }));
       }
       return next(

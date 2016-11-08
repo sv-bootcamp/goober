@@ -4,7 +4,7 @@ import httpMocks from 'node-mocks-http';
 import Controller from '../../../server/users/controllers';
 import {KeyUtils, ENTITY} from '../../../server/key-utils';
 import jwt, {TOKEN_TYPE} from '../../../server/auth-token';
-import config from 'config';
+import {FacebookManager} from '../../../server/users/models';
 
 test('get a user from database', t => {
   const expected = {
@@ -173,30 +173,36 @@ test('add created post using user controller', t => {
 });
 
 test('signup as a facebook user to database', t => {
-  const mockUser = {
-    userType: 'facebook',
-    facebookToken: config.FACEBOOK_TEST_ACCESS_TOKEN
-  };
-
-  const req = httpMocks.createRequest({
-    method: 'POST',
-    url: '/users/signup',
-    body: mockUser
-  });
-  const res = httpMocks.createResponse();
 
   clearDB()
-  .then(() => {
-    Controller.signup(req, res, () => {
+  .then(FacebookManager.getTestAccessToken)
+  .then(mockFacebookToken => {
+    const mockUser = {
+      userType: 'facebook',
+      facebookToken: mockFacebookToken
+    };
+
+    const req = httpMocks.createRequest({
+      method: 'POST',
+      url: '/users/signup',
+      body: mockUser
+    });
+    const res = httpMocks.createResponse();
+
+    Controller.signup(req, res, (err) => {
+      if (err) {
+       t.fail();
+       return t.end(err);
+      }
       const data = res._getData();
       t.ok(jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken), 'should be valid access token');
       t.ok(jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken), 'should be valid refresh token');
-      t.end();
+      return t.end();
     });
   })
   .catch(err => {
-    t.fail(err);
-    t.end();
+    t.fail();
+    t.end(err);
   });
 });
 test('add posted post using user controller', t => {
