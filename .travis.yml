@@ -15,11 +15,7 @@ addons:
 
 before_script:
   - npm install -g npm
-  - npm install
   - echo '{}' > config/local.json
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install python2.7
 script: npm test
 notifications:
   slack: siliconvalleybootcamp:SnRpv9p0fK5FmSEFa7iVqJAw
