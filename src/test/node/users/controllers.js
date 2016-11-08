@@ -191,12 +191,20 @@ test('signup as a facebook user to database', t => {
     Controller.signup(req, res, (err) => {
       if (err) {
         t.fail();
-        t.end(err);
+        return t.end(err);
       }
       const data = res._getData();
-      t.ok(jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken), 'should be valid access token');
-      t.ok(jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken), 'should be valid refresh token');
-      return t.end();
+      return jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken)
+        .then((decodedAccessToken) => {
+          t.ok(decodedAccessToken, 'should be valid access token');
+        })
+        .then(() => {
+          return jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken)
+        })
+        .then(decodedRefreshToken => {
+          t.ok(decodedRefreshToken, 'should be valid refresh token');
+          t.end();
+        });
     });
   })
   .catch(err => {
