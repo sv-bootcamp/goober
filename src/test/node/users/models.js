@@ -1,7 +1,7 @@
 import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
 import UserManager, {CreatedPostManager, SavedPostManager} from '../../../server/users/models';
-import {mockUsers, mockCreatedPosts} from '../../../server/database-mock-data';
+import {mockUsers, mockCreatedPosts, mockSavedPosts} from '../../../server/database-mock-data';
 import {KeyUtils, ENTITY, STATE, CATEGORY} from '../../../server/key-utils';
 import {STATE_STRING} from '../../../server/items/models';
 
@@ -125,5 +125,39 @@ test('get created post keys of a user', t => {
     t.equal(values.length, expected.length,
       `should be same number of size : ${values.length}`);
     t.end();
+  });
+});
+test('get saved posts of a user(SavedPostManager.getSavedPosts)', t => {
+  const testUser = mockUsers[0].value;
+  const expected = {
+    userKey: testUser.key,
+    // get a number of savedposts of test user
+    length: mockSavedPosts.filter((post)=>{
+      return (post.key.includes(testUser.key)) ? true : false;
+    }).length,
+    thumnailPrefix: 'url-of-thumbnail-'
+  };
+  clearDB().then(initMock)
+  .then(()=>{
+    return new Promise((resolve, reject) => {
+      SavedPostManager.getSavedPosts(testUser.key, (err, values) => {
+        return (err) ? reject(err) : resolve(values);
+      });
+    });
+  }).then((values) => {
+    t.equal(values.length, expected.length,
+    `should ba same length of item : ${values.length}`);
+    values.map((value) => {
+      if (value.userKey !== expected.userKey) {
+        t.fail(`wrong user key : ${value.userKey}`);
+        return;
+      }
+      t.notEqual(value.imageUrls.length, 0,
+      `valid length of image url : ${value.imageUrls.length}`);
+    });
+    t.end();
+  }).catch((err) => {
+    t.fail();
+    t.end(err);
   });
 });
