@@ -12,9 +12,9 @@ addons:
     packages:
       - g++-4.8
       - gcc-4.8
-
-before_script:
+before_install:
   - npm install -g npm
+before_script:
   - echo '{}' > config/local.json
 script: npm test
 notifications:
