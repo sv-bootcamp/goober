@@ -116,7 +116,11 @@ test('signup as a anonymous user to database', t => {
 
   clearDB()
     .then(() => {
-      Controller.signup(req, res, () => {
+      return Controller.signup(req, res, (err) => {
+        if (err) {
+          t.fail();
+          return t.end(err);
+        }
         const data = res._getData();
         return jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken)
           .then((decodedAccessToken) => {
@@ -196,7 +200,7 @@ test('signup as a facebook user to database', t => {
     });
     const res = httpMocks.createResponse();
 
-    Controller.signup(req, res, (err) => {
+    return Controller.signup(req, res, (err) => {
       if (err) {
         t.fail();
         return t.end(err);
