@@ -41,15 +41,8 @@ class AuthToken {
     return new Promise((resolve, reject) => {
       jwt.verify(token, SECRET_KEY[type], (err, payload) => {
         if (err) {
-          console.log('this is wrong');
           return reject(err);
         }
-        console.log("no it's not");
-        console.log(payload);
-        console.log(payload.user);
-        console.log(`now : ${new Date(Number(new Date()))}`);
-        console.log(`iat : ${new Date(Number(payload.iat)*1000)}`);
-        console.log(`exp : ${new Date(Number(payload.exp)*1000)}`);
         return resolve(payload);
       });
     });
