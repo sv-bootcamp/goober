@@ -124,13 +124,13 @@ test('signup as a anonymous user to database', t => {
         const data = res._getData();
         return jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken)
           .then((decodedAccessToken) => {
-            t.ok(decodedAccessToken, 'should be valid access token');
+            t.ok(decodedAccessToken.user, 'should be valid access token');
           })
           .then(() => {
             return jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken);
           })
           .then(decodedRefreshToken => {
-            t.ok(decodedRefreshToken, 'should be valid refresh token');
+            t.ok(decodedRefreshToken.user, 'should be valid refresh token');
             t.end();
           });
       });
@@ -208,13 +208,13 @@ test('signup as a facebook user to database', t => {
       const data = res._getData();
       return jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken)
         .then((decodedAccessToken) => {
-          t.ok(decodedAccessToken, 'should be valid access token');
+          t.ok(decodedAccessToken.user, 'should be valid access token');
         })
         .then(() => {
           return jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken);
         })
         .then(decodedRefreshToken => {
-          t.ok(decodedRefreshToken, 'should be valid refresh token');
+          t.ok(decodedRefreshToken.user, 'should be valid refresh token');
           t.end();
         });
     });
