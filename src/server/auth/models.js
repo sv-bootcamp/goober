@@ -35,12 +35,12 @@ const AuthModel = {
   grantFacebook: (facebookToken) => {
     return FacebookManager.getId(facebookToken)
       .then(id => {
-        return UserModel.getUserIndexKey({
+        const idxKey = UserModel.getUserIndexKey({
           userType: USER_TYPE.FACEBOOK,
           facebookId: id
         });
-      })
-      .then(UserModel.getUserKey);
+        return UserModel.getUserKey(idxKey);
+      });
   }
 };
 export default AuthModel;
