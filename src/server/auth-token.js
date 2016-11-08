@@ -7,10 +7,10 @@ export const TOKEN_TYPE = {
   REFRESH: 'REFRESH'
 };
 
-const TOKEN_EXPIRE = {
-  [TOKEN_TYPE.ACCESS]: process.env.ACCESS_TOKEN_EXPIRE || config.ACCESS_TOKEN_EXPIRE,
-  [TOKEN_TYPE.REFRESH]: process.env.REFRESH_TOKEN_EXPIRE || config.REFRESH_TOKEN_EXPIRE
-};
+// const TOKEN_EXPIRE = {
+//   [TOKEN_TYPE.ACCESS]: process.env.ACCESS_TOKEN_EXPIRE || config.ACCESS_TOKEN_EXPIRE,
+//   [TOKEN_TYPE.REFRESH]: process.env.REFRESH_TOKEN_EXPIRE || config.REFRESH_TOKEN_EXPIRE
+// };
 
 const SECRET_KEY = {
   [TOKEN_TYPE.ACCESS]: process.env.ACCESS_SECRET_KEY || config.ACCESS_SECRET_KEY,
@@ -28,7 +28,7 @@ class AuthToken {
   encode(type, payload) {
     return new Promise((resolve, reject) => {
       payload.type = type;
-      jwt.sign(payload, SECRET_KEY[type], {expiresIn: TOKEN_EXPIRE[type]}, (err, token) => {
+      jwt.sign(payload, SECRET_KEY[type], {expiresIn: '2 days'}, (err, token) => {
         if (err) {
           return reject(err);
         }
