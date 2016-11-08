@@ -2,7 +2,7 @@ import levelup from 'levelup';
 import leveldown from 'leveldown';
 import config from 'config';
 import { mockItems, mockItemIndexies, mockImages, mockImageIndexies,
-        mockUsers, mockCreatedPosts} from './database-mock-data';
+        mockUsers, mockCreatedPosts, mockSavedPosts} from './database-mock-data';
 
 const db = levelup(config.database, {valueEncoding: 'json'});
 export default db;
@@ -42,7 +42,7 @@ export const initMock = () => {
     const arrs = [];
     const ops = [];
     arrs.push(mockItems, mockItemIndexies, mockImages, mockImageIndexies, mockUsers,
-      mockCreatedPosts);
+      mockCreatedPosts, mockSavedPosts);
     arrs.map((arr) => {
       arr.map((obj) => {
         ops.push({ type: 'put', key: obj.key, value: obj.value });

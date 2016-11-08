@@ -388,6 +388,20 @@ export const mockCreatedPosts = [
     }
   }
 ];
+export const mockSavedPosts = [
+  {
+    key: 'savedPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz0',
+    value: {
+      key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'
+    }
+  },
+  {
+    key: 'savedPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz1',
+    value: {
+      key: 'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001'
+    }
+  }
+];
 export const mockImages = [
   {
     key: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',

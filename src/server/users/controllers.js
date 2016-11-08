@@ -97,5 +97,15 @@ export default {
       });
       return cb();
     });
+  },
+  getSavedPosts(req, res, cb) {
+    const userKey = req.params.id;
+    SavedPostManager.getSavedPosts(userKey, (err, posts) => {
+      if (err) {
+        return cb(new APIError());
+      }
+      res.status(200).send(posts);
+      return cb();
+    });
   }
 };

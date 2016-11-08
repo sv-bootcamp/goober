@@ -3,7 +3,7 @@ import testDB, {initMock, clearDB} from '../../../server/database';
 import httpMocks from 'node-mocks-http';
 import Controller from '../../../server/users/controllers';
 import {KeyUtils, ENTITY} from '../../../server/key-utils';
-
+import {mockUsers, mockSavedPosts} from '../../../server/database-mock-data';
 const mockUser = {
   key: 'user-unique-key',
   name: 'test-user',
@@ -134,7 +134,7 @@ test('add created post using user controller', t => {
     t.end();
   });
 });
-test('add posted post using user controller', t => {
+test('add saved post using user controller', t => {
   const testBody = {
     entityKey:	'test-image-key',
     userKey:	'test-users-key'
@@ -172,6 +172,41 @@ test('add posted post using user controller', t => {
     t.end();
   }).catch((err) => {
     t.fail(err);
+    t.end();
+  });
+});
+test('get saved posts using user controller', t => {
+  const testUser = mockUsers[0].value;
+  const expected = {
+    status: 200,
+    userKey: testUser.key,
+    // get a number of savedposts of test user
+    length: mockSavedPosts.filter((post)=>{
+      return (post.key.includes(testUser.key)) ? true : false;
+    }).length
+  };
+  const req = httpMocks.createRequest({
+    method: 'GET',
+    url: `/users/savedposts/${testUser.key}`,
+    params: {
+      id: `${testUser.key}`
+    }
+  });
+  const res = httpMocks.createResponse();
+  Controller.getSavedPosts(req, res, () => {
+    const posts = res._getData();
+    const status = res.statusCode;
+    t.equal(status, expected.status, 'should be same status');
+    t.equal(posts.length, expected.length,
+    `should ba same length of posts array : ${posts.length}`);
+    posts.map((post) => {
+      if (post.userKey !== expected.userKey) {
+        t.fail(`wrong user key : ${post.userKey}`);
+        return;
+      }
+      t.notEqual(post.imageUrls.length, 0,
+      `valid length of image url : ${post.imageUrls.length}`);
+    });
     t.end();
   });
 });

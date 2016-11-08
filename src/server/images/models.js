@@ -1,4 +1,6 @@
-import db from '../database';
+import db, {fetchPrefix} from '../database';
+import {ENTITY, STATE, KeyUtils} from '../key-utils';
+import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
 
 export default class ImageManager {
   static fetchImage(keys = [], cb) {
@@ -21,6 +23,40 @@ export default class ImageManager {
       cb(null, values);
     }).catch(() => {
       cb(new Error('database error'));
+    });
+  }
+  static getImageUrls(params, cb) {
+    // get all image Urls of item
+    const itemKey = params.itemKey;
+    const isThumbnail = params.isThumbnail || false;
+    const keys = [];
+    const promises = [];
+    const checkState = [STATE.ALIVE, STATE.EXPIRED];
+    for (const state of checkState) {
+      promises.push(new Promise((resolve, reject) => {
+        const prefix = KeyUtils.getPrefix(ENTITY.IMAGE, state, itemKey);
+        fetchPrefix(prefix, (err, data) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          data.map((value) => {
+            keys.push(value.key);
+          });
+          resolve();
+        });
+      }));
+    }
+    Promise.all(promises)
+    .then(() => {
+      const s3Connector = new S3Connector();
+      const urls = (isThumbnail) ?
+        s3Connector.getPrefixedImageUrls(keys, IMAGE_SIZE_PREFIX.THUMBNAIL) :
+        s3Connector.getImageUrls(keys);
+      return cb(null, urls);
+    })
+    .catch((err) => {
+      return cb(err);
     });
   }
 }
