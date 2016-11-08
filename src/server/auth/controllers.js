@@ -41,6 +41,7 @@ export default {
     grant
     .then(AuthModel.encodeTokenSet)
     .then(tokenSet => {
+      console.log(tokenSet);
       res.send(tokenSet);
       return next();
     })

@@ -74,12 +74,8 @@ const UserManager = {
     });
   },
   getUserKey: key => {
-    console.log('getuserKey');
-    console.log(key);
     return UserManager.getUser(key)
       .then(userData => {
-        console.log('userData');
-        console.log(userData);
         return userData.key;
       })
   }

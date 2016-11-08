@@ -134,7 +134,6 @@ test('signup as a anonymous user to database', t => {
             t.end();
           })
           .catch(jwtErr => {
-            console.log(jwtErr);
             t.fail(jwtErr);
             t.end();
           });

@@ -139,7 +139,7 @@ test('grant anonymous user in userController', t => {
       t.end(err);
     });
 });
-test('grant facebook user', t => {
+test('grant facebook user in controller', t => {
   const mockUser = {
     key: 'userKey',
     type: USER_TYPE.FACEBOOK,
@@ -193,7 +193,7 @@ test('grant facebook user', t => {
         const tokenSet = res._getData();
         const accessToken = jwt.decode(TOKEN_TYPE.ACCESS, tokenSet.accessToken);
         const refreshToken = jwt.decode(TOKEN_TYPE.REFRESH, tokenSet.refreshToken);
-        Promise.all([accessToken, refreshToken])
+        return Promise.all([accessToken, refreshToken])
           .then(decodedSet => {
             const decodedAccessToken = decodedSet[0];
             const decodedRefreshToken = decodedSet[1];
