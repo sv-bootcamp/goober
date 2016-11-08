@@ -134,26 +134,25 @@ test('get saved posts of a user(SavedPostManager.getSavedPosts)', t => {
     // get a number of savedposts of test user
     length: mockSavedPosts.filter((post)=>{
       return (post.key.includes(testUser.key)) ? true : false;
-    }).length,
-    thumnailPrefix: 'url-of-thumbnail-'
+    }).length
   };
   clearDB().then(initMock)
   .then(()=>{
     return new Promise((resolve, reject) => {
-      SavedPostManager.getSavedPosts(testUser.key, (err, values) => {
-        return (err) ? reject(err) : resolve(values);
+      SavedPostManager.getSavedPosts(testUser.key, (err, posts) => {
+        return (err) ? reject(err) : resolve(posts);
       });
     });
-  }).then((values) => {
-    t.equal(values.length, expected.length,
-    `should ba same length of item : ${values.length}`);
-    values.map((value) => {
-      if (value.userKey !== expected.userKey) {
-        t.fail(`wrong user key : ${value.userKey}`);
+  }).then((posts) => {
+    t.equal(posts.length, expected.length,
+    `should ba same length of posts array : ${posts.length}`);
+    posts.map((post) => {
+      if (post.userKey !== expected.userKey) {
+        t.fail(`wrong user key : ${post.userKey}`);
         return;
       }
-      t.notEqual(value.imageUrls.length, 0,
-      `valid length of image url : ${value.imageUrls.length}`);
+      t.notEqual(post.imageUrls.length, 0,
+      `valid length of image url : ${post.imageUrls.length}`);
     });
     t.end();
   }).catch((err) => {

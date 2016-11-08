@@ -67,7 +67,7 @@ router.get('/:id', controller.get);
 router.post('/', controller.post);
 
 /* *
- * @api {add} /users/createdpost Add a created post of a user
+ * @api {add} /users/createdposts Add a created post of a user
  * @apiName addACreatedpost
  * @apiGroup User
  *
@@ -97,10 +97,10 @@ router.post('/', controller.post);
  *       error: "error message ..."
  *     }
  */
-router.post('/createdpost', controller.addCreatedPost);
+router.post('/createdposts', controller.addCreatedPost);
 /*
  *
- * @api {add} /users/savedpost Add a saved post of a user
+ * @api {add} /users/savedposts Add a saved post of a user
  * @apiName addASavedpost
  * @apiGroup User
  *
@@ -129,7 +129,48 @@ router.post('/createdpost', controller.addCreatedPost);
  *       error: "error message ..."
  *     }
  */
-router.post('/savedpost', controller.addSavedPost);
-
+router.post('/savedposts', controller.addSavedPost);
+/*
+ * @api {get} /users/savedposts/:id Get saved(favorite) posts of user
+ * @apiName get saved(favorite) posts of user
+ * @apiGroup User
+ *
+ * @apiParam {String} ID of target user
+ *
+ * @apiSuccess {Object} json
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     [
+ *       {
+ *          title: 'Lion popup store',
+ *          lat: 37.756787937,
+ *          lng: -122.4233365122,
+ *          address: '310 Dolores St, San Francisco, CA 94110, USA',
+ *          createdDate: '2016-10-13T01:11:46.851Z',
+ *          modifiedDate: '2016-10-13T01:11:46.851Z',
+ *          category: 'event',
+ *          startTime: '2016-10-13T01:11:46.851Z',
+ *          endTime: '2016-11-08T07:28:21.676Z',
+ *          state: 'alive',
+ *          key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+ *          userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
+ *          imageUrls:
+ *            [ 'url-of-thumbnail-image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',
+ *              'url-of-thumbnail-image-8523569761934-dd3860f5-b82e-473b-1234-ead0f54gvr00',
+ *              'url-of-thumbnail-image-8523569761934-dd3860f5-b82e-473b-1234-ead0fts0b000',
+ *              'url-of-thumbnail-image-8523569761934-dd3860f5-b82e-473b-1234-ead0fts43200'
+ *            ]
+ *        }
+ *      ]
+ * @apiError (Error 500) Internal Server Error.
+ *
+ * @apiErrorExample {json} Database-Error-Response:
+ *     HTTP/1.1 500 InternalError
+ *     {
+ *       error: "database error"
+ *     }
+*/
+router.get('/savedposts/:id', controller.getSavedPosts);
 
 export default router;
