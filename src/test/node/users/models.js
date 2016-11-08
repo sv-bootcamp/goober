@@ -58,7 +58,7 @@ test('get user', t => {
           }
           return resolve(mockUser.key);
         });
-      })
+      });
     })
     .then(UserModel.getUser)
     .then(data => {

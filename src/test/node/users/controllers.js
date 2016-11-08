@@ -123,7 +123,7 @@ test('signup as a anonymous user to database', t => {
             t.ok(decodedAccessToken, 'should be valid access token');
           })
           .then(() => {
-            return jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken)
+            return jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken);
           })
           .then(decodedRefreshToken => {
             t.ok(decodedRefreshToken, 'should be valid refresh token');
@@ -207,7 +207,7 @@ test('signup as a facebook user to database', t => {
           t.ok(decodedAccessToken, 'should be valid access token');
         })
         .then(() => {
-          return jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken)
+          return jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken);
         })
         .then(decodedRefreshToken => {
           t.ok(decodedRefreshToken, 'should be valid refresh token');
