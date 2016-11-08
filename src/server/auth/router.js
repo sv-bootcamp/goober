@@ -32,7 +32,7 @@ const router = express.Router();
  *     }
  *
  */
-router.post('/auth/refresh', controller.refreshToken);
+router.post('/refresh', controller.refreshToken);
 
 /**
  * @api  /auth/grant authentication grant
@@ -74,4 +74,6 @@ router.post('/auth/refresh', controller.refreshToken);
  *       error: "error message ..."
  *     }
  */
-router.post('/auth/grant', controller.grant);
+router.post('/grant', controller.grant);
+
+export default router;
