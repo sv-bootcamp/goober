@@ -131,7 +131,7 @@ test('grant anonymous user in userController', t => {
             t.equal(decodedRefreshToken.user, expected.refreshToken.user,
               'should be same user');
             t.end();
-          })
+          });
       });
     })
     .catch(err => {
@@ -145,7 +145,7 @@ test('grant facebook user', t => {
     type: USER_TYPE.FACEBOOK,
     facebookId: config.FACEBOOK_TEST_ID
   };
-  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}`+
+  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}` +
     `-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
   const expected = {
     accessToken: {

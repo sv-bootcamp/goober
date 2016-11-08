@@ -173,7 +173,6 @@ test('add created post using user controller', t => {
 });
 
 test('signup as a facebook user to database', t => {
-
   clearDB()
   .then(FacebookManager.getTestAccessToken)
   .then(mockFacebookToken => {
@@ -191,8 +190,8 @@ test('signup as a facebook user to database', t => {
 
     Controller.signup(req, res, (err) => {
       if (err) {
-       t.fail();
-       return t.end(err);
+        t.fail();
+        t.end(err);
       }
       const data = res._getData();
       t.ok(jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken), 'should be valid access token');

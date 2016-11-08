@@ -87,7 +87,7 @@ test('grant facebook user', t => {
     type: USER_TYPE.FACEBOOK,
     facebookId: config.FACEBOOK_TEST_ID
   };
-  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}`+
+  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}` +
     `-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
 
   clearDB()

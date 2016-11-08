@@ -22,7 +22,7 @@ export const FacebookManager = {
   getId: (accessToken) => {
     return FacebookManager.getProfile(accessToken)
       .then(profile => {
-        return profile.id
+        return profile.id;
       });
   },
   getProfileImage: (id) => {
@@ -43,7 +43,7 @@ export const FacebookManager = {
     })
     .then(res => {
       return res.data[0].access_token;
-    })
+    });
   }
 };
 
@@ -117,7 +117,7 @@ const UserManager = {
       .then(FacebookManager.getProfileImage)
       .then(profileImg => {
         userValue.profileImgUrl = profileImg.data.url;
-        return UserManager.addUser(userKey, userValue)
+        return UserManager.addUser(userKey, userValue);
       })
       .then(key => {
         const userIdx = UserManager.getUserIndexKey({
@@ -136,7 +136,7 @@ const UserManager = {
     case USER_TYPE.ANONYMOUS:
       return `${ENTITY.USER}-${params.state || STATE.ALIVE}-${ENTITY.ANONYMOUS}-${params.secret}`;
     case USER_TYPE.FACEBOOK:
-      return `${ENTITY.USER}-${params.state || STATE.ALIVE}`+
+      return `${ENTITY.USER}-${params.state || STATE.ALIVE}` +
         `-${ENTITY.FACEBOOK}-${params.facebookId}`;
     default:
       return null;
