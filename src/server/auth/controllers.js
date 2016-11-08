@@ -32,6 +32,7 @@ export default {
       grant = AuthModel.grantAnonymous(req.body.userSecret);
       break;
     case GRANT_TYPE.FACEBOOK:
+      console.log(req.body.facebookToken);
       grant = AuthModel.grantFacebook(req.body.facebookToken);
       break;
     default:

@@ -35,6 +35,8 @@ const AuthModel = {
   grantFacebook: (facebookToken) => {
     return FacebookManager.getId(facebookToken)
       .then(id => {
+        console.log('id');
+        console.log(id);
         const idxKey = UserModel.getUserIndexKey({
           userType: USER_TYPE.FACEBOOK,
           facebookId: id
