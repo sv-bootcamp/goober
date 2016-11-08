@@ -30,10 +30,7 @@ const AuthModel = {
       userType: USER_TYPE.ANONYMOUS,
       secret: userSecret
     });
-    return UserModel.getUser(idxKey)
-      .then(data => {
-        return data.key;
-      });
+    return UserModel.getUserKey(idxKey);
   },
   grantFacebook: (facebookToken) => {
     return FacebookManager.getId(facebookToken)
@@ -43,10 +40,7 @@ const AuthModel = {
           facebookId: id
         });
       })
-      .then(UserModel.getUser)
-      .then(ref => {
-        return ref.key;
-      });
+      .then(UserModel.getUserKey);
   }
 };
 export default AuthModel;

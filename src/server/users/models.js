@@ -73,6 +73,13 @@ const UserManager = {
       });
     });
   },
+  getUserKey: key => {
+    return UserManager.getUser(key)
+      .then(userData => {
+        return userData.key;
+      })
+  }
+  ,
   addAnonymousUser: (data) => {
     const userKey = UserManager.genUserKey();
     const userValue = {
