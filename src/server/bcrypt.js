@@ -7,8 +7,6 @@ const bcrypt = {
   hash: password => {
     return new Promise((resolve, reject) => {
       nodeBcrypt.hash(password, SALT_ROUNDS, (err, hash) => {
-        console.log('salt rounds');
-        console.log(SALT_ROUNDS);
         if (err) {
           return reject(err);
         }
