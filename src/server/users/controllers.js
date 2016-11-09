@@ -122,11 +122,9 @@ export default {
     .then((userKey) => {
       switch (userType) {
       case 'anonymous':
-        return UserModel.getUser(userKey)
-          .then(data => {
-            userSecret = data.secret;
-            return userKey;
-          });
+        // @TODO just give your the uuid()
+        userSecret = req.body.secret;
+        return userKey;
       case 'facebook':
         return userKey;
       default:

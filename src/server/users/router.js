@@ -105,7 +105,7 @@ router.post('/createdpost', controller.addCreatedPost);
  * @apiGroup User
  *
  * @apiParam {String} userType user type; anonymous, facebook
- * @apiParam {String} facebookToken facebook token
+ * @apiParam {String} [facebookToken] facebook token
  * @apiParamExample {json} Request-Example:
  *      {
  *          "userType"      : "facebook",

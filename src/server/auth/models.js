@@ -1,7 +1,6 @@
 import jwt, {TOKEN_TYPE} from './../auth-token';
 import UserModel, {FacebookManager, USER_TYPE} from './../users/models';
 
-
 export const GRANT_TYPE = {
   ANONYMOUS: 'anonymous',
   FACEBOOK: 'facebook'

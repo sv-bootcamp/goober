@@ -22,8 +22,6 @@ export const FacebookManager = {
   getId: (accessToken) => {
     return FacebookManager.getProfile(accessToken)
       .then(profile => {
-        console.log('This is user/models facebook manager get id function');
-        console.log(profile);
         return profile.id;
       });
   },
@@ -78,8 +76,6 @@ const UserManager = {
   getUserKey: key => {
     return UserManager.getUser(key)
       .then(userData => {
-        console.log('userData');
-        console.log(userData);
         return userData.key;
       })
   }

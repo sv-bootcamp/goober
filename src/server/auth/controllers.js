@@ -32,7 +32,6 @@ export default {
       grant = AuthModel.grantAnonymous(req.body.userSecret);
       break;
     case GRANT_TYPE.FACEBOOK:
-      console.log(req.body.facebookToken);
       grant = AuthModel.grantFacebook(req.body.facebookToken);
       break;
     default:
@@ -40,14 +39,8 @@ export default {
     }
 
     grant
-    .then(userKey => {
-      console.log('encodeTokenSet');
-      console.log(userKey);
-      return AuthModel.encodeTokenSet(userKey)
-    })
+    .then(AuthModel.encodeTokenSet)
     .then(tokenSet => {
-      console.log('tokenSet in controller');
-      console.log(tokenSet);
       res.send(tokenSet);
       return next();
     })
