@@ -107,7 +107,7 @@ test('grant anonymous user in userController', t => {
         url: '/auth/grant',
         body: {
           grantType: GRANT_TYPE.ANONYMOUS,
-          userSecret: mockUserSecret
+          secret: mockUserSecret
         }
       });
       const res = httpMocks.createResponse();

@@ -29,10 +29,10 @@ const AuthModel = {
         });
     });
   },
-  grantAnonymous: (userSecret) => {
+  grantAnonymous: (secret) => {
     const idxKey = UserModel.getUserIndexKey({
       userType: USER_TYPE.ANONYMOUS,
-      secret: userSecret
+      secret
     });
     return UserModel.getUserKey(idxKey);
   },
