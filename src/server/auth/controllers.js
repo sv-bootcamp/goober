@@ -46,11 +46,10 @@ export default {
       return AuthModel.encodeTokenSet(userKey)
     })
     .then(tokenSet => {
-      console.log('tokenSet');
+      console.log('tokenSet in controller');
       console.log(tokenSet);
       res.send(tokenSet);
       return next();
-
     })
     .catch(err => {
       if (err.notFound) {
