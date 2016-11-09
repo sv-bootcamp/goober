@@ -1,5 +1,5 @@
 import test from 'tape';
-import jwt, {TOKEN_TYPE} from './../../../server/auth-token';
+import AuthToken, {TOKEN_TYPE} from './../../../server/auth-token';
 import AuthController from '../../../server/auth/controllers';
 import {GRANT_TYPE} from '../../../server/auth/models';
 import {FacebookManager, USER_TYPE} from '../../../server/users/models';
@@ -13,7 +13,7 @@ test('refresh token', t => {
   const mockUser = {
     user: 'mockUserKey'
   };
-  jwt.encode(TOKEN_TYPE.REFRESH, mockUser)
+  AuthToken.encode(TOKEN_TYPE.REFRESH, mockUser)
     .then((mockRefreshToken) => {
       const expected = {
         accessToken: {
@@ -34,8 +34,8 @@ test('refresh token', t => {
 
       AuthController.refreshToken(req, res, () => {
         const tokenSet = res._getData();
-        const accessToken = jwt.decode(TOKEN_TYPE.ACCESS, tokenSet.accessToken);
-        const refreshToken = jwt.decode(TOKEN_TYPE.REFRESH, tokenSet.refreshToken);
+        const accessToken = AuthToken.decode(TOKEN_TYPE.ACCESS, tokenSet.accessToken);
+        const refreshToken = AuthToken.decode(TOKEN_TYPE.REFRESH, tokenSet.refreshToken);
         Promise.all([accessToken, refreshToken])
         .then(decodedSet => {
           const decodedAccessToken = decodedSet[0];
@@ -116,8 +116,8 @@ test('grant anonymous user in userController', t => {
           return t.end(err);
         }
         const tokenSet = res._getData();
-        const accessToken = jwt.decode(TOKEN_TYPE.ACCESS, tokenSet.accessToken);
-        const refreshToken = jwt.decode(TOKEN_TYPE.REFRESH, tokenSet.refreshToken);
+        const accessToken = AuthToken.decode(TOKEN_TYPE.ACCESS, tokenSet.accessToken);
+        const refreshToken = AuthToken.decode(TOKEN_TYPE.REFRESH, tokenSet.refreshToken);
         return Promise.all([accessToken, refreshToken])
           .then(decodedSet => {
             const decodedAccessToken = decodedSet[0];
@@ -191,8 +191,10 @@ test('grant facebook user in controller', t => {
       const res = httpMocks.createResponse();
       return AuthController.grant(req, res, () => {
         const tokenSet = res._getData();
-        const accessToken = jwt.decode(TOKEN_TYPE.ACCESS, tokenSet.accessToken);
-        const refreshToken = jwt.decode(TOKEN_TYPE.REFRESH, tokenSet.refreshToken);
+        console.log('tokenSet');
+        console.log(tokenSet);
+        const accessToken = AuthToken.decode(TOKEN_TYPE.ACCESS, tokenSet.accessToken);
+        const refreshToken = AuthToken.decode(TOKEN_TYPE.REFRESH, tokenSet.refreshToken);
         return Promise.all([accessToken, refreshToken])
           .then(decodedSet => {
             const decodedAccessToken = decodedSet[0];
@@ -214,6 +216,7 @@ test('grant facebook user in controller', t => {
       });
     })
     .catch(err => {
+      console.log('here2');
       t.fail();
       t.end(err);
     });

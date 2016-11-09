@@ -1,9 +1,9 @@
 import {APIError} from './../ErrorHandler';
-import jwt, {TOKEN_TYPE} from './../auth-token';
+import AuthToken, {TOKEN_TYPE} from './../auth-token';
 import AuthModel, {GRANT_TYPE} from './models';
 export default {
   refreshToken: (req, res, next) => {
-    jwt.decode(TOKEN_TYPE.REFRESH, req.body.refreshToken)
+    AuthToken.decode(TOKEN_TYPE.REFRESH, req.body.refreshToken)
     .then((decoded) => {
       if (decoded.type === TOKEN_TYPE.REFRESH) {
         return AuthModel.encodeTokenSet(decoded.user)
@@ -40,7 +40,11 @@ export default {
     }
 
     grant
-    .then(AuthModel.encodeTokenSet)
+    .then(userId => {
+      console.log('encodeTokenSet');
+      console.log(userId);
+      return AuthModel.encodeTokenSet(userId);
+    })
     .then(tokenSet => {
       console.log(tokenSet);
       res.send(tokenSet);

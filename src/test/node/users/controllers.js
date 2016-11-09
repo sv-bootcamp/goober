@@ -3,7 +3,7 @@ import testDB, {initMock, clearDB} from '../../../server/database';
 import httpMocks from 'node-mocks-http';
 import Controller from '../../../server/users/controllers';
 import {KeyUtils, ENTITY} from '../../../server/key-utils';
-import jwt, {TOKEN_TYPE} from '../../../server/auth-token';
+import AuthToken, {TOKEN_TYPE} from '../../../server/auth-token';
 import {FacebookManager} from '../../../server/users/models';
 
 test('get a user from database', t => {
@@ -122,12 +122,12 @@ test('signup as a anonymous user to database', t => {
           return t.end(err);
         }
         const data = res._getData();
-        return jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken)
+        return AuthToken.decode(TOKEN_TYPE.ACCESS, data.accessToken)
           .then((decodedAccessToken) => {
             t.ok(decodedAccessToken.user, 'should be valid access token');
           })
           .then(() => {
-            return jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken);
+            return AuthToken.decode(TOKEN_TYPE.REFRESH, data.refreshToken);
           })
           .then(decodedRefreshToken => {
             t.ok(decodedRefreshToken.user, 'should be valid refresh token');
@@ -210,12 +210,12 @@ test('signup as a facebook user to database', t => {
         return t.end(err);
       }
       const data = res._getData();
-      return jwt.decode(TOKEN_TYPE.ACCESS, data.accessToken)
+      return AuthToken.decode(TOKEN_TYPE.ACCESS, data.accessToken)
         .then((decodedAccessToken) => {
           t.ok(decodedAccessToken.user, 'should be valid access token');
         })
         .then(() => {
-          return jwt.decode(TOKEN_TYPE.REFRESH, data.refreshToken);
+          return AuthToken.decode(TOKEN_TYPE.REFRESH, data.refreshToken);
         })
         .then(decodedRefreshToken => {
           t.ok(decodedRefreshToken.user, 'should be valid refresh token');
