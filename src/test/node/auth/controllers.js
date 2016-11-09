@@ -116,6 +116,8 @@ test('grant anonymous user in userController', t => {
           return t.end(err);
         }
         const tokenSet = res._getData();
+        console.log('tokenSet');
+        console.log(tokenSet);
         const accessToken = AuthToken.decode(TOKEN_TYPE.ACCESS, tokenSet.accessToken);
         const refreshToken = AuthToken.decode(TOKEN_TYPE.REFRESH, tokenSet.refreshToken);
         return Promise.all([accessToken, refreshToken])

@@ -17,15 +17,18 @@ const AuthModel = {
       type: TOKEN_TYPE.REFRESH,
       user: userKey
     });
-    return Promise.all([accessToken, refreshToken])
-      .then((tokenSet)=>{
-        console.log('promise all');
-        console.log(tokenSet);
-        return {
-          accessToken: tokenSet[0],
-          refreshToken: tokenSet[1]
-        };
-      });
+    return new Promise((resolve, reject) => {
+      Promise.all([accessToken, refreshToken])
+        .then(tokenSet=> {
+          return resolve({
+            accessToken: tokenSet[0],
+            refreshToken: tokenSet[1]
+          })
+        })
+        .catch(err => {
+          return reject(err);
+        });
+    });
   },
   grantAnonymous: (userSecret) => {
     const idxKey = UserModel.getUserIndexKey({
@@ -37,16 +40,10 @@ const AuthModel = {
   grantFacebook: (facebookToken) => {
     return FacebookManager.getId(facebookToken)
       .then(id => {
-        console.log('id');
-        console.log('compare');
-        console.log(id === '109768169505525');
-        console.log(id);
         const idxKey = UserModel.getUserIndexKey({
           userType: USER_TYPE.FACEBOOK,
           facebookId: id
         });
-        console.log('key');
-        console.log(idxKey);
         return UserModel.getUserKey(idxKey);
       });
   }

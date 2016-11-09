@@ -43,12 +43,14 @@ export default {
     .then(userKey => {
       console.log('encodeTokenSet');
       console.log(userKey);
-      return AuthModel.encodeTokenSet(userKey);
+      return AuthModel.encodeTokenSet(userKey)
     })
     .then(tokenSet => {
+      console.log('tokenSet');
       console.log(tokenSet);
       res.send(tokenSet);
       return next();
+
     })
     .catch(err => {
       if (err.notFound) {
