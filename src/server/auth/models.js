@@ -36,11 +36,15 @@ const AuthModel = {
     return FacebookManager.getId(facebookToken)
       .then(id => {
         console.log('id');
+        console.log('compare');
+        console.log(id === '109768169505525');
         console.log(id);
         const idxKey = UserModel.getUserIndexKey({
           userType: USER_TYPE.FACEBOOK,
           facebookId: id
         });
+        console.log('key');
+        console.log(idxKey);
         return UserModel.getUserKey(idxKey);
       });
   }

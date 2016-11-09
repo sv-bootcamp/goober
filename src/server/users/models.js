@@ -26,7 +26,25 @@ export const FacebookManager = {
   getId: (accessToken) => {
     return FacebookManager.getProfile(accessToken)
       .then(profile => {
+
+        const index = 'id';
+        const temp = profile[index];
+        console.log('one');
         console.log(profile);
+        JSON.stringify(profile).split('"').map(data => console.log(data));
+        console.log('second');
+        console.log(profile);
+        console.log('here');
+        console.log(temp);
+        console.log(typeof temp);
+        console.log(JSON.stringify(profile));
+        console.log(typeof profile);
+        console.log(profile.id);
+        console.log(typeof profile.id);
+        console.log(profile.name);
+        console.log(typeof profile.name);
+        console.log(profile.verified);
+        console.log('profile.id');
         return profile.id;
       });
   },
@@ -81,6 +99,8 @@ const UserManager = {
   getUserKey: key => {
     return UserManager.getUser(key)
       .then(userData => {
+        console.log('userData');
+        console.log(userData);
         return userData.key;
       })
   }
