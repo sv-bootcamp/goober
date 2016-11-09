@@ -145,7 +145,7 @@ test('grant facebook user in controller', t => {
   const mockUser = {
     key: 'userKey',
     type: USER_TYPE.FACEBOOK,
-    facebookId: process.env.FACEBOO_TEST_ID || config.FACEBOOK_TEST_ID
+    facebookId: process.env.FACEBOOK_TEST_ID || config.FACEBOOK_TEST_ID
   };
   const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}` +
     `-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
