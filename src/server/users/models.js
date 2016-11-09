@@ -10,17 +10,21 @@ const FACEBOOK_PROFILE_IMAGE_URL = '/picture';
 
 export const FacebookManager = {
   getProfile: (accessToken) => {
-    return request({
-      uri: `${FACEBOOK_BASE_URL}${FACEBOOK_USER_PROFILE_URL}`,
-      qs: {
-        fields: 'name,email,verified',
-        access_token: accessToken
-      },
-      json: true
-    }).then((profile) => {
-      console.log('profile');
-      console.log(profile);
-      return profile;
+    return new Promise((resolve, reject) => {
+      request({
+        uri: `${FACEBOOK_BASE_URL}${FACEBOOK_USER_PROFILE_URL}`,
+        qs: {
+          fields: 'name,email,verified',
+          access_token: accessToken
+        },
+        json: true
+      }).then((profile) => {
+        console.log('profile');
+        console.log(profile);
+        return resolve(profile);
+      }).catch(err => {
+        return reject(err);
+      });
     });
   },
   getId: (accessToken) => {
