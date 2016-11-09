@@ -19,6 +19,8 @@ const AuthModel = {
     });
     return Promise.all([accessToken, refreshToken])
       .then((tokenSet)=>{
+        console.log('promise all');
+        console.log(tokenSet);
         return {
           accessToken: tokenSet[0],
           refreshToken: tokenSet[1]

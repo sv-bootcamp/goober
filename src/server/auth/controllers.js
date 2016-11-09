@@ -40,10 +40,10 @@ export default {
     }
 
     grant
-    .then(userId => {
+    .then(userKey => {
       console.log('encodeTokenSet');
-      console.log(userId);
-      return AuthModel.encodeTokenSet(userId);
+      console.log(userKey);
+      return AuthModel.encodeTokenSet(userKey);
     })
     .then(tokenSet => {
       console.log(tokenSet);
