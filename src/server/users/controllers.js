@@ -104,7 +104,6 @@ export default {
   signup: (req, res, next) => {
     const {userType} = req.body;
     let addUser;
-
     switch (userType) {
     case 'anonymous':
       req.body.secret = uuid();
@@ -116,13 +115,11 @@ export default {
     default:
       break;
     }
-
     let userSecret;
     addUser
     .then((userKey) => {
       switch (userType) {
       case 'anonymous':
-        // @TODO just give your the uuid()
         userSecret = req.body.secret;
         return userKey;
       case 'facebook':
@@ -136,7 +133,7 @@ export default {
       if (userSecret) {
         tokenSet.secret = userSecret;
       }
-      res.send(tokenSet);
+      res.status(200).send(tokenSet);
       next();
     })
     .catch((err) => {

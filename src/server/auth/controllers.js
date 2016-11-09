@@ -8,12 +8,12 @@ export default {
       if (decoded.type === TOKEN_TYPE.REFRESH) {
         return AuthModel.encodeTokenSet(decoded.user)
           .then(tokenSet => {
-            res.send(tokenSet);
+            res.status(200).send(tokenSet);
             return next();
           });
       }
       return next(new APIError(new Error(), {
-        status: 400,
+        statusCode: 400,
         message: 'Not a valid token type'
       }));
     })
@@ -41,7 +41,7 @@ export default {
     grant
     .then(AuthModel.encodeTokenSet)
     .then(tokenSet => {
-      res.send(tokenSet);
+      res.status(200).send(tokenSet);
       return next();
     })
     .catch(err => {
