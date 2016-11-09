@@ -17,6 +17,10 @@ export const FacebookManager = {
         access_token: accessToken
       },
       json: true
+    }).then((profile) => {
+      console.log('profile');
+      console.log(profile);
+      return profile;
     });
   },
   getId: (accessToken) => {
