@@ -159,15 +159,22 @@ export class CreatedPostManager {
 }
 export class SavedPostManager {
   static addSavedPost(entityKey, userKey, timeHash, cb) {
-    const idxKey = KeyUtils.getIdxKey(ENTITY.SAVED_POST, timeHash, userKey);
-    const idxPost = {
-      key: entityKey
-    };
-    return db.put(idxKey, idxPost, (err) => {
+    /*
+    make two indexing keys for saved post.
+    1. indexing item : savedPost-{STATE}-{ITEM_KEY}-{USER_KEY}-{TIMEHASH}
+    2. indexing user : savedPost-{STATE}-{USER_KEY}-{TIMEHASH}
+    */
+    const keyForUser = KeyUtils.getIdxKey(ENTITY.SAVED_POST, timeHash, userKey);
+    const keyForItem = KeyUtils.getIdxKey(ENTITY.SAVED_POST, timeHash, entityKey, userKey);
+    const ops = [
+      { type: 'put', key: keyForItem, value: {key: entityKey}},
+      { type: 'put', key: keyForUser, value: {key: entityKey}}
+    ];
+    return db.batch(ops, (err) => {
       if (err) {
         return cb(new Error('error while putting in DB'), null);
       }
-      return cb(null, idxKey);
+      return cb(null, keyForUser);
     });
   }
 }
