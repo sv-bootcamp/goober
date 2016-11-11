@@ -2,8 +2,8 @@ import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
 import {mockUsers, mockCreatedPosts} from '../../../server/database-mock-data';
 import UserModel, {USER_TYPE} from '../../../server/users/models';
-import UserManager, {CreatedPostManager, SavedPostManager, FacebookManager}
-  from '../../../server/users/models';
+import UserManager, {CreatedPostManager, SavedPostManager} from '../../../server/users/models';
+import FacebookManager from '../../../server/users/facebook-manager';
 import {KeyUtils, ENTITY, STATE, CATEGORY} from '../../../server/key-utils';
 import bcrypt from './../../../server/bcrypt';
 import {STATE_STRING} from '../../../server/items/models';
@@ -19,57 +19,6 @@ test('generate user key', t => {
   t.end();
 });
 
-test('add user', t => {
-  const mockUser = {
-    key: UserModel.genUserKey(),
-    secret: 'userSecret'
-  };
-  const expected = {
-    value: mockUser
-  };
-
-  clearDB()
-  .then(() => {
-    return UserModel.addUser(expected.value.key, expected.value);
-  })
-  .then(() => {
-    testDB.get(expected.value.key, (err, data) => {
-      t.equal(data.secret, expected.value.secret, 'should have same secret');
-      t.end();
-    });
-  });
-});
-
-test('get user', t => {
-  const mockUser = {
-    key: UserModel.genUserKey(),
-    secret: 'userSecret'
-  };
-  const expected = {
-    value: mockUser
-  };
-
-  clearDB()
-    .then(() => {
-      return new Promise((resolve, reject) => {
-        testDB.put(mockUser.key, mockUser, (err) => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve(mockUser.key);
-        });
-      });
-    })
-    .then(UserModel.getUser)
-    .then(data => {
-      t.equal(data.secret, expected.value.secret, 'should have same secret');
-      t.end();
-    })
-    .catch(err => {
-      t.fail();
-      t.end(err);
-    });
-});
 
 test('add Anonymous user', t => {
   const mockUser = {

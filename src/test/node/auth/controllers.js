@@ -2,9 +2,10 @@ import test from 'tape';
 import AuthToken, {TOKEN_TYPE} from './../../../server/auth-token';
 import AuthController from '../../../server/auth/controllers';
 import {GRANT_TYPE} from '../../../server/auth/models';
-import {FacebookManager, USER_TYPE} from '../../../server/users/models';
+import {USER_TYPE} from '../../../server/users/models';
+import FacebookManager from '../../../server/users/facebook-manager';
 import {STATE, ENTITY} from '../../../server/key-utils';
-import db, {clearDB} from '../../../server/database';
+import {clearDB, putPromise} from '../../../server/database';
 import bcrypt from '../../../server/bcrypt';
 import httpMocks from 'node-mocks-http';
 import config from 'config';
@@ -27,7 +28,7 @@ test('refresh token', t => {
       };
       const req = httpMocks.createRequest({
         method: 'POST',
-        url: '/users',
+        url: 'api/auth/refresh',
         body: {refreshToken: mockRefreshToken}
       });
       const res = httpMocks.createResponse();
@@ -82,29 +83,15 @@ test('grant anonymous user in userController', t => {
     })
     .then(clearDB)
     .then(() => {
-      return new Promise((resolve, reject) => {
-        db.put(mockUser.key, mockUser, err => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve();
-        });
-      });
+      return putPromise(mockUser.key, mockUser);
     })
     .then(() => {
-      return new Promise((resolve, reject) => {
-        db.put(mockUserIdxKey, {key: mockUser.key}, err => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve();
-        });
-      });
+      return putPromise(mockUserIdxKey, {key: mockUser.key});
     })
     .then(() => {
       const req = httpMocks.createRequest({
         method: 'POST',
-        url: '/auth/grant',
+        url: 'api/auth/grant',
         body: {
           grantType: GRANT_TYPE.ANONYMOUS,
           secret: mockUserSecret
@@ -159,30 +146,16 @@ test('grant facebook user in controller', t => {
   };
   clearDB()
     .then(() => {
-      return new Promise((resolve, reject) => {
-        db.put(mockUser.key, mockUser, err => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve();
-        });
-      });
+      return putPromise(mockUser.key, mockUser);
     })
     .then(() => {
-      return new Promise((resolve, reject) => {
-        db.put(mockUserIdxKey, {key: mockUser.key}, err => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve();
-        });
-      });
+      return putPromise(mockUserIdxKey, {key: mockUser.key});
     })
     .then(FacebookManager.getTestAccessToken)
     .then(mockFacebookToken => {
       const req = httpMocks.createRequest({
         method: 'POST',
-        url: '/auth/grant',
+        url: 'api/auth/grant',
         body: {
           grantType: GRANT_TYPE.FACEBOOK,
           facebookToken: mockFacebookToken

@@ -1,8 +1,8 @@
-import jwt, {TOKEN_TYPE} from './../auth-token';
-import UserModel, {FacebookManager, USER_TYPE} from './../users/models';
+import jwt, {TOKEN_TYPE} from '../auth-token';
+import UserModel, {USER_TYPE} from '../users/models';
+import FacebookManager from '../users/facebook-manager';
 
 export const GRANT_TYPE = {
-  ACCESS_TOKEN: 'accessToken',
   ANONYMOUS: 'anonymous',
   FACEBOOK: 'facebook'
 };

@@ -1,10 +1,11 @@
 import test from 'tape';
-import jwt, {TOKEN_TYPE} from './../../../server/auth-token';
+import jwt, {TOKEN_TYPE} from '../../../server/auth-token';
 import AuthModel from '../../../server/auth/models';
 import {STATE, ENTITY} from '../../../server/key-utils';
-import {FacebookManager, USER_TYPE} from '../../../server/users/models';
+import {USER_TYPE} from '../../../server/users/models';
+import FacebookManager from '../../../server/users/facebook-manager';
 import bcrypt from '../../../server/bcrypt';
-import db, {clearDB} from '../../../server/database';
+import {clearDB, putPromise} from '../../../server/database';
 import config from 'config';
 
 test('get token set', t => {
@@ -50,24 +51,10 @@ test('grant anonymous user', t => {
     })
     .then(clearDB)
     .then(() => {
-      return new Promise((resolve, reject) => {
-        db.put(mockUser.key, mockUser, err => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve();
-        });
-      });
+      return putPromise(mockUser.key, mockUser);
     })
     .then(() => {
-      return new Promise((resolve, reject) => {
-        db.put(mockUserIdxKey, {key: mockUser.key}, err => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve();
-        });
-      });
+      return putPromise(mockUserIdxKey, {key: mockUser.key});
     })
     .then(() => {
       return AuthModel.grantAnonymous(mockUserSecret);
@@ -92,24 +79,10 @@ test('grant facebook user', t => {
 
   clearDB()
     .then(() => {
-      return new Promise((resolve, reject) => {
-        db.put(mockUser.key, mockUser, err => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve();
-        });
-      });
+      return putPromise(mockUser.key, mockUser);
     })
     .then(() => {
-      return new Promise((resolve, reject) => {
-        db.put(mockUserIdxKey, {key: mockUser.key}, err => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve();
-        });
-      });
+      return putPromise(mockUserIdxKey, {key: mockUser.key});
     })
     .then(FacebookManager.getTestAccessToken)
     .then(AuthModel.grantFacebook)

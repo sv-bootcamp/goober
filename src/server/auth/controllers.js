@@ -1,5 +1,5 @@
-import {APIError} from './../ErrorHandler';
-import AuthToken, {TOKEN_TYPE, TOKEN_STATUS} from './../auth-token';
+import {APIError} from '../ErrorHandler';
+import AuthToken, {TOKEN_TYPE, TOKEN_STATUS} from '../auth-token';
 import AuthModel, {GRANT_TYPE} from './models';
 export default {
   refreshToken: (req, res, next) => {

@@ -33,7 +33,7 @@ test('test authenticate user', t => {
     .then((accessToken) => {
       const req = httpMocks.createRequest({
         method: 'POST',
-        url: '/users',
+        url: 'api/users',
         headers: {
           authorization: 'Bearer ' + accessToken
         }

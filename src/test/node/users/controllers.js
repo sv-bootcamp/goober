@@ -4,7 +4,8 @@ import httpMocks from 'node-mocks-http';
 import Controller from '../../../server/users/controllers';
 import {KeyUtils, ENTITY} from '../../../server/key-utils';
 import AuthToken, {TOKEN_TYPE} from '../../../server/auth-token';
-import {FacebookManager} from '../../../server/users/models';
+import {USER_TYPE} from '../../../server/users/models';
+import FacebookManager from '../../../server/users/facebook-manager';
 
 test('get a user from database', t => {
   const expected = {
@@ -22,7 +23,7 @@ test('get a user from database', t => {
     }
     const req = httpMocks.createRequest({
       method: 'GET',
-      url: `/users/${expected.key}`,
+      url: `api/users/${expected.key}`,
       params: {
         id: `${expected.key}`
       }
@@ -51,7 +52,7 @@ test('add a user to database', t => {
   };
   const req = httpMocks.createRequest({
     method: 'POST',
-    url: '/users',
+    url: 'api/users',
     body: mockUser
   });
   const res = httpMocks.createResponse();
@@ -102,13 +103,13 @@ test('add a user to database', t => {
 
 test('signup as a anonymous user to database', t => {
   const mockUser = {
-    userType: 'anonymous',
+    userType: USER_TYPE.ANONYMOUS,
     secret: 'anonymousSecret'
   };
 
   const req = httpMocks.createRequest({
     method: 'POST',
-    url: '/users/signup',
+    url: 'api/users/signup',
     body: mockUser
   });
 
@@ -157,7 +158,7 @@ test('add created post using user controller', t => {
   };
   const req = httpMocks.createRequest({
     method: 'POST',
-    url: '/users/createdpost',
+    url: 'api/users/createdpost',
     body: testBody
   });
   const res = httpMocks.createResponse();
@@ -193,13 +194,13 @@ test('signup as a facebook user to database', t => {
   .then(FacebookManager.getTestAccessToken)
   .then(mockFacebookToken => {
     const mockUser = {
-      userType: 'facebook',
+      userType: USER_TYPE.FACEBOOK,
       facebookToken: mockFacebookToken
     };
 
     const req = httpMocks.createRequest({
       method: 'POST',
-      url: '/users/signup',
+      url: 'api/users/signup',
       body: mockUser
     });
     const res = httpMocks.createResponse();
@@ -239,7 +240,7 @@ test('add posted post using user controller', t => {
   };
   const req = httpMocks.createRequest({
     method: 'POST',
-    url: '/users/savedpost',
+    url: 'api/users/savedpost',
     body: testBody
   });
   const res = httpMocks.createResponse();
