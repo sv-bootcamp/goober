@@ -76,4 +76,38 @@ router.post('/refresh', controller.refreshToken);
  */
 router.post('/grant', controller.grant);
 
+
+/**
+ * @api  /auth/validate validate token
+ * @apiName authValidate
+ * @apiGroup Auth
+ *
+ * @apiParam {String} accessToken access token to validate
+ *
+ * @apiParamExample {json} Request-Example:
+ *      {
+ *          "accessToken": "accessTokenToValidate"
+ *      }
+ *
+ * @apiSuccess {Number} result validate result
+ * @apiSuccess {String} message result message
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "result"  : 1,
+ *       "message" : "Access Token is valid"
+ *     }
+ *
+ * @apiError (Error 400) error invalid token.
+ * @apiErrorExample {json} Invalid-Token-Error-Response
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "result"  : 0,
+ *       "message" : "Access Token is invalid"
+ *     }
+ *
+ */
+router.post('/validate', controller.validate);
+
 export default router;

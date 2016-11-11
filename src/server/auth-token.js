@@ -7,6 +7,11 @@ export const TOKEN_TYPE = {
   REFRESH: 'REFRESH'
 };
 
+export const TOKEN_STATUS = {
+  VALID: 1,
+  INVALID: 0
+}
+
 const TOKEN_EXPIRE = {
   [TOKEN_TYPE.ACCESS]: process.env.ACCESS_TOKEN_EXPIRE || config.ACCESS_TOKEN_EXPIRE,
   [TOKEN_TYPE.REFRESH]: process.env.REFRESH_TOKEN_EXPIRE || config.REFRESH_TOKEN_EXPIRE
@@ -52,12 +57,12 @@ class AuthToken {
     const bearerToken = req.headers.authorization;
     const jwtToken = bearerToken.split(' ')[1];
     this.decode(TOKEN_TYPE.ACCESS, jwtToken)
-    .then(payload => {
-      req.headers.userKey = payload.user;
-      next();
-    })
-    .catch(err => {
-      next(new APIError(err, {
+      .then(payload => {
+        req.headers.userKey = payload.user;
+        next();
+      })
+        .catch(err => {
+          next(new APIError(err, {
         statusCode: 400,
         message: err.message
       }));
