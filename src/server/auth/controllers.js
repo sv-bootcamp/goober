@@ -65,14 +65,14 @@ export default {
       .then(() => {
         res.status(200).send({
           result: TOKEN_STATUS.VALID,
-          message: "Access Token is valid."
+          message: 'Access Token is valid.'
         });
         return next();
       })
       .catch(() => {
         res.status(400).send({
           result: TOKEN_STATUS.INVALID,
-          message: "Access Token is invalid"
+          message: 'Access Token is invalid'
         });
         return next();
       });

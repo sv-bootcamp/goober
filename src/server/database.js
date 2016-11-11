@@ -38,7 +38,7 @@ export const getPromise = key => {
       }
       return resolve(data);
     });
-  })
+  });
 };
 
 export const fetchPrefix = (prefix, cb) => {

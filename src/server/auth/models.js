@@ -23,7 +23,7 @@ const AuthModel = {
           return resolve({
             accessToken: tokenSet[0],
             refreshToken: tokenSet[1]
-          })
+          });
         })
         .catch(err => {
           return reject(err);

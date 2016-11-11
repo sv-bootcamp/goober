@@ -3,7 +3,6 @@ import config from 'config';
 import FacebookManager from '../../../server/users/facebook-manager';
 
 test('should get user profile', t => {
-
   const expected = {
     name: 'Open Graph Test User',
     id: 'SECRET_FACEBOOK_ID'
@@ -23,7 +22,6 @@ test('should get user profile', t => {
 });
 
 test('should get user profile image url from facebook.', t => {
-
   const mockId = config.FACEBOOK_TEST_ID;
 
   FacebookManager.getProfileImage(mockId)
@@ -38,7 +36,6 @@ test('should get user profile image url from facebook.', t => {
 });
 
 test('should get user id from facebook.', t => {
-
   const expected = {
     facebookId: process.env.FACEBOOK_TEST_ID || config.FACEBOOK_TEST_ID
   };
@@ -55,7 +52,6 @@ test('should get user id from facebook.', t => {
 });
 
 test('should get facebook test user token from facebook', t => {
-
   FacebookManager.getTestAccessToken()
     .then(FacebookManager.getProfile)
     .then(profile => {

@@ -14,7 +14,7 @@ const FacebookManager = {
         access_token: accessToken
       },
       json: true
-    })
+    });
   },
   getId: (accessToken) => {
     return FacebookManager.getProfile(accessToken)

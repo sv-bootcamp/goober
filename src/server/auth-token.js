@@ -61,12 +61,12 @@ class AuthToken {
         req.headers.userKey = payload.user;
         next();
       })
-        .catch(err => {
-          next(new APIError(err, {
-        statusCode: 400,
-        message: err.message
-      }));
-    });
+      .catch(err => {
+        next(new APIError(err, {
+          statusCode: 400,
+          message: err.message
+        }));
+      });
   }
 }
 

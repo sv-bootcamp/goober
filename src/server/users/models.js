@@ -17,9 +17,8 @@ const UserManager = {
     return getPromise(key)
       .then(userData => {
         return userData.key;
-      })
-  }
-  ,
+      });
+  },
   addAnonymousUser: ({secret, name}) => {
     const userKey = UserManager.genUserKey();
     const userValue = {

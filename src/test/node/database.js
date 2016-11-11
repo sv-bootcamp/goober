@@ -56,7 +56,6 @@ test('put data into database by promise', t => {
       t.fail();
       t.end(err);
     });
-
 });
 
 test('get data from database by promise', t => {
@@ -84,7 +83,7 @@ test('get data from database by promise', t => {
           .catch(err => {
             t.fail();
             t.end(err);
-          })
+          });
       });
     })
     .catch(err => {

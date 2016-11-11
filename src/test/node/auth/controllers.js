@@ -194,8 +194,8 @@ test('grant facebook user in controller', t => {
 
 test('should valid access token', t => {
   const mockUser = {
-    userId : 'mockUserId',
-    name : 'mockUserName'
+    userId: 'mockUserId',
+    name: 'mockUserName'
   };
 
   AuthToken.encode(TOKEN_TYPE.ACCESS, mockUser)
