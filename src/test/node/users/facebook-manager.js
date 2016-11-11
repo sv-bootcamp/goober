@@ -40,7 +40,7 @@ test('should get user profile image url from facebook.', t => {
 test('should get user id from facebook.', t => {
 
   const expected = {
-    facebookId: config.FACEBOOK_TEST_ID
+    facebookId: process.env.FACEBOOK_TEST_ID || config.FACEBOOK_TEST_ID
   };
   FacebookManager.getTestAccessToken()
     .then(FacebookManager.getId)
