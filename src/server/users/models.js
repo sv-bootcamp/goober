@@ -21,20 +21,14 @@ const UserManager = {
       })
   }
   ,
-  addAnonymousUser: (data) => {
-    /*
-      data : {
-        secret(required) : "user secret",
-        name(optional) : "user name. If it's undefined name set as default name"
-      }
-     */
+  addAnonymousUser: ({secret, name}) => {
     const userKey = UserManager.genUserKey();
     const userValue = {
       type: USER_TYPE.ANONYMOUS,
-      name: data.name || ANONYMOUS_USER_DEFAULT.NAME,
+      name: name || ANONYMOUS_USER_DEFAULT.NAME,
       key: userKey
     };
-    return bcrypt.hash(data.secret)
+    return bcrypt.hash(secret)
       .then(hash => {
         userValue.secret = hash;
         return putPromise(userKey, userValue);
@@ -42,24 +36,19 @@ const UserManager = {
       .then(key => {
         const userIdx = UserManager.getUserIndexKey({
           userType: USER_TYPE.ANONYMOUS,
-          secret: data.secret
+          secret
         });
         return putPromise(userIdx, {key});
       });
   },
-  addFacebookUser: (data) => {
-    /*
-      data : {
-
-      }
-     */
+  addFacebookUser: ({facebookToken}) => {
     const userKey = UserManager.genUserKey();
     const userValue = {
       type: USER_TYPE.FACEBOOK,
       key: userKey
     };
     let facebookId;
-    return FacebookManager.getProfile(data.facebookToken)
+    return FacebookManager.getProfile(facebookToken)
       .then(profile => {
         userValue.name = profile.name;
         userValue.email = profile.email;
@@ -68,8 +57,8 @@ const UserManager = {
         return profile.id;
       })
       .then(FacebookManager.getProfileImage)
-      .then(profileImg => {
-        userValue.profileImgUrl = profileImg.data.url;
+      .then(profileImgUrl => {
+        userValue.profileImgUrl = profileImgUrl;
         return putPromise(userKey, userValue);
       })
       .then(key => {
@@ -84,13 +73,13 @@ const UserManager = {
     const timeHash = KeyUtils.genTimeHash();
     return `user-${timeHash}`;
   },
-  getUserIndexKey: (params) => {
-    switch (params.userType) {
+  getUserIndexKey: ({userType, state, secret, facebookId}) => {
+    switch (userType) {
     case USER_TYPE.ANONYMOUS:
-      return `${ENTITY.USER}-${params.state || STATE.ALIVE}-${ENTITY.ANONYMOUS}-${params.secret}`;
+      return `${ENTITY.USER}-${state || STATE.ALIVE}-${ENTITY.ANONYMOUS}-${secret}`;
     case USER_TYPE.FACEBOOK:
-      return `${ENTITY.USER}-${params.state || STATE.ALIVE}` +
-        `-${ENTITY.FACEBOOK}-${params.facebookId}`;
+      return `${ENTITY.USER}-${state || STATE.ALIVE}` +
+        `-${ENTITY.FACEBOOK}-${facebookId}`;
     default:
       return null;
     }

@@ -7,7 +7,6 @@ import FacebookManager from '../../../server/users/facebook-manager';
 import {KeyUtils, ENTITY, STATE, CATEGORY} from '../../../server/key-utils';
 import bcrypt from './../../../server/bcrypt';
 import {STATE_STRING} from '../../../server/items/models';
-import config from 'config';
 
 test('generate user key', t => {
   const expected = {
@@ -204,33 +203,4 @@ test('get created post keys of a user', t => {
       `should be same number of size : ${values.length}`);
     t.end();
   });
-});
-test('get user profile', t => {
-  const expected = {
-    name: 'Open Graph Test User'
-  };
-
-  FacebookManager.getTestAccessToken()
-    .then(FacebookManager.getProfile)
-    .then((profile) => {
-      t.equal(profile.name, expected.name, 'should be same name');
-      t.end();
-    })
-    .catch(err => {
-      t.fail();
-      t.end(err);
-    });
-});
-
-test('get user profile image', t => {
-  const mockId = config.FACEBOOK_TEST_ID;
-  FacebookManager.getProfileImage(mockId)
-    .then((imageData) => {
-      t.ok(imageData, 'facebook profile image ok');
-      t.end();
-    })
-    .catch(err => {
-      t.fail();
-      t.end(err);
-    });
 });

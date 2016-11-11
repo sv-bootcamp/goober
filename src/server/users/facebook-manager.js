@@ -27,6 +27,8 @@ const FacebookManager = {
       uri: `${FACEBOOK_BASE_URL}/${id}${FACEBOOK_PROFILE_IMAGE_URL}`,
       qs: { type: 'large', redirect: 0 },
       json: true
+    }).then(imageData => {
+      return imageData.data.url;
     });
   },
   getTestAccessToken: () => {

@@ -73,7 +73,8 @@ export default {
         res.status(400).send({
           result: TOKEN_STATUS.INVALID,
           message: "Access Token is invalid"
-        })
+        });
+        return next();
       });
   }
 };

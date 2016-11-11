@@ -120,19 +120,19 @@ export default {
     }
 
     return addUser
-    .then(AuthModel.encodeTokenSet)
-    .then((tokenSet) => {
-      if (userType === USER_TYPE.ANONYMOUS) {
-        tokenSet.secret = req.body.secret;
-      }
-      res.status(200).send(tokenSet);
-      next();
-    })
-    .catch((err) => {
-      next(new APIError(err, {
-        statusCode: 500,
-        message: err.message
-      }));
-    });
+      .then(AuthModel.encodeTokenSet)
+      .then((tokenSet) => {
+        if (userType === USER_TYPE.ANONYMOUS) {
+          tokenSet.secret = req.body.secret;
+        }
+        res.status(200).send(tokenSet);
+        next();
+      })
+      .catch((err) => {
+        next(new APIError(err, {
+          statusCode: 500,
+          message: err.message
+        }));
+      });
   }
 };

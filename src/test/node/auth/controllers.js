@@ -1,5 +1,5 @@
 import test from 'tape';
-import AuthToken, {TOKEN_TYPE} from './../../../server/auth-token';
+import AuthToken, {TOKEN_TYPE, TOKEN_STATUS} from './../../../server/auth-token';
 import AuthController from '../../../server/auth/controllers';
 import {GRANT_TYPE} from '../../../server/auth/models';
 import {USER_TYPE} from '../../../server/users/models';
@@ -190,4 +190,68 @@ test('grant facebook user in controller', t => {
       t.fail();
       t.end(err);
     });
+});
+
+test('should valid access token', t => {
+  const mockUser = {
+    userId : 'mockUserId',
+    name : 'mockUserName'
+  };
+
+  AuthToken.encode(TOKEN_TYPE.ACCESS, mockUser)
+  .then(validAccessToken => {
+    const expected = {
+      result: TOKEN_STATUS.VALID,
+      message: 'Access Token is valid.'
+    };
+    const req = httpMocks.createRequest({
+      method: 'POST',
+      url: 'api/auth/validate',
+      body: {
+        accessToken: validAccessToken
+      }
+    });
+    const res = httpMocks.createResponse();
+    AuthController.validate(req, res, () => {
+      if (res.statusCode === 400) {
+        t.fail('Validation is failed');
+        return t.end();
+      }
+      const {result, message} = res._getData();
+
+      t.equal(result, expected.result, 'should be same result.');
+      t.equal(message, expected.message, 'should be same message.');
+      return t.end();
+    });
+  });
+});
+
+test('should invalid access token', t => {
+  const invalidAccessToken = 'THIS_IS_INVALID_ACCESS_TOKEN';
+
+  const req = httpMocks.createRequest({
+    method: 'POST',
+    url: 'api/auth/validate',
+    body: {
+      accessToken: invalidAccessToken
+    }
+  });
+
+  const expected = {
+    result: TOKEN_STATUS.INVALID,
+    message: 'Access Token is invalid'
+  };
+
+  const res = httpMocks.createResponse();
+  AuthController.validate(req, res, () => {
+    if (res.statusCode === 400) {
+      const {result, message} = res._getData();
+      t.equal(result, expected.result, 'should be same result.');
+      t.equal(message, expected.message, 'should be same message.');
+      return t.end();
+    }
+
+    t.fail('Validation is failed');
+    return t.end();
+  });
 });

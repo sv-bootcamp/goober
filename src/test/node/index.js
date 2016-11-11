@@ -12,6 +12,7 @@ import './images/models';
 import './images/controllers';
 import './users/controllers';
 import './users/models';
+import './users/facebook-manager';
 import './auth/models';
 import './auth/controllers';
 import './database';
