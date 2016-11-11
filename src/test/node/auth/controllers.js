@@ -201,7 +201,6 @@ test('should valid access token', t => {
   AuthToken.encode(TOKEN_TYPE.ACCESS, mockUser)
   .then(validAccessToken => {
     const expected = {
-      result: TOKEN_STATUS.VALID,
       message: 'Access Token is valid.'
     };
     const req = httpMocks.createRequest({
@@ -219,7 +218,6 @@ test('should valid access token', t => {
       }
       const {result, message} = res._getData();
 
-      t.equal(result, expected.result, 'should be same result.');
       t.equal(message, expected.message, 'should be same message.');
       return t.end();
     });
@@ -238,7 +236,6 @@ test('should invalid access token', t => {
   });
 
   const expected = {
-    result: TOKEN_STATUS.INVALID,
     message: 'Access Token is invalid'
   };
 
@@ -246,7 +243,6 @@ test('should invalid access token', t => {
   AuthController.validate(req, res, () => {
     if (res.statusCode === 400) {
       const {result, message} = res._getData();
-      t.equal(result, expected.result, 'should be same result.');
       t.equal(message, expected.message, 'should be same message.');
       return t.end();
     }

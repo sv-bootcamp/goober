@@ -89,13 +89,11 @@ router.post('/grant', controller.grant);
  *          "accessToken": "accessTokenToValidate"
  *      }
  *
- * @apiSuccess {Number} result validate result
  * @apiSuccess {String} message result message
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "result"  : 1,
  *       "message" : "Access Token is valid"
  *     }
  *
@@ -103,8 +101,7 @@ router.post('/grant', controller.grant);
  * @apiErrorExample {json} Invalid-Token-Error-Response
  *     HTTP/1.1 400 Bad Request
  *     {
- *       "result"  : 0,
- *       "message" : "Access Token is invalid"
+ *       "message": "Access Token is invalid"
  *     }
  *
  */
