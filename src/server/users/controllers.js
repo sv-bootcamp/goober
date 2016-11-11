@@ -3,7 +3,7 @@ import {S3Connector} from '../aws-s3';
 import db from '../database';
 import {APIError} from '../ErrorHandler';
 import AuthModel from '../auth/models';
-import UserModel, {CreatedPostManager, SavedPostManager, USER_TYPE} from './models';
+import UserModel, {CreatedPostManager, SavedPostManager,USER_TYPE} from './models';
 import uuid from 'uuid4';
 
 export default {
@@ -86,16 +86,36 @@ export default {
       return cb();
     });
   },
-  addSavedPost(req, res, cb) {
-    const timeHash = KeyUtils.genTimeHash();
-    SavedPostManager.addSavedPost(req.body.entityKey, req.body.userKey, timeHash, (err, idxKey) => {
-      if (err) {
-        return cb(new APIError(err));
-      }
+  deleteSavedPost(req, res, cb) {
+    const {itemKey, userKey} = req.body;
+    return SavedPostManager.deletePost(userKey, itemKey)
+    .then(()=>{
       res.status(200).send({
-        message: 'success',
-        data: idxKey
+        message: 'success'
       });
+      return cb();
+    });
+  },
+  getSavedPosts(req, res, cb) {
+    console.log('3');
+    const userKey = req.params.id;
+    SavedPostManager.getPosts(userKey, (err, posts) => {
+      console.log('4');
+      if (err) {
+        return cb(new APIError());
+      }
+      console.log('5');
+      res.status(200).send(posts);
+      return cb();
+    });
+  },
+  getCreatedPosts(req, res, cb) {
+    const userKey = req.params.id;
+    CreatedPostManager.getPosts(userKey, (err, posts) => {
+      if (err) {
+        return cb(new APIError());
+      }
+      res.status(200).send(posts);
       return cb();
     });
   },

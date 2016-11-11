@@ -3,6 +3,8 @@ import bcrypt from '../bcrypt';
 import db, {fetchPrefix, putPromise, getPromise} from '../database';
 import FacebookManager from './facebook-manager';
 import {PERMISSION} from '../permission';
+import {STATE_STRING} from '../../server/items/models';
+import ImageManager from '../../server/images/models';
 
 export const USER_TYPE = {
   ANONYMOUS: 'anonymous',
@@ -162,6 +164,57 @@ export class SavedPostManager {
     const idxKey = `${ENTITY.SAVED_POST}-${userKey}-${entityKey}`;
     db.put(idxKey, {key: entityKey}, (err) => {
       return (err) ? cb(err) : cb(null, idxKey);
+    });
+  }
+  static getPosts(userKey, cb) {
+    const imagePromises = [];
+    const items = [];
+    const TARGET_STATE = [
+      STATE_STRING[STATE.ALIVE],
+      STATE_STRING[STATE.EXPIRED]
+    ];
+    UserManager.getPostKeys(ENTITY.SAVED_POST, userKey)
+    .then((posts)=>{
+      posts.map((post)=>{
+        imagePromises.push(new Promise((resolve, reject) => {
+          db.get(post.key, (err, item) => {
+            return (err) ? reject(err) : resolve(item);
+          });
+        }).then((item)=>{
+          items.push(item);
+          return new Promise((resolve, reject) => {
+            if (TARGET_STATE.indexOf(item.state) === -1) {
+              resolve();
+              return;
+            }
+            ImageManager.getImageUrls({itemKey: item.key, isThumbnail: true}, (err, imageUrls) => {
+              if (err) {
+                reject(err);
+                return;
+              }
+              item.imageUrls = imageUrls;
+              resolve();
+            });
+          });
+        }).catch((err) => {
+          return err;
+        }));
+      });
+      Promise.all(imagePromises).then(() => {
+        cb(null, items);
+      }).catch((err) => {
+        return err;
+      });
+    }).catch((err)=>{
+      return cb(err);
+    });
+  }
+  static deletePost(userKey, itemKey) {
+    const idxKey = `${ENTITY.SAVED_POST}-${userKey}-${itemKey}`;
+    return new Promise((resolve, reject) => {
+      db.del(idxKey, (err) => {
+        return (err) ? reject(err) : resolve();
+      });
     });
   }
 }
