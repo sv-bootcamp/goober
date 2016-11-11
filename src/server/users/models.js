@@ -8,7 +8,6 @@ export const USER_TYPE = {
   FACEBOOK: 'facebook'
 };
 
-
 const ANONYMOUS_USER_DEFAULT = {
   NAME: 'guest'
 };

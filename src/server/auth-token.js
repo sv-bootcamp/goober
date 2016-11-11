@@ -10,7 +10,7 @@ export const TOKEN_TYPE = {
 export const TOKEN_STATUS = {
   VALID: 1,
   INVALID: 0
-}
+};
 
 const TOKEN_EXPIRE = {
   [TOKEN_TYPE.ACCESS]: process.env.ACCESS_TOKEN_EXPIRE || config.ACCESS_TOKEN_EXPIRE,
