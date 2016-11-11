@@ -19,6 +19,28 @@ export const clearDB = () => {
   });
 };
 
+export const putPromise = (key, value) => {
+  return new Promise((resolve, reject) => {
+    db.put(key, value, err => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve();
+    });
+  });
+};
+
+export const getPromise = key => {
+  return new Promise((resolve, reject) => {
+    db.get(key, (err, data) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(data);
+    });
+  })
+};
+
 export const fetchPrefix = (prefix, cb) => {
   const values = [];
   let error;
