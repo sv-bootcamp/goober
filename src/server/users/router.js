@@ -102,40 +102,6 @@ router.post('/signup', controller.signup);
  */
 router.post('/', controller.post);
 
-/**
- * @api {add} /users/createdpost Add a created post of a user
- * @apiName addACreatedpost
- * @apiGroup User
- *
- * @apiParam {String} entity entity(item or image)
- * @apiParam {String} entityKey entityKey
- * @apiParam {String} userKey userKey
- * @apiParamExample {json} Request-Example:
- *      {
- *          "entity"      : "image",
- *          "entityKey"   : "image-8523569761934-dd3860f5-b82e-473b-1234-ead0fts43200",
- *          "userKey"     : "user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000",
- *      }
- *
- * @apiSuccess {String} message success
- *
- * @apiSuccessExample Success-Response:
- *     HTTP/1.1 200 OK
- *     {
- *       "message": "success",
- *       "data"   : "createdPost-0-user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000-~~"
- *     }
- *
- * @apiError (Error 500) error The id of the error occured while putting an Item in DB
- * @apiErrorExample {json} Database-Error-Response:
- *     HTTP/1.1 500 Internal Server Error
- *     {
- *       error: "error message ..."
- *     }
- */
-router.post('/createdpost', controller.addCreatedPost);
-
-
 /*
  *
  * @api {add} /users/savedpost Add a saved post of a user

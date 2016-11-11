@@ -114,9 +114,18 @@ const mockUser = {
 };
 test('add created posts with user key', t => {
   const timeHash = KeyUtils.genTimeHash(new Date());
+  const post = {
+    entity: ENTITY.IMAGE,
+    itemKey: testObject.itemKey,
+    imageKey: testObject.key
+  };
   new Promise((resolve, reject) => {
+<<<<<<< 368114616ba71ca6198e0139149b75bfbebc0392
     CreatedPostManager.addCreatedPost(ENTITY.ITEM, mockItem.key, mockItem.userKey, timeHash,
     (err, key) => {
+=======
+    CreatedPostManager.addPost(testObject.userKey, post, timeHash, (err, key) => {
+>>>>>>>  update savedPosts/add
       return (err) ? reject(err) : resolve(key);
     });
   }).then((key)=>{
@@ -134,13 +143,17 @@ test('add created posts with user key', t => {
   });
 });
 test('add saved posts with user key', t => {
-  const timeHash = KeyUtils.genTimeHash(new Date());
   new Promise((resolve, reject) => {
+<<<<<<< 368114616ba71ca6198e0139149b75bfbebc0392
     SavedPostManager.addSavedPost(mockItem.key, mockItem.userKey, timeHash, (err, key)=>{
+=======
+    SavedPostManager.addPost(mockItem.userKey, mockItem.key, (err, key) => {
+>>>>>>>  update savedPosts/add
       return (err) ? reject(err) : resolve(key);
     });
-  }).then((key)=>{
+  }).then((key) => {
     return new Promise((resolve, reject) => {
+<<<<<<< 368114616ba71ca6198e0139149b75bfbebc0392
       // There are two indexing objects(item/user).
       let valueForItem;
       let valueForUser;
@@ -168,9 +181,20 @@ test('add saved posts with user key', t => {
         }
         t.equal(valueForItem.key, mockItem.key, 'should be same indexing(item)');
         t.equal(valueForUser.key, mockItem.key, 'should be same indexing(user)');
+=======
+      if (typeof key !== 'string' || !key.includes(mockItem.userKey)) {
+        t.fail(`key is wrong: ${key}`);
+>>>>>>>  update savedPosts/add
         t.end();
+        return;
+      }
+      testDB.get(key, (err, value) => {
+        return (err) ? reject(err) : resolve(value);
       });
     });
+  }).then((value) => {
+    t.equal(value.key, mockItem.key, 'should be same key');
+    t.end();
   }).catch((err)=>{
     t.fail();
     t.end(err);

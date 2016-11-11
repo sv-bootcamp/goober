@@ -147,49 +147,6 @@ test('signup as a anonymous user to database', t => {
     });
 });
 
-test('add created post using user controller', t => {
-  const testBody = {
-    entity:	ENTITY.IMAGE,
-    entityKey:	'test-image-key',
-    userKey:	'test-users-key'
-  };
-  const expected = {
-    status: 200,
-    key: testBody.entityKey
-  };
-  const req = httpMocks.createRequest({
-    method: 'POST',
-    url: 'api/users/createdpost',
-    body: testBody
-  });
-  const res = httpMocks.createResponse();
-  clearDB().then(initMock).then(() => {
-    return new Promise((resolve) => {
-      Controller.addCreatedPost(req, res, resolve);
-    });
-  }).then(()=>{
-    return new Promise((resolve, reject) => {
-      const status = res.statusCode;
-      const key = res._getData().data;
-      t.equal(status, expected.status, 'should be same status');
-      if (typeof key !== 'string' || !key.includes(testBody.userKey)) {
-        t.fail(`wrong key : ${key}`);
-        t.end();
-        return;
-      }
-      testDB.get(key, (err, value) => {
-        return (err) ? reject(err) : resolve(value);
-      });
-    });
-  }).then((value) => {
-    t.equal(value.key, expected.key, 'should be same key');
-    t.end();
-  }).catch((err) => {
-    t.fail(err);
-    t.end();
-  });
-});
-
 test('signup as a facebook user to database', t => {
   clearDB()
   .then(FacebookManager.getTestAccessToken)

@@ -74,10 +74,8 @@ export default {
       return cb(new APIError(err, { statusCode: err.statusCode, message: err.message }));
     });
   },
-  addCreatedPost(req, res, cb) {
-    const timeHash = KeyUtils.genTimeHash();
-    CreatedPostManager.addCreatedPost(req.body.entity, req.body.entityKey, req.body.userKey,
-    timeHash, (err, idxKey) => {
+  addSavedPost(req, res, cb) {
+    SavedPostManager.addPost(req.body.userKey, req.body.itemKey, (err, idxKey) => {
       if (err) {
         return cb(new APIError(err));
       }
