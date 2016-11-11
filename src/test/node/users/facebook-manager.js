@@ -1,6 +1,5 @@
 import test from 'tape';
-import config from 'config';
-import FacebookManager from '../../../server/users/facebook-manager';
+import FacebookManager, {APP_ID, FACEBOOK_TEST_ID} from '../../../server/users/facebook-manager';
 
 test('should get user profile', t => {
   const expected = {
@@ -22,7 +21,7 @@ test('should get user profile', t => {
 });
 
 test('should get user profile image url from facebook.', t => {
-  const mockId = config.FACEBOOK_TEST_ID;
+  const mockId = APP_ID;
 
   FacebookManager.getProfileImage(mockId)
     .then((imageUrl) => {
@@ -37,7 +36,7 @@ test('should get user profile image url from facebook.', t => {
 
 test('should get user id from facebook.', t => {
   const expected = {
-    facebookId: process.env.FACEBOOK_TEST_ID || config.FACEBOOK_TEST_ID
+    facebookId: FACEBOOK_TEST_ID
   };
   FacebookManager.getTestAccessToken()
     .then(FacebookManager.getId)
