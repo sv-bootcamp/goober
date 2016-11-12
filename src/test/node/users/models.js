@@ -109,7 +109,7 @@ test('add Facebook user', t => {
       });
     });
 });
-test('add created posts with user key', t => {
+test('add created post(CreatedPostManager.addPost', t => {
   const testObject = mockImages[0].value;
   const timeHash = KeyUtils.genTimeHash(new Date());
   const post = {
@@ -117,18 +117,16 @@ test('add created posts with user key', t => {
     itemKey: testObject.itemKey,
     imageKey: testObject.key
   };
-  new Promise((resolve, reject) => {
-    CreatedPostManager.addPost(testObject.userKey, post, timeHash, (err, key) => {
-      return (err) ? reject(err) : resolve(key);
-    });
-  }).then((key)=>{
+  CreatedPostManager.addPost(testObject.userKey, post, timeHash)
+  .then((key)=>{
     return new Promise((resolve, reject) => {
       testDB.get(key, (err, item) => {
         return (err) ? reject(err) : resolve(item);
       });
     });
   }).then((item)=>{
-    t.equal(item.key, mockItem.key, 'should be same key');
+    t.equal(item.itemKey, testObject.itemKey, 'should be same itemKey');
+    t.equal(item.imageKey, testObject.key, 'should be same imageKey');
     t.end();
   }).catch((err)=>{
     t.fail(err);
@@ -136,45 +134,14 @@ test('add created posts with user key', t => {
   });
 });
 test('add saved posts with user key', t => {
-  new Promise((resolve, reject) => {
-    SavedPostManager.addPost(mockItem.userKey, mockItem.key, (err, key) => {
-      return (err) ? reject(err) : resolve(key);
-    });
-  }).then((key) => {
+  SavedPostManager.addPost(mockItem.userKey, mockItem.key)
+  .then((key) => {
     return new Promise((resolve, reject) => {
       if (typeof key !== 'string' || !key.includes(mockItem.userKey)) {
         t.fail(`key is wrong: ${key}`);
-      }
-      // There are two indexing objects(item/user).
-      let valueForItem;
-      let valueForUser;
-      let error;
-      testDB.createReadStream({
-        start: `${ENTITY.SAVED_POST}-\x00`,
-        end: `${ENTITY.SAVED_POST}-\xFF`
-      }).on('data', (data) => {
-        // Check this data has relevance to mock user.
-        if (data.key.indexOf(mockItem.userKey) !== -1) {
-          // constant for checking data key is indexing for item
-          const isKeyForItem = (data.key.indexOf(mockItem.key) !== -1);
-          if (isKeyForItem) {
-            valueForItem = data.value;
-          } else {
-            t.equal(data.key, key, 'should be same key');
-            valueForUser = data.value;
-          }
-        }
-      }).on('error', (err) => {
-        error = err;
-      }).on('close', () => {
-        if (error) {
-          reject(error);
-        }
-        t.equal(valueForItem.key, mockItem.key, 'should be same indexing(item)');
-        t.equal(valueForUser.key, mockItem.key, 'should be same indexing(user)');
         t.end();
         return;
-      });
+      }
       testDB.get(key, (err, value) => {
         return (err) ? reject(err) : resolve(value);
       });
@@ -233,18 +200,18 @@ test('get created post keys of a user', t => {
   const expected = {
     // get a number of posts of test user
     length: mockCreatedPosts.filter((post)=>{
-      return post.key.includes(testUser.key);
+      return (post.key.includes(testUser.key)) ? true : false;
     }).length
   };
-  UserManager.getPostKeys(ENTITY.CREATED_POST, testUser.key, (err, values) => {
-    if (err) {
-      t.fail('Error while reading from DB');
-      t.end();
-      return;
-    }
+  UserManager.getPostKeys(ENTITY.CREATED_POST, testUser.key)
+  .then((values) => {
     t.equal(values.length, expected.length,
       `should be same number of size : ${values.length}`);
     t.end();
+  }).catch((err) => {
+    t.fail();
+    t.end(err);
+    return;
   });
 });
 test('get saved posts of a user(SavedPostManager.getPosts)', t => {

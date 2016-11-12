@@ -1,11 +1,10 @@
 import {KeyUtils, ENTITY, STATE} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import db from '../database';
-import {APIError} from '../ErrorHandler';
 import AuthModel from '../auth/models';
 import UserModel, {CreatedPostManager, SavedPostManager,USER_TYPE} from './models';
 import uuid from 'uuid4';
-
+import { APIError } from '../ErrorHandler';
 export default {
   get(req, res, cb) {
     const key = req.params.id;

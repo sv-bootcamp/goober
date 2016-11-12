@@ -209,22 +209,30 @@ test('get saved posts using user controller', t => {
     }
   });
   const res = httpMocks.createResponse();
-  Controller.getSavedPosts(req, res, () => {
-    const posts = res._getData();
-    const status = res.statusCode;
-    t.equal(status, expected.status, 'should be same status');
-    t.equal(posts.length, expected.length,
-    `should be same length of posts array : ${posts.length}`);
-    posts.map((post) => {
-      if (post.userKey !== expected.userKey) {
-        t.fail(`wrong user key : ${post.userKey}`);
-        return;
-      }
-      t.notEqual(post.imageUrls.length, 0,
-      `valid length of image url : ${post.imageUrls.length}`);
+  clearDB().then(initMock)
+  .then(()=>{
+    Controller.getSavedPosts(req, res, () => {
+      const posts = res._getData();
+      const status = res.statusCode;
+      t.equal(status, expected.status, 'should be same status');
+      t.equal(posts.length, expected.length,
+      `should be same length of posts array : ${posts.length}`);
+      posts.map((post) => {
+        console.log('post :', post);
+        if (post.userKey !== expected.userKey) {
+          t.fail(`wrong user key : ${post.userKey}`);
+          return;
+        }
+        t.notEqual(post.imageUrls.length, 0,
+        `valid length of image url : ${post.imageUrls.length}`);
+      });
+      t.end();
     });
-    t.end();
+  }).catch((err)=>{
+    t.fail();
+    t.end(err);
   });
+    
 });
 test('get created posts using user controller', t => {
   const testUser = mockUsers[0].value;
@@ -248,25 +256,33 @@ test('get created posts using user controller', t => {
     }
   });
   const res = httpMocks.createResponse();
-  Controller.getCreatedPosts(req, res, () => {
-    const posts = res._getData();
-    const status = res.statusCode;
-    t.equal(status, expected.status, 'should be same status');
-    t.equal(posts.length, expected.length,
-    `should ba same length of posts array : ${posts.length}`);
-    posts.map((post) => {
-      if (!post.imageUrl) {
-        t.fail('there is no imageUrl Field');
-      }
-      if (expected.states.indexOf(post.state) === -1) {
-        t.fail(`invalid state : ${post.state}`);
-      }
-      if (post.userKey !== expected.userKey) {
-        t.fail(`wrong user key : ${post.userKey}`);
-        return;
-      }
+  
+  clearDB().then(initMock)
+  .then(()=>{
+    Controller.getCreatedPosts(req, res, () => {
+      const posts = res._getData();
+      const status = res.statusCode;
+      t.equal(status, expected.status, 'should be same status');
+      t.equal(posts.length, expected.length,
+      `should ba same length of posts array : ${posts.length}`);
+      posts.map((post) => {
+        if (!post.imageUrl) {
+          t.fail('there is no imageUrl Field');
+        }
+        if (expected.states.indexOf(post.state) === -1) {
+          t.fail(`invalid state : ${post.state}`);
+        }
+        if (post.userKey !== expected.userKey) {
+          t.fail(`wrong user key : ${post.userKey}`);
+          return;
+        }
+      });
+      t.end();
     });
-    t.end();
+  })
+  .catch((err)=>{
+    t.fail();
+    t.end(err);
   });
 });
 
