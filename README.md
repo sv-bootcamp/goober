@@ -1,14 +1,15 @@
-# This is Goober's base code. You can build up from this. It is done by deleting unnecessary parts from sv-bootcamp/example-project.
-# Install
-npm install
-# Running Service
-npm run watch
-or
-gulp watch
-# Running Tests
-npm test
-# Linting (Code Analysis)
-npm run lint
+# Pingo backend
+Pingo is real-time travel experience sharing mobile application.
+This repository is backend of service Pingo. <br>
+Our backend has built with Node.js, Gulp, Tape, LevelDB etc. For more detail, check out [Development Guide](https://github.com/sv-bootcamp/wiki/wiki/Development-Guide). <br>
+Pingo is result of [project-goober](https://github.com/sv-bootcamp/wiki/wiki/Project-Goober). And Here is our [mobile repository](https://github.com/sv-bootcamp/goober-mobile).
+
+# Quick start
+    npm install                  // Install
+    npm run watch OR gulp watch  // Running Service
+    npm test                     // Running Tests
+    npm run lint                 // Linting (Code Analysis)
+
 
 # Docker
 Every commit of master branch makes docker image file and push to docker-hub <br>
@@ -43,7 +44,7 @@ For update docker image of EC2 instance follow description below
 
 * Show running or all docker containers
 
-        docker ps        docker ps -a 
+        docker ps        docker ps -a
 
 * Remove image or container
 
