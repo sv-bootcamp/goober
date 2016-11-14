@@ -56,7 +56,6 @@ test('grant anonymous user', t => {
       return putPromise(mockUser.key, mockUser);
     })
     .then(() => {
-      console.log(mockUserIdxKey);
       return putPromise(mockUserIdxKey, {key: mockUser.key});
     })
     .then(() => {
