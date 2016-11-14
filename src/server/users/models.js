@@ -2,6 +2,7 @@ import {KeyUtils, ENTITY, STATE} from '../key-utils';
 import bcrypt from '../bcrypt';
 import db, {fetchPrefix, putPromise, getPromise} from '../database';
 import FacebookManager from './facebook-manager';
+import {PERMISSION} from '../permission';
 
 export const USER_TYPE = {
   ANONYMOUS: 'anonymous',
@@ -9,8 +10,8 @@ export const USER_TYPE = {
 };
 
 export const USER_PERMISSION = {
-  [USER_TYPE.ANONYMOUS]: 'r-',
-  [USER_TYPE.FACEBOOK]: 'rw'
+  [USER_TYPE.ANONYMOUS]: PERMISSION.R,
+  [USER_TYPE.FACEBOOK]: PERMISSION.RW
 };
 
 
