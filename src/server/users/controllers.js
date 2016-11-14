@@ -1,8 +1,11 @@
-import { KeyUtils, ENTITY, STATE } from '../key-utils';
-import { S3Connector } from '../aws-s3';
+import {KeyUtils, ENTITY, STATE} from '../key-utils';
+import {S3Connector} from '../aws-s3';
 import db from '../database';
-import { APIError } from '../ErrorHandler';
-import { CreatedPostManager, SavedPostManager } from './models';
+import {APIError} from '../ErrorHandler';
+import AuthModel from '../auth/models';
+import UserModel, {CreatedPostManager, SavedPostManager, USER_TYPE} from './models';
+import uuid from 'uuid4';
+
 export default {
   get(req, res, cb) {
     const key = req.params.id;
@@ -97,5 +100,41 @@ export default {
       });
       return cb();
     });
+  },
+  signup: (req, res, next) => {
+    const {userType} = req.body;
+    let addUser;
+    switch (userType) {
+    case USER_TYPE.ANONYMOUS:
+      req.body.userId = uuid();
+      req.body.secret = uuid();
+      addUser = UserModel.addAnonymousUser(req.body);
+      break;
+    case USER_TYPE.FACEBOOK:
+      addUser = UserModel.addFacebookUser(req.body);
+      break;
+    default:
+      return next(new APIError(new Error(), {
+        statusCode: 400,
+        message: 'invalid user type'
+      }));
+    }
+
+    return addUser
+      .then(AuthModel.encodeTokenSet)
+      .then((tokenSet) => {
+        if (userType === USER_TYPE.ANONYMOUS) {
+          tokenSet.userId = req.body.userId;
+          tokenSet.secret = req.body.secret;
+        }
+        res.status(200).send(tokenSet);
+        next();
+      })
+      .catch((err) => {
+        next(new APIError(err, {
+          statusCode: 500,
+          message: err.message
+        }));
+      });
   }
 };

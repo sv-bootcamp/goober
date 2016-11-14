@@ -1,8 +1,92 @@
-import db, {fetchPrefix} from '../database';
-import {KeyUtils, ENTITY, STATE} from '../../server/key-utils';
+import {KeyUtils, ENTITY, STATE} from '../key-utils';
+import bcrypt from '../bcrypt';
+import db, {fetchPrefix, putPromise, getPromise} from '../database';
+import FacebookManager from './facebook-manager';
 
-export default class UserManager {
-  static modifyUser(key, value, cb) {
+export const USER_TYPE = {
+  ANONYMOUS: 'anonymous',
+  FACEBOOK: 'facebook'
+};
+
+const ANONYMOUS_USER_DEFAULT = {
+  NAME: 'guest'
+};
+
+const UserManager = {
+  getUserKey: key => {
+    return getPromise(key)
+      .then(userData => {
+        return userData.key;
+      });
+  },
+  addAnonymousUser: ({userId, secret, name = ANONYMOUS_USER_DEFAULT.NAME}) => {
+    const userKey = UserManager.genUserKey();
+    const userValue = {
+      type: USER_TYPE.ANONYMOUS,
+      id: userId,
+      name,
+      key: userKey
+    };
+    return bcrypt.hash(secret)
+      .then(hash => {
+        userValue.hash = hash;
+        return putPromise(userKey, userValue);
+      })
+      .then(key => {
+        const userIdxKey = UserManager.getUserIndexKey({
+          userType: USER_TYPE.ANONYMOUS,
+          userId: userValue.id
+        });
+        return putPromise(userIdxKey, {key});
+      })
+      .then(() => {
+        return userValue.key;
+      });
+  },
+  addFacebookUser: ({facebookToken}) => {
+    const userKey = UserManager.genUserKey();
+    const userValue = {
+      type: USER_TYPE.FACEBOOK,
+      key: userKey
+    };
+    let facebookId;
+    return FacebookManager.getProfile(facebookToken)
+      .then(profile => {
+        userValue.name = profile.name;
+        userValue.email = profile.email;
+        userValue.facebookId = profile.id;
+        facebookId = profile.id;
+        return profile.id;
+      })
+      .then(FacebookManager.getProfileImage)
+      .then(profileImgUrl => {
+        userValue.profileImgUrl = profileImgUrl;
+        return putPromise(userKey, userValue);
+      })
+      .then(key => {
+        const userIdx = UserManager.getUserIndexKey({
+          userType: USER_TYPE.FACEBOOK,
+          facebookId: facebookId
+        });
+        return putPromise(userIdx, {key});
+      });
+  },
+  genUserKey: () => {
+    const timeHash = KeyUtils.genTimeHash();
+    return `user-${timeHash}`;
+  },
+  getUserIndexKey: ({userType, state, userId, facebookId}) => {
+    switch (userType) {
+    case USER_TYPE.ANONYMOUS:
+      return `${ENTITY.USER}-${state || STATE.ALIVE}-${ENTITY.ANONYMOUS}-${userId}`;
+    case USER_TYPE.FACEBOOK:
+      return `${ENTITY.USER}-${state || STATE.ALIVE}` +
+        `-${ENTITY.FACEBOOK}-${facebookId}`;
+    default:
+      return null;
+    }
+  },
+  modifyUser: (key, value, cb) => {
     return new Promise((resolve, reject) => {
       db.get(key, (err) => {
         return (err) ? reject(err) : resolve();
@@ -21,22 +105,24 @@ export default class UserManager {
       }
       return new Error(err);
     });
-  }
-  static isPostType(postType) {
+  },
+  isPostType: (postType) => {
     if (postType === ENTITY.CREATED_POST
-     || postType === ENTITY.SAVED_POST
-     || postType === ENTITY.REACT_POST) {
+      || postType === ENTITY.SAVED_POST
+      || postType === ENTITY.REACT_POST) {
       return true;
     }
     return false;
-  }
-  static getPostKeys(postType, userKey, cb) {
+  },
+  getPostKeys: (postType, userKey, cb) => {
     const prefix = `${postType}-${STATE.ALIVE}-${userKey}`;
     fetchPrefix(prefix, (err, keyData) => {
       cb(err, keyData);
     });
   }
-}
+};
+export default UserManager;
+
 export class CreatedPostManager {
   static addCreatedPost(entity, entityKey, userKey, timeHash, cb) {
     if (entity !== ENTITY.ITEM && entity !== ENTITY.IMAGE) {

@@ -1,10 +1,96 @@
 import test from 'tape';
 import testDB, {initMock, clearDB} from '../../../server/database';
-import UserManager, {CreatedPostManager, SavedPostManager} from '../../../server/users/models';
 import {mockUsers, mockCreatedPosts} from '../../../server/database-mock-data';
+import UserModel, {USER_TYPE} from '../../../server/users/models';
+import UserManager, {CreatedPostManager, SavedPostManager} from '../../../server/users/models';
+import FacebookManager from '../../../server/users/facebook-manager';
 import {KeyUtils, ENTITY, STATE, CATEGORY} from '../../../server/key-utils';
+import bcrypt from './../../../server/bcrypt';
 import {STATE_STRING} from '../../../server/items/models';
 
+test('generate user key', t => {
+  const expected = {
+    prefix: 'user'
+  };
+  const userKey = UserModel.genUserKey();
+  const prefix = userKey.split('-')[0];
+  t.equal(prefix, expected.prefix, 'should be same prefix user');
+  t.end();
+});
+
+
+test('add Anonymous user', t => {
+  const mockUser = {
+    userId: 'userId',
+    secret: 'userSecret'
+  };
+  const expected = {
+    type: USER_TYPE.ANONYMOUS,
+    value: mockUser
+  };
+
+  clearDB()
+  .then(() => {
+    return UserModel.addAnonymousUser(mockUser);
+  })
+  .catch((err) => {
+    t.fail('Error while add Anonymous User to DB');
+    t.end(err);
+  })
+  .then(() => {
+    let savedUser;
+    testDB.createReadStream({
+      start: `${ENTITY.USER}-\x00`,
+      end: `${ENTITY.USER}-\xFF`
+    }).on('data', (data) => {
+      savedUser = data.value;
+    }).on('error', (err) => {
+      t.fail('Error while read Anonymous User from DB');
+      t.end(err);
+    }).on('close', () => {
+      t.equal(savedUser.type, expected.type, 'should have same user type anonymous');
+      bcrypt.compare(mockUser.secret, savedUser.hash)
+        .then(result => {
+          t.ok(result, 'should have same secret');
+        })
+        .catch(err => {
+          t.fail();
+          t.end(err);
+        });
+      t.equal(savedUser.id, expected.value.userId, 'should have same user id');
+      t.end();
+    });
+  });
+});
+
+test('add Facebook user', t => {
+  const expected = {
+    type: USER_TYPE.FACEBOOK
+  };
+  clearDB()
+    .then(FacebookManager.getTestAccessToken)
+    .then(mockFacebookToken => {
+      const mockUser = {
+        facebookToken: mockFacebookToken
+      };
+      return UserModel.addFacebookUser(mockUser);
+    })
+    .then(() => {
+      let savedUser;
+      testDB.createReadStream({
+        start: `${ENTITY.USER}-\x00`,
+        end: `${ENTITY.USER}-\xFF`
+      }).on('data', (data) => {
+        savedUser = data.value;
+      }).on('error', (err) => {
+        t.fail('Error while read Facebook User from DB');
+        t.end(err);
+      }).on('close', () => {
+        t.equal(savedUser.type, expected.type, 'should have same user type facebook');
+        t.end();
+      });
+    });
+});
 const mockItem = {
   title: 'mock item',
   lat: 37.765432,
@@ -113,7 +199,7 @@ test('get created post keys of a user', t => {
   const expected = {
     // get a number of posts of test user
     length: mockCreatedPosts.filter((post)=>{
-      return (post.key.includes(testUser.key)) ? true : false;
+      return post.key.includes(testUser.key);
     }).length
   };
   UserManager.getPostKeys(ENTITY.CREATED_POST, testUser.key, (err, values) => {

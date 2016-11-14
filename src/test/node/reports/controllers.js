@@ -9,7 +9,7 @@ test('reports controller post ', t => {
   };
   const req = httpMocks.createRequest({
     method: 'POST',
-    url: '/reports'
+    url: 'api/reports'
   });
   const res = httpMocks.createResponse();
   Controller.post(req, res, () => {

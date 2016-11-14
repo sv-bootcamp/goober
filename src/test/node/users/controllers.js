@@ -3,17 +3,18 @@ import testDB, {initMock, clearDB} from '../../../server/database';
 import httpMocks from 'node-mocks-http';
 import Controller from '../../../server/users/controllers';
 import {KeyUtils, ENTITY} from '../../../server/key-utils';
-
-const mockUser = {
-  key: 'user-unique-key',
-  name: 'test-user',
-  email: 'test@email.com',
-  password: 'secret-password',
-  imageUrl: 'url-of-image'
-};
+import AuthToken, {TOKEN_TYPE} from '../../../server/auth-token';
+import {USER_TYPE} from '../../../server/users/models';
+import FacebookManager from '../../../server/users/facebook-manager';
 
 test('get a user from database', t => {
-  const expected = mockUser;
+  const expected = {
+    key: 'user-unique-key',
+    name: 'test-user',
+    email: 'test@email.com',
+    password: 'secret-password',
+    imageUrl: 'url-of-image'
+  };
   testDB.put(expected.key, expected, (err) => {
     if (err) {
       t.fail(err);
@@ -22,7 +23,7 @@ test('get a user from database', t => {
     }
     const req = httpMocks.createRequest({
       method: 'GET',
-      url: `/users/${expected.key}`,
+      url: `api/users/${expected.key}`,
       params: {
         id: `${expected.key}`
       }
@@ -37,6 +38,13 @@ test('get a user from database', t => {
   });
 });
 test('add a user to database', t => {
+  const mockUser = {
+    key: 'user-unique-key',
+    name: 'test-user',
+    email: 'test@email.com',
+    password: 'secret-password',
+    imageUrl: 'url-of-image'
+  };
   const expected = {
     status: 200,
     message: 'success',
@@ -44,7 +52,7 @@ test('add a user to database', t => {
   };
   const req = httpMocks.createRequest({
     method: 'POST',
-    url: '/users',
+    url: 'api/users',
     body: mockUser
   });
   const res = httpMocks.createResponse();
@@ -92,6 +100,53 @@ test('add a user to database', t => {
     t.end(err);
   });
 });
+
+test('signup as a anonymous user to database', t => {
+  const mockUser = {
+    userType: USER_TYPE.ANONYMOUS,
+    userId: 'anonymousId',
+    secret: 'anonymousSecret'
+  };
+
+  const req = httpMocks.createRequest({
+    method: 'POST',
+    url: 'api/users/signup',
+    body: mockUser
+  });
+
+  const res = httpMocks.createResponse();
+
+  clearDB()
+    .then(() => {
+      return Controller.signup(req, res, (err) => {
+        if (err) {
+          t.fail();
+          return t.end(err);
+        }
+        const data = res._getData();
+        return AuthToken.decode(TOKEN_TYPE.ACCESS, data.accessToken)
+          .then((decodedAccessToken) => {
+            t.ok(decodedAccessToken.user, 'should be valid access token');
+          })
+          .then(() => {
+            return AuthToken.decode(TOKEN_TYPE.REFRESH, data.refreshToken);
+          })
+          .then(decodedRefreshToken => {
+            t.ok(decodedRefreshToken.user, 'should be valid refresh token');
+            t.end();
+          })
+          .catch(jwtErr => {
+            t.fail(jwtErr);
+            t.end();
+          });
+      });
+    })
+    .catch(err => {
+      t.fail(err);
+      t.end();
+    });
+});
+
 test('add created post using user controller', t => {
   const testBody = {
     entity:	ENTITY.IMAGE,
@@ -104,7 +159,7 @@ test('add created post using user controller', t => {
   };
   const req = httpMocks.createRequest({
     method: 'POST',
-    url: '/users/createdpost',
+    url: 'api/users/createdpost',
     body: testBody
   });
   const res = httpMocks.createResponse();
@@ -134,6 +189,47 @@ test('add created post using user controller', t => {
     t.end();
   });
 });
+
+test('signup as a facebook user to database', t => {
+  clearDB()
+  .then(FacebookManager.getTestAccessToken)
+  .then(mockFacebookToken => {
+    const mockUser = {
+      userType: USER_TYPE.FACEBOOK,
+      facebookToken: mockFacebookToken
+    };
+
+    const req = httpMocks.createRequest({
+      method: 'POST',
+      url: 'api/users/signup',
+      body: mockUser
+    });
+    const res = httpMocks.createResponse();
+
+    return Controller.signup(req, res, (err) => {
+      if (err) {
+        t.fail();
+        return t.end(err);
+      }
+      const data = res._getData();
+      return AuthToken.decode(TOKEN_TYPE.ACCESS, data.accessToken)
+        .then((decodedAccessToken) => {
+          t.ok(decodedAccessToken.user, 'should be valid access token');
+        })
+        .then(() => {
+          return AuthToken.decode(TOKEN_TYPE.REFRESH, data.refreshToken);
+        })
+        .then(decodedRefreshToken => {
+          t.ok(decodedRefreshToken.user, 'should be valid refresh token');
+          t.end();
+        });
+    });
+  })
+  .catch(err => {
+    t.fail();
+    t.end(err);
+  });
+});
 test('add posted post using user controller', t => {
   const testBody = {
     entityKey:	'test-image-key',
@@ -145,7 +241,7 @@ test('add posted post using user controller', t => {
   };
   const req = httpMocks.createRequest({
     method: 'POST',
-    url: '/users/savedpost',
+    url: 'api/users/savedpost',
     body: testBody
   });
   const res = httpMocks.createResponse();
