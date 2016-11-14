@@ -203,7 +203,7 @@ test('get saved posts using user controller', t => {
   };
   const req = httpMocks.createRequest({
     method: 'GET',
-    url: `/users/savedposts/${testUser.key}`,
+    url: `/api/users/savedposts/${testUser.key}`,
     params: {
       id: `${testUser.key}`
     }
@@ -248,7 +248,7 @@ test('get created posts using user controller', t => {
   };
   const req = httpMocks.createRequest({
     method: 'GET',
-    url: `/users/createdPosts/${testUser.key}`,
+    url: `/api/users/createdPosts/${testUser.key}`,
     params: {
       id: `${testUser.key}`
     }
@@ -271,7 +271,6 @@ test('get created posts using user controller', t => {
         }
         if (post.userKey !== expected.userKey) {
           t.fail(`wrong user key : ${post.userKey}`);
-          return;
         }
       });
       t.end();
@@ -291,7 +290,7 @@ test('delete saved post using user controller', t => {
   };
   const req = httpMocks.createRequest({
     method: 'DELETE',
-    url: '/users/savedposts',
+    url: '/api/users/savedposts',
     body: {
       itemKey: testItem.key,
       userKey: testUser.key

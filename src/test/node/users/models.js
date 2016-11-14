@@ -109,7 +109,7 @@ test('add Facebook user', t => {
       });
     });
 });
-test('add created post(CreatedPostManager.addPost', t => {
+test('add created post(CreatedPostManager.addPost)', t => {
   const testObject = mockImages[0].value;
   const timeHash = KeyUtils.genTimeHash(new Date());
   const post = {
