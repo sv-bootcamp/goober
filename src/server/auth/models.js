@@ -1,6 +1,8 @@
 import jwt, {TOKEN_TYPE} from '../auth-token';
+import bcrypt from '../bcrypt';
 import UserModel, {USER_TYPE} from '../users/models';
 import FacebookManager from '../users/facebook-manager';
+import {getPromise} from '../database';
 
 export const GRANT_TYPE = {
   ANONYMOUS: 'anonymous',
@@ -30,12 +32,19 @@ const AuthModel = {
         });
     });
   },
-  grantAnonymous: (secret) => {
-    const idxKey = UserModel.getUserIndexKey({
+  grantAnonymous: (userId, secret) => {
+    const userIdxKey = UserModel.getUserIndexKey({
       userType: USER_TYPE.ANONYMOUS,
-      secret
+      userId
     });
-    return UserModel.getUserKey(idxKey);
+    return UserModel.getUserKey(userIdxKey)
+      .then(getPromise)
+      .then(userData => {
+        return bcrypt.compare(secret, userData.hash)
+          .then(() => {
+            return userData.key;
+          });
+      });
   },
   grantFacebook: (facebookToken) => {
     return FacebookManager.getId(facebookToken)

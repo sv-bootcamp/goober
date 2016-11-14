@@ -21,6 +21,7 @@ test('generate user key', t => {
 
 test('add Anonymous user', t => {
   const mockUser = {
+    userId: 'userId',
     secret: 'userSecret'
   };
   const expected = {
@@ -48,7 +49,15 @@ test('add Anonymous user', t => {
       t.end(err);
     }).on('close', () => {
       t.equal(savedUser.type, expected.type, 'should have same user type anonymous');
-      t.ok(bcrypt.compare(expected.value.secret, savedUser.secret), 'should have same secret');
+      bcrypt.compare(mockUser.secret, savedUser.hash)
+        .then(result => {
+          t.ok(result, 'should have same secret');
+        })
+        .catch(err => {
+          t.fail();
+          t.end(err);
+        });
+      t.equal(savedUser.id, expected.value.userId, 'should have same user id');
       t.end();
     });
   });

@@ -106,6 +106,7 @@ export default {
     let addUser;
     switch (userType) {
     case USER_TYPE.ANONYMOUS:
+      req.body.userId = uuid();
       req.body.secret = uuid();
       addUser = UserModel.addAnonymousUser(req.body);
       break;
@@ -123,6 +124,7 @@ export default {
       .then(AuthModel.encodeTokenSet)
       .then((tokenSet) => {
         if (userType === USER_TYPE.ANONYMOUS) {
+          tokenSet.userId = req.body.userId;
           tokenSet.secret = req.body.secret;
         }
         res.status(200).send(tokenSet);

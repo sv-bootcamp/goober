@@ -19,24 +19,28 @@ const UserManager = {
         return userData.key;
       });
   },
-  addAnonymousUser: ({secret, name}) => {
+  addAnonymousUser: ({userId, secret, name = ANONYMOUS_USER_DEFAULT.NAME}) => {
     const userKey = UserManager.genUserKey();
     const userValue = {
       type: USER_TYPE.ANONYMOUS,
-      name: name || ANONYMOUS_USER_DEFAULT.NAME,
+      id: userId,
+      name,
       key: userKey
     };
     return bcrypt.hash(secret)
       .then(hash => {
-        userValue.secret = hash;
+        userValue.hash = hash;
         return putPromise(userKey, userValue);
       })
       .then(key => {
-        const userIdx = UserManager.getUserIndexKey({
+        const userIdxKey = UserManager.getUserIndexKey({
           userType: USER_TYPE.ANONYMOUS,
-          secret
+          userId: userValue.id
         });
-        return putPromise(userIdx, {key});
+        return putPromise(userIdxKey, {key});
+      })
+      .then(() => {
+        return userValue.key;
       });
   },
   addFacebookUser: ({facebookToken}) => {
@@ -71,10 +75,10 @@ const UserManager = {
     const timeHash = KeyUtils.genTimeHash();
     return `user-${timeHash}`;
   },
-  getUserIndexKey: ({userType, state, secret, facebookId}) => {
+  getUserIndexKey: ({userType, state, userId, facebookId}) => {
     switch (userType) {
     case USER_TYPE.ANONYMOUS:
-      return `${ENTITY.USER}-${state || STATE.ALIVE}-${ENTITY.ANONYMOUS}-${secret}`;
+      return `${ENTITY.USER}-${state || STATE.ALIVE}-${ENTITY.ANONYMOUS}-${userId}`;
     case USER_TYPE.FACEBOOK:
       return `${ENTITY.USER}-${state || STATE.ALIVE}` +
         `-${ENTITY.FACEBOOK}-${facebookId}`;

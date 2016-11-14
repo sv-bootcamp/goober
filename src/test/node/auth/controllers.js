@@ -62,9 +62,10 @@ test('grant anonymous user in userController', t => {
   const mockUserSecret = 'userSecret';
   const mockUser = {
     key: 'userKey',
+    userId: 'userId',
     type: USER_TYPE.ANONYMOUS
   };
-  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.ANONYMOUS}-${mockUserSecret}`;
+  let mockUserIdxKey;
 
   const expected = {
     accessToken: {
@@ -79,7 +80,8 @@ test('grant anonymous user in userController', t => {
 
   bcrypt.hash(mockUserSecret)
     .then(hash => {
-      mockUser.secret = hash;
+      mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.ANONYMOUS}-${mockUser.userId}`;
+      mockUser.hash = hash;
     })
     .then(clearDB)
     .then(() => {
@@ -94,6 +96,7 @@ test('grant anonymous user in userController', t => {
         url: 'api/auth/grant',
         body: {
           grantType: GRANT_TYPE.ANONYMOUS,
+          userId: mockUser.userId,
           secret: mockUserSecret
         }
       });

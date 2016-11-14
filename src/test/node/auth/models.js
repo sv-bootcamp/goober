@@ -41,23 +41,26 @@ test('grant anonymous user', t => {
   const mockUserSecret = 'userSecret';
   const mockUser = {
     key: 'userKey',
+    userId: 'userId',
     type: USER_TYPE.ANONYMOUS
   };
-  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.ANONYMOUS}-${mockUserSecret}`;
+  let mockUserIdxKey;
 
   bcrypt.hash(mockUserSecret)
     .then(hash => {
-      mockUser.secret = hash;
+      mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.ANONYMOUS}-${mockUser.userId}`;
+      mockUser.hash = hash;
     })
     .then(clearDB)
     .then(() => {
       return putPromise(mockUser.key, mockUser);
     })
     .then(() => {
+      console.log(mockUserIdxKey);
       return putPromise(mockUserIdxKey, {key: mockUser.key});
     })
     .then(() => {
-      return AuthModel.grantAnonymous(mockUserSecret);
+      return AuthModel.grantAnonymous(mockUser.userId, mockUserSecret);
     })
     .then(userKey => {
       t.equal(userKey, mockUser.key, 'should be same user key');

@@ -104,6 +104,7 @@ test('add a user to database', t => {
 test('signup as a anonymous user to database', t => {
   const mockUser = {
     userType: USER_TYPE.ANONYMOUS,
+    userId: 'anonymousId',
     secret: 'anonymousSecret'
   };
 
