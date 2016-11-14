@@ -1,6 +1,6 @@
 import test from 'tape';
 import testDB, {initMock, clearDB, fetchPrefix} from '../../../server/database';
-import {mockUsers, mockCreatedPosts, mockSavedPosts, mockItems, mockImages} 
+import {mockUsers, mockCreatedPosts, mockSavedPosts, mockItems, mockImages}
       from '../../../server/database-mock-data';
 import UserModel, {USER_TYPE} from '../../../server/users/models';
 import UserManager, {CreatedPostManager, SavedPostManager} from '../../../server/users/models';

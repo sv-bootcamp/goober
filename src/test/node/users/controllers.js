@@ -6,7 +6,7 @@ import {KeyUtils, ENTITY, STATE} from '../../../server/key-utils';
 import AuthToken, {TOKEN_TYPE} from '../../../server/auth-token';
 import {USER_TYPE} from '../../../server/users/models';
 import FacebookManager from '../../../server/users/facebook-manager';
-import {mockItems, mockSavedPosts, mockUsers, mockCreatedPosts} 
+import {mockItems, mockSavedPosts, mockUsers, mockCreatedPosts}
         from '../../../server/database-mock-data';
 import {STATE_STRING} from '../../../server/items/models';
 test('get a user from database', t => {
@@ -218,7 +218,6 @@ test('get saved posts using user controller', t => {
       t.equal(posts.length, expected.length,
       `should be same length of posts array : ${posts.length}`);
       posts.map((post) => {
-        console.log('post :', post);
         if (post.userKey !== expected.userKey) {
           t.fail(`wrong user key : ${post.userKey}`);
           return;
@@ -232,7 +231,6 @@ test('get saved posts using user controller', t => {
     t.fail();
     t.end(err);
   });
-    
 });
 test('get created posts using user controller', t => {
   const testUser = mockUsers[0].value;
@@ -256,7 +254,6 @@ test('get created posts using user controller', t => {
     }
   });
   const res = httpMocks.createResponse();
-  
   clearDB().then(initMock)
   .then(()=>{
     Controller.getCreatedPosts(req, res, () => {
@@ -285,7 +282,6 @@ test('get created posts using user controller', t => {
     t.end(err);
   });
 });
-
 test('delete saved post using user controller', t => {
   const testUser = mockUsers[0].value;
   const testItem = mockItems[0].value;

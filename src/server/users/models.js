@@ -5,8 +5,7 @@ import FacebookManager from './facebook-manager';
 import {PERMISSION} from '../permission';
 import {STATE_STRING} from '../../server/items/models';
 import ImageManager from '../../server/images/models';
- import {S3Connector} from '../aws-s3';
- 
+import {S3Connector} from '../aws-s3';
 export const USER_TYPE = {
   ANONYMOUS: 'anonymous',
   FACEBOOK: 'facebook'
@@ -21,7 +20,6 @@ export const USER_PERMISSION = {
 const ANONYMOUS_USER_DEFAULT = {
   NAME: 'guest'
 };
-
 const UserManager = {
   getUserKey: key => {
     return getPromise(key)
@@ -143,7 +141,6 @@ const UserManager = {
   }
 };
 export default UserManager;
-
 export class CreatedPostManager {
   static addPost(userKey, {entity, itemKey, imageKey}, timeHash) {
     /*
