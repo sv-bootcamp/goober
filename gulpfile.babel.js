@@ -170,7 +170,8 @@ const apidocConfig = {
     './src/server/routes',
     './src/server/items',
     './src/server/images',
-    './src/server/users'],
+    './src/server/users',
+    './src/server/auth'],
   dest: 'doc/',
   debug: true,
   config: './'

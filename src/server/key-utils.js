@@ -13,7 +13,9 @@ export const ENTITY = {
   USER: 'user',
   CREATED_POST: 'createdPost',
   SAVED_POST: 'savedPost',
-  REACT_POST: 'reactPost'
+  REACT_POST: 'reactPost',
+  ANONYMOUS: 'anonymous',
+  FACEBOOK: 'facebook'
 };
 export const CATEGORY = {
   EVENT: 'event',

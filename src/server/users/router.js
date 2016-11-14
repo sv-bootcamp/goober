@@ -31,6 +31,42 @@ const router = express.Router();
 router.get('/:id', controller.get);
 
 /**
+ * @api {add} /users/signup signup user
+ * @apiName signupUser
+ * @apiGroup User
+ *
+ * @apiParam {String} userType user type; anonymous, facebook
+ * @apiParam {String} [facebookToken] facebook token
+ * @apiParamExample {json} Request-Example:
+ *      {
+ *          "userType"      : "facebook",
+ *          "facebookToken" :	"facebookToken"
+ *      }
+ *
+ * @apiSuccess {String} accessToken access token
+ * @apiSuccess {String} refreshToken refresh token
+ * @apiSuccess {String} [userId] user id
+ * @apiSuccess {String} [secret] user secret
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "accessToken"  : "accessToken",
+ *       "refreshToken" : "refreshToken",
+ *       "userId"       : "userId",
+ *       "secret"       : "userSecret"
+ *     }
+ *
+ * @apiError (Error 500) error Database Internal error
+ * @apiErrorExample {json} Database-Error-Response:
+ *     HTTP/1.1 500 Internal Server Error
+ *     {
+ *       error: "error message ..."
+ *     }
+ */
+router.post('/signup', controller.signup);
+
+/**
  * @api {add} /users Add a user
  * @apiName addAUser
  * @apiGroup User
@@ -66,7 +102,7 @@ router.get('/:id', controller.get);
  */
 router.post('/', controller.post);
 
-/* *
+/**
  * @api {add} /users/createdpost Add a created post of a user
  * @apiName addACreatedpost
  * @apiGroup User
@@ -98,6 +134,8 @@ router.post('/', controller.post);
  *     }
  */
 router.post('/createdpost', controller.addCreatedPost);
+
+
 /*
  *
  * @api {add} /users/savedpost Add a saved post of a user
@@ -130,6 +168,5 @@ router.post('/createdpost', controller.addCreatedPost);
  *     }
  */
 router.post('/savedpost', controller.addSavedPost);
-
 
 export default router;
