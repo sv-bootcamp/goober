@@ -4,7 +4,7 @@ import Controllers from './controllers';
 const router = express.Router();
 
 /**
- * @api {add} /reports Add an item or image.
+ * @api {add} /reports Add a report from item or image.
  * @apiName reportAnItem
  * @apiGroup Report
  *
