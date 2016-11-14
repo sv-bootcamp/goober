@@ -126,13 +126,13 @@ test('signup as a anonymous user to database', t => {
         const data = res._getData();
         return AuthToken.decode(TOKEN_TYPE.ACCESS, data.accessToken)
           .then((decodedAccessToken) => {
-            t.ok(decodedAccessToken.user, 'should be valid access token');
+            t.ok(decodedAccessToken.userKey, 'should be valid access token');
           })
           .then(() => {
             return AuthToken.decode(TOKEN_TYPE.REFRESH, data.refreshToken);
           })
           .then(decodedRefreshToken => {
-            t.ok(decodedRefreshToken.user, 'should be valid refresh token');
+            t.ok(decodedRefreshToken.userKey, 'should be valid refresh token');
             t.end();
           })
           .catch(jwtErr => {
@@ -214,13 +214,13 @@ test('signup as a facebook user to database', t => {
       const data = res._getData();
       return AuthToken.decode(TOKEN_TYPE.ACCESS, data.accessToken)
         .then((decodedAccessToken) => {
-          t.ok(decodedAccessToken.user, 'should be valid access token');
+          t.ok(decodedAccessToken.userKey, 'should be valid access token');
         })
         .then(() => {
           return AuthToken.decode(TOKEN_TYPE.REFRESH, data.refreshToken);
         })
         .then(decodedRefreshToken => {
-          t.ok(decodedRefreshToken.user, 'should be valid refresh token');
+          t.ok(decodedRefreshToken.userKey, 'should be valid refresh token');
           t.end();
         });
     });

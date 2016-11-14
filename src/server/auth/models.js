@@ -10,14 +10,16 @@ export const GRANT_TYPE = {
 };
 
 const AuthModel = {
-  encodeTokenSet: (userKey) => {
+  encodeTokenSet: ({userType, userKey}) => {
     const accessToken = jwt.encode(TOKEN_TYPE.ACCESS, {
-      type: TOKEN_TYPE.ACCESS,
-      user: userKey
+      tokenType: TOKEN_TYPE.ACCESS,
+      userKey,
+      userType
     });
     const refreshToken = jwt.encode(TOKEN_TYPE.REFRESH, {
-      type: TOKEN_TYPE.REFRESH,
-      user: userKey
+      tokenType: TOKEN_TYPE.REFRESH,
+      userKey,
+      userType
     });
     return new Promise((resolve, reject) => {
       Promise.all([accessToken, refreshToken])
@@ -42,7 +44,10 @@ const AuthModel = {
       .then(userData => {
         return bcrypt.compare(secret, userData.hash)
           .then(() => {
-            return userData.key;
+            return {
+              userKey: userData.key,
+              userType: USER_TYPE.ANONYMOUS
+            };
           });
       });
   },
@@ -54,6 +59,12 @@ const AuthModel = {
           facebookId: id
         });
         return UserModel.getUserKey(idxKey);
+      })
+      .then(userKey => {
+        return {
+          userKey,
+          userType: USER_TYPE.FACEBOOK
+        };
       });
   }
 };
