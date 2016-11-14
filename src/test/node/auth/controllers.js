@@ -12,18 +12,21 @@ import config from 'config';
 
 test('refresh token', t => {
   const mockUser = {
-    user: 'mockUserKey'
+    userType: USER_TYPE.ANONYMOUS,
+    userKey: 'mockUserKey'
   };
   AuthToken.encode(TOKEN_TYPE.REFRESH, mockUser)
     .then((mockRefreshToken) => {
       const expected = {
         accessToken: {
-          type: TOKEN_TYPE.ACCESS,
-          user: mockUser.user
+          tokenType: TOKEN_TYPE.ACCESS,
+          userType: USER_TYPE.ANONYMOUS,
+          userKey: mockUser.userKey
         },
         refreshToken: {
-          type: TOKEN_TYPE.REFRESH,
-          user: mockUser.user
+          tokenType: TOKEN_TYPE.REFRESH,
+          userType: USER_TYPE.ANONYMOUS,
+          userKey: mockUser.userKey
         }
       };
       const req = httpMocks.createRequest({
@@ -41,14 +44,18 @@ test('refresh token', t => {
         .then(decodedSet => {
           const decodedAccessToken = decodedSet[0];
           const decodedRefreshToken = decodedSet[1];
-          t.equal(decodedAccessToken.type, expected.accessToken.type,
+          t.equal(decodedAccessToken.tokenType, expected.accessToken.tokenType,
             'should be same token type');
-          t.equal(decodedAccessToken.user, expected.accessToken.user,
-            'should be same user');
-          t.equal(decodedRefreshToken.type, expected.refreshToken.type,
+          t.equal(decodedAccessToken.userType, expected.accessToken.userType,
+            'should be same user type');
+          t.equal(decodedAccessToken.userKey, expected.accessToken.userKey,
+            'should be same user key');
+          t.equal(decodedRefreshToken.tokenType, expected.refreshToken.tokenType,
             'should be same token type');
-          t.equal(decodedRefreshToken.user, expected.refreshToken.user,
-            'should be same user');
+          t.equal(decodedRefreshToken.userType, expected.refreshToken.userType,
+            'should be same user type');
+          t.equal(decodedRefreshToken.userKey, expected.refreshToken.userKey,
+            'should be same user key');
           t.end();
         })
         .catch(err => {
@@ -69,12 +76,14 @@ test('grant anonymous user in userController', t => {
 
   const expected = {
     accessToken: {
-      type: TOKEN_TYPE.ACCESS,
-      user: mockUser.key
+      tokenType: TOKEN_TYPE.ACCESS,
+      userType: USER_TYPE.ANONYMOUS,
+      userKey: mockUser.key
     },
     refreshToken: {
-      type: TOKEN_TYPE.REFRESH,
-      user: mockUser.key
+      tokenType: TOKEN_TYPE.REFRESH,
+      userType: USER_TYPE.ANONYMOUS,
+      userKey: mockUser.key
     }
   };
 
@@ -112,14 +121,18 @@ test('grant anonymous user in userController', t => {
           .then(decodedSet => {
             const decodedAccessToken = decodedSet[0];
             const decodedRefreshToken = decodedSet[1];
-            t.equal(decodedAccessToken.type, expected.accessToken.type,
+            t.equal(decodedAccessToken.tokenType, expected.accessToken.tokenType,
               'should be same token type');
-            t.equal(decodedAccessToken.user, expected.accessToken.user,
-              'should be same user');
-            t.equal(decodedRefreshToken.type, expected.refreshToken.type,
+            t.equal(decodedAccessToken.userType, expected.accessToken.userType,
+              'should be same user type');
+            t.equal(decodedAccessToken.userKey, expected.accessToken.userKey,
+              'should be same user key');
+            t.equal(decodedRefreshToken.tokenType, expected.refreshToken.tokenType,
               'should be same token type');
-            t.equal(decodedRefreshToken.user, expected.refreshToken.user,
-              'should be same user');
+            t.equal(decodedRefreshToken.userType, expected.refreshToken.userType,
+              'should be same user type');
+            t.equal(decodedRefreshToken.userKey, expected.refreshToken.userKey,
+              'should be same user key');
             t.end();
           });
       });
@@ -139,12 +152,14 @@ test('grant facebook user in controller', t => {
     `-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
   const expected = {
     accessToken: {
-      type: TOKEN_TYPE.ACCESS,
-      user: mockUser.key
+      tokenType: TOKEN_TYPE.ACCESS,
+      userType: USER_TYPE.FACEBOOK,
+      userKey: mockUser.key
     },
     refreshToken: {
-      type: TOKEN_TYPE.REFRESH,
-      user: mockUser.key
+      tokenType: TOKEN_TYPE.REFRESH,
+      userType: USER_TYPE.FACEBOOK,
+      userKey: mockUser.key
     }
   };
   clearDB()
@@ -173,14 +188,18 @@ test('grant facebook user in controller', t => {
           .then(decodedSet => {
             const decodedAccessToken = decodedSet[0];
             const decodedRefreshToken = decodedSet[1];
-            t.equal(decodedAccessToken.type, expected.accessToken.type,
+            t.equal(decodedAccessToken.tokenType, expected.accessToken.tokenType,
               'should be same token type');
-            t.equal(decodedAccessToken.user, expected.accessToken.user,
-              'should be same user');
-            t.equal(decodedRefreshToken.type, expected.refreshToken.type,
+            t.equal(decodedAccessToken.userType, expected.accessToken.userType,
+              'should be same user key');
+            t.equal(decodedAccessToken.userKey, expected.accessToken.userKey,
+              'should be same user type');
+            t.equal(decodedRefreshToken.tokenType, expected.refreshToken.tokenType,
               'should be same token type');
-            t.equal(decodedRefreshToken.user, expected.refreshToken.user,
-              'should be same user');
+            t.equal(decodedRefreshToken.userType, expected.refreshToken.userType,
+              'should be same user type');
+            t.equal(decodedRefreshToken.userKey, expected.refreshToken.userKey,
+              'should be same user key');
             t.end();
           })
           .catch(err => {

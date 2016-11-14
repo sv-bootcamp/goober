@@ -5,8 +5,8 @@ export default {
   refreshToken: (req, res, next) => {
     AuthToken.decode(TOKEN_TYPE.REFRESH, req.body.refreshToken)
     .then((decoded) => {
-      if (decoded.type === TOKEN_TYPE.REFRESH) {
-        return AuthModel.encodeTokenSet(decoded.user)
+      if (decoded.tokenType === TOKEN_TYPE.REFRESH) {
+        return AuthModel.encodeTokenSet(decoded)
           .then(tokenSet => {
             res.status(200).send(tokenSet);
             return next();
