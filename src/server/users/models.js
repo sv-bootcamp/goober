@@ -3,7 +3,9 @@ import bcrypt from '../bcrypt';
 import db, {fetchPrefix, putPromise, getPromise} from '../database';
 import FacebookManager from './facebook-manager';
 import {PERMISSION} from '../permission';
-
+import {STATE_STRING} from '../../server/items/models';
+import ImageManager from '../../server/images/models';
+import {S3Connector} from '../aws-s3';
 export const USER_TYPE = {
   ANONYMOUS: 'anonymous',
   FACEBOOK: 'facebook'
@@ -18,7 +20,6 @@ export const USER_PERMISSION = {
 const ANONYMOUS_USER_DEFAULT = {
   NAME: 'guest'
 };
-
 const UserManager = {
   getUserKey: key => {
     return getPromise(key)
@@ -130,44 +131,154 @@ const UserManager = {
     }
     return false;
   },
-  getPostKeys: (postType, userKey, cb) => {
-    const prefix = `${postType}-${STATE.ALIVE}-${userKey}`;
-    fetchPrefix(prefix, (err, keyData) => {
-      cb(err, keyData);
+  getPostKeys: (postType, userKey) => {
+    return new Promise((resolve, reject)=>{
+      const prefix = `${postType}-${STATE.ALIVE}-${userKey}`;
+      fetchPrefix(prefix, (err, keySets) => {
+        return (err) ? reject(err) : resolve(keySets);
+      });
     });
   }
 };
 export default UserManager;
-
 export class CreatedPostManager {
-  static addCreatedPost(entity, entityKey, userKey, timeHash, cb) {
-    if (entity !== ENTITY.ITEM && entity !== ENTITY.IMAGE) {
-      return cb(new Error(('invalid entity'), null));
+  static addPost(userKey, {entity, itemKey, imageKey}, timeHash) {
+    /*
+    sample of parameter
+    {
+      entity  : 'image',
+      itemKey : 'item-8523569761934-dd3860f5-..',
+      imageKey: 'image-8523569761900-dcca60d3-'
     }
-    const idxKey = KeyUtils.getIdxKey(ENTITY.CREATED_POST, timeHash, userKey);
-    const idxPost = {
-      entity,
-      key: entityKey
-    };
-    return db.put(idxKey, idxPost, (err) => {
+    */
+    return new Promise((resolve, reject) => {
+      const idxKey = KeyUtils.getIdxKey(ENTITY.CREATED_POST, timeHash, userKey);
+      return db.put(idxKey, {entity, itemKey, imageKey}, (err) => {
+        return (err) ? reject(err) : resolve(idxKey);
+      });
+    });
+  }
+
+/**
+ * make Item Json value includes entity and image Url about CreatedPost
+ * @param {Object} keySet example:
+ * {  entity: 'image',
+ *    itemKey: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+ *    imageKey: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000'
+ * }
+ * @param {function} cb callback function
+ * @return {Object} item example:
+ * {  title: 'Pingo release party',
+ *    lat: 37.756787937,
+ *    lng: -122.4233365122,
+ *    address: '310 Dolores St, San Francisco, CA 94110, USA',
+ *    createdDate: '2016-12-20T01:11:46.851Z',
+ *    modifiedDate: '2016-12-21T01:11:46.851Z',
+ *    category: 'event',
+ *    startTime: '2016-12-24T01:11:46.851Z',
+ *    endTime: '2016-12-25T07:51:12.729Z',
+ *    state: 'alive',
+ *    key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+ *    userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
+ *    entity: 'image',
+ *    imageUrl: 'url-of-image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000'
+ * }
+**/
+  static getPost({entity, itemKey, imageKey}, cb) {
+    db.get(itemKey, (err, item) => {
       if (err) {
-        return cb(new Error('error while putting in DB'), null);
+        return cb(err);
       }
-      return cb(null, idxKey);
+      item.entity = entity;
+      item.imageUrl = new S3Connector().getImageUrl(imageKey);
+      return cb(null, item);
+    });
+  }
+  static getPosts(userKey, cb) {
+    const posts = [];
+    const promises = [];
+    UserManager.getPostKeys(ENTITY.CREATED_POST, userKey)
+    .then((keySets) => {
+      keySets.map((keySet)=>{
+        promises.push(new Promise((resolve, reject) => {
+          CreatedPostManager.getPost(keySet, (err, item) => {
+            if (err) {
+              reject(err);
+              return;
+            }
+            posts.push(item);
+            resolve();
+          });
+        }));
+      });
+      Promise.all(promises).then(() => {
+        return cb(null, posts);
+      }).catch((err) => {
+        return err;
+      });
+    }).catch((err)=>{
+      return cb(err);
     });
   }
 }
 export class SavedPostManager {
-  static addSavedPost(entityKey, userKey, timeHash, cb) {
-    const idxKey = KeyUtils.getIdxKey(ENTITY.SAVED_POST, timeHash, userKey);
-    const idxPost = {
-      key: entityKey
-    };
-    return db.put(idxKey, idxPost, (err) => {
-      if (err) {
-        return cb(new Error('error while putting in DB'), null);
-      }
-      return cb(null, idxKey);
+  static addPost(userKey, entityKey) {
+    return new Promise((resolve, reject) => {
+      const idxKey = `${ENTITY.SAVED_POST}-${STATE.ALIVE}-${userKey}-${entityKey}`;
+      db.put(idxKey, {key: entityKey}, (err) => {
+        return (err) ? reject(err) : resolve(idxKey);
+      });
+    });
+  }
+  static getPosts(userKey, cb) {
+    const imagePromises = [];
+    const items = [];
+    const TARGET_STATE = [
+      STATE_STRING[STATE.ALIVE],
+      STATE_STRING[STATE.EXPIRED]
+    ];
+    UserManager.getPostKeys(ENTITY.SAVED_POST, userKey)
+    .then((posts)=>{
+      posts.map((post)=>{
+        imagePromises.push(new Promise((resolve, reject) => {
+          db.get(post.key, (err, item) => {
+            return (err) ? reject(err) : resolve(item);
+          });
+        }).then((item)=>{
+          items.push(item);
+          return new Promise((resolve, reject) => {
+            if (TARGET_STATE.indexOf(item.state) === -1) {
+              resolve();
+              return;
+            }
+            ImageManager.getImageUrls({itemKey: item.key, isThumbnail: true}, (err, imageUrls) => {
+              if (err) {
+                reject(err);
+                return;
+              }
+              item.imageUrls = imageUrls;
+              resolve();
+            });
+          });
+        }).catch((err) => {
+          return err;
+        }));
+      });
+      Promise.all(imagePromises).then(() => {
+        cb(null, items);
+      }).catch((err) => {
+        return err;
+      });
+    }).catch((err)=>{
+      return cb(err);
+    });
+  }
+  static deletePost(userKey, itemKey) {
+    const idxKey = `${ENTITY.SAVED_POST}-${STATE.ALIVE}-${userKey}-${itemKey}`;
+    return new Promise((resolve, reject) => {
+      db.del(idxKey, (err) => {
+        return (err) ? reject(err) : resolve();
+      });
     });
   }
 }
