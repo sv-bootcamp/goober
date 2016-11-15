@@ -103,9 +103,7 @@ test('add a user to database', t => {
 
 test('signup as a anonymous user to database', t => {
   const mockUser = {
-    userType: USER_TYPE.ANONYMOUS,
-    userId: 'anonymousId',
-    secret: 'anonymousSecret'
+    userType: USER_TYPE.ANONYMOUS
   };
 
   const req = httpMocks.createRequest({
@@ -133,6 +131,10 @@ test('signup as a anonymous user to database', t => {
           })
           .then(decodedRefreshToken => {
             t.ok(decodedRefreshToken.userKey, 'should be valid refresh token');
+          })
+          .then(() => {
+            t.ok(data.userKey, 'should have user key');
+            t.ok(data.userSecret, 'should have user secret');
             t.end();
           })
           .catch(jwtErr => {

@@ -26,11 +26,10 @@ const UserManager = {
         return userData.key;
       });
   },
-  addAnonymousUser: ({userId, secret, name = ANONYMOUS_USER_DEFAULT.NAME}) => {
+  addAnonymousUser: ({secret, name = ANONYMOUS_USER_DEFAULT.NAME}) => {
     const userKey = UserManager.genUserKey();
     const userValue = {
       type: USER_TYPE.ANONYMOUS,
-      id: userId,
       name,
       key: userKey
     };
@@ -39,17 +38,11 @@ const UserManager = {
         userValue.hash = hash;
         return putPromise(userKey, userValue);
       })
-      .then(key => {
-        const userIdxKey = UserManager.getUserIndexKey({
-          userType: USER_TYPE.ANONYMOUS,
-          userId: userValue.id
-        });
-        return putPromise(userIdxKey, {key});
-      })
       .then(() => {
         return {
           userKey: userValue.key,
-          userType: USER_TYPE.ANONYMOUS
+          userType: USER_TYPE.ANONYMOUS,
+          userSecret: secret
         };
       });
   },
@@ -82,7 +75,7 @@ const UserManager = {
       })
       .then(() => {
         return {
-          userKey,
+          userKey: userKey,
           userType: USER_TYPE.FACEBOOK
         };
       });
