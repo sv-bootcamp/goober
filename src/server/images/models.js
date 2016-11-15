@@ -25,28 +25,24 @@ export default class ImageManager {
       cb(new Error('database error'));
     });
   }
+  // get all image Urls of item
   static getImageUrls({itemKey, isThumbnail = false}, cb) {
-    // get all image Urls of item
     const keys = [];
-    const promises = [];
     const checkState = [STATE.ALIVE, STATE.EXPIRED];
-    checkState.map((state) => {
-      promises.push(new Promise((resolve, reject) => {
+    Promise.all(checkState.map((state) => {
+      return new Promise((resolve, reject) => {
         const prefix = KeyUtils.getPrefix(ENTITY.IMAGE, state, itemKey);
         fetchPrefix(prefix, (err, data) => {
           if (err) {
-            reject(err);
-            return;
+            return reject(err);
           }
           data.map((value) => {
             keys.push(value.key);
           });
-          resolve();
+          return resolve();
         });
-      }));
-    });
-    Promise.all(promises)
-    .then(() => {
+      });
+    })).then(() => {
       const s3Connector = new S3Connector();
       const urls = (isThumbnail) ?
         s3Connector.getPrefixedImageUrls(keys, IMAGE_SIZE_PREFIX.THUMBNAIL) :
