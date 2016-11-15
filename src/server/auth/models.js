@@ -58,7 +58,7 @@ const AuthModel = {
               };
             }
             throw new Error('wrong facebook token');
-          })
+          });
       });
   }
 };
