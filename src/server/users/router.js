@@ -46,7 +46,7 @@ router.get('/:id', controller.get);
  * @apiSuccess {String} accessToken access token
  * @apiSuccess {String} refreshToken refresh token
  * @apiSuccess {String} [userKey] user key
- * @apiSuccess {String} [secret] user secret
+ * @apiSuccess {String} [userSecret] user secret
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -54,7 +54,7 @@ router.get('/:id', controller.get);
  *       "accessToken"  : "accessToken",
  *       "refreshToken" : "refreshToken",
  *       "userKey"      : "userKey",
- *       "secret"       : "userSecret"
+ *       "userSecret"   : "userSecret"
  *     }
  *
  * @apiError (Error 500) error Database Internal error

@@ -41,7 +41,8 @@ const UserManager = {
       .then(() => {
         return {
           userKey: userValue.key,
-          userType: USER_TYPE.ANONYMOUS
+          userType: USER_TYPE.ANONYMOUS,
+          userSecret: secret
         };
       });
   },
@@ -74,7 +75,7 @@ const UserManager = {
       })
       .then(() => {
         return {
-          userKey,
+          userKey: userKey,
           userType: USER_TYPE.FACEBOOK
         };
       });

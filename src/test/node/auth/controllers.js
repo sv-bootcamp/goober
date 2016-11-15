@@ -100,7 +100,7 @@ test('grant anonymous user in userController', t => {
         body: {
           grantType: GRANT_TYPE.ANONYMOUS,
           userKey: mockUser.key,
-          secret: mockUserSecret
+          userSecret: mockUserSecret
         }
       });
       const res = httpMocks.createResponse();

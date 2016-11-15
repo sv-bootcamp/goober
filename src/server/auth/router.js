@@ -46,10 +46,10 @@ router.post('/refresh', controller.refreshToken);
  *
  * @apiParamExample {json} Request-Example:
  *      {
- *          "grantType": "anonymous",
- *          "userKey": "userKey"
- *          "secret": "secret",
- *          "facebookToken": "facebookSecret"
+ *          "grantType"     : "anonymous",
+ *          "userKey"       : "userKey"
+ *          "userSecret"    : "userSecret",
+ *          "facebookToken" : "facebookSecret"
  *      }
  *
  * @apiSuccess {String} accessToken new access token

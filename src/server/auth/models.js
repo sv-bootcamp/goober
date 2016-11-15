@@ -34,10 +34,10 @@ const AuthModel = {
         });
     });
   },
-  grantAnonymous: (userKey, secret) => {
+  grantAnonymous: (userKey, userSecret) => {
     return getPromise(userKey)
       .then(userData => {
-        return bcrypt.compare(secret, userData.hash)
+        return bcrypt.compare(userSecret, userData.hash)
           .then(() => {
             return {
               userKey: userData.key,
