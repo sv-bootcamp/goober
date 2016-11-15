@@ -1,7 +1,38 @@
 import express from 'express';
 import controller from './controllers';
+import {PERMISSION, requiredPermission} from '../permission';
 
 const router = express.Router();
+/**
+ * @api {get} /users/profile Get user profile
+ * @apiName get a user profile
+ * @apiGroup User
+ *
+ * @apiHeader {String} accessToken user access token
+ *
+ * @apiSuccess {String} key user unique key
+ * @apiSuccess {String} name user name
+ * @apiSuccess {String} [email] facebook user email
+ * @apiSuccess {String} [imageUrl] facebook user profile image url
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *        key: 'user-unique-key',
+ *        name: 'test-user',
+ *        email: 'test@email.com',
+ *        imageUrl: 'url-of-image'
+ *     }
+ *
+ * @apiError (Error 500) Internal Server Error.
+ *
+ * @apiErrorExample {json} Database-Error-Response:
+ *     HTTP/1.1 500 InternalError
+ *     {
+ *       error: "database error"
+ *     }
+ */
+router.get('/profile', requiredPermission(PERMISSION.R), controller.getProfile);
 /**
  * @api {get} /users/:id Get information of a user
  * @apiName get information of a user
@@ -106,6 +137,7 @@ router.post('/', controller.post);
  * @api {add} /users/createdpost Add a created post of a user
  * @apiName addACreatedpost
  * @apiGroup User
+ *
  *
  * @apiParam {String} entity entity(item or image)
  * @apiParam {String} entityKey entityKey

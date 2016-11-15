@@ -25,6 +25,20 @@ export default {
       return cb();
     });
   },
+  getProfile(req, res, next) {
+    const {userkey} = req.headers;
+    return UserModel.getUserProfile(userkey)
+      .then(profile => {
+        res.status(200).send(profile);
+        return next();
+      })
+      .catch(err => {
+        return next(new APIError(err, {
+          statusCode: err.statusCode,
+          message: err.message
+        }));
+      });
+  },
   post(req, res, cb) {
     const currentTime = new Date();
     const timeHash = KeyUtils.genTimeHash(currentTime);
