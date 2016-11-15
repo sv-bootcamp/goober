@@ -7,7 +7,7 @@ export const PERMISSION = {
   None: '--'
 };
 
-export const requiredPermmission = (permission) => {
+export const requiredPermission = (permission) => {
   return (req, res, next) => {
     assert(req.headers.permission, 'No permission in request header');
 

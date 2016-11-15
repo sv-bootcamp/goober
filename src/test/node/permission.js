@@ -1,6 +1,6 @@
 import test from 'tape';
 import httpMock from 'node-mocks-http';
-import {requiredPermmission, PERMISSION} from '../../server/permission';
+import {requiredPermission, PERMISSION} from '../../server/permission';
 
 test('required RW permitted RW', t => {
   const req = httpMock.createRequest({
@@ -11,7 +11,7 @@ test('required RW permitted RW', t => {
     }
   });
   const res = httpMock.createResponse();
-  requiredPermmission(PERMISSION.RW)(req, res, () => {
+  requiredPermission(PERMISSION.RW)(req, res, () => {
     t.ok('callback was called');
     t.end();
   });
@@ -29,7 +29,7 @@ test('required RW permitted R', t => {
     }
   });
   const res = httpMock.createResponse();
-  requiredPermmission(PERMISSION.RW)(req, res, () => {
+  requiredPermission(PERMISSION.RW)(req, res, () => {
     t.fail();
     t.end();
   });
@@ -49,7 +49,7 @@ test('required RW permitted R', t => {
   const res = httpMock.createResponse();
 
   try {
-    requiredPermmission(PERMISSION.RW)(req, res, () => {
+    requiredPermission(PERMISSION.RW)(req, res, () => {
       t.fail();
     });
   } catch (error) {
