@@ -1,7 +1,10 @@
 import express from 'express';
 import controller from './controllers';
+import {PERMISSION, requiredPermission} from '../permission';
 
 const router = express.Router();
+
+router.get('/profile', requiredPermission(PERMISSION.R), controller.getProfile);
 /**
  * @api {get} /users/:id Get information of a user
  * @apiName get information of a user

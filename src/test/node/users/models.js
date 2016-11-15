@@ -1,5 +1,5 @@
 import test from 'tape';
-import testDB, {initMock, clearDB} from '../../../server/database';
+import testDB, {initMock, clearDB, putPromise} from '../../../server/database';
 import {mockUsers, mockCreatedPosts} from '../../../server/database-mock-data';
 import UserModel, {USER_TYPE} from '../../../server/users/models';
 import UserManager, {CreatedPostManager, SavedPostManager} from '../../../server/users/models';
@@ -18,6 +18,33 @@ test('generate user key', t => {
   t.end();
 });
 
+test('get user profile', t => {
+  const mockUser = {
+    key: 'mockUserKey',
+    name: 'mockUserName',
+    email: 'mockUserEmail',
+    profileImgUrl: 'mockUserImgUrl'
+  };
+
+  const expected = mockUser;
+
+  clearDB()
+    .then(() => {
+      return putPromise(mockUser.key, mockUser);
+    })
+    .then(UserModel.getUserProfile)
+    .then(profile => {
+      t.equal(profile.key, expected.key, 'should have same user key');
+      t.equal(profile.name, expected.name, 'should have same name');
+      t.equal(profile.email, expected.email, 'should have same email');
+      t.equal(profile.profileImgUrl, expected.profileImgUrl, 'should have same profile');
+      t.end();
+    })
+    .catch(err => {
+      t.fail();
+      t.end(err);
+    });
+});
 
 test('add Anonymous user', t => {
   const mockUser = {

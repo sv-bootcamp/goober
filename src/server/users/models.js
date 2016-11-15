@@ -26,6 +26,18 @@ const UserManager = {
         return userData.key;
       });
   },
+  getUserProfile: userKey => {
+    return getPromise(userKey)
+      .then(userData => {
+        const {key, name, email, profileImgUrl} = userData;
+        return {
+          key,
+          name,
+          email,
+          profileImgUrl
+        };
+      });
+  },
   addAnonymousUser: ({userId, secret, name = ANONYMOUS_USER_DEFAULT.NAME}) => {
     const userKey = UserManager.genUserKey();
     const userValue = {
