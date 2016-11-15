@@ -1,5 +1,6 @@
 import express from 'express';
 import controller from './controllers';
+import {requiredPermission, PERMISSION} from '../permission';
 
 const router = express.Router();
 /**
@@ -28,7 +29,7 @@ const router = express.Router();
  *       error: "database error"
  *     }
  */
-router.get('/:id', controller.getById);
+router.get('/:id', requiredPermission(PERMISSION.R), controller.get);
 
 /**
  * @api {add} /users/signup signup user
@@ -64,7 +65,7 @@ router.get('/:id', controller.getById);
  *       error: "error message ..."
  *     }
  */
-router.post('/signup', controller.signup);
+router.post('/signup', requiredPermission(PERMISSION.W), controller.signup);
 
 /**
  * @api {add} /users Add a user
@@ -77,11 +78,11 @@ router.post('/signup', controller.signup);
  * @apiParam {String} image base64 encoding image
  * @apiParamExample {json} Request-Example:
  *      {
- *          "title"       : "textTitle",
- *          "name"		    :	"Hewon Jeong",
- *    	    "email"		    :	"hewonjeong@goober.com",
- *   	      "password"	  :	"ghldnjs!@#123",
- *    	    "image"		    :	"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAOCAMAAAAPOFwLAAAACXBIWXMAA"
+ *          "title"         : "textTitle",
+ *          "name"		    : "Hewon Jeong",
+ *    	    "email"		    : "hewonjeong@goober.com",
+ *   	    "password"	    : "ghldnjs!@#123",
+ *    	    "image"		    : "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAOCAMAAAAPOFwLAAAACXBIWXMAA"
  *      }
  *
  * @apiSuccess {String} message success
@@ -100,9 +101,9 @@ router.post('/signup', controller.signup);
  *       error: "error message ..."
  *     }
  */
-router.post('/', controller.post);
+router.post('/', requiredPermission(PERMISSION.W), controller.post);
 
-/*
+/**
  *
  * @api {add} /users/savedposts Add a saved post of a user
  * @apiName addASavedpost
@@ -133,8 +134,9 @@ router.post('/', controller.post);
  *       error: "error message ..."
  *     }
  */
-router.post('/savedposts', controller.addSavedPost);
-/*
+router.post('/savedposts', requiredPermission(PERMISSION.W), controller.addSavedPost);
+
+/**
  * @api {get} /users/savedposts/:id Get saved(favorite) posts of user
  * @apiName get saved(favorite) posts of user
  * @apiGroup User
@@ -175,8 +177,9 @@ router.post('/savedposts', controller.addSavedPost);
  *       error: "database error"
  *     }
 */
-router.get('/savedposts/:id', controller.getSavedPosts);
-/*
+router.get('/savedposts/:id', requiredPermission(PERMISSION.R), controller.getSavedPosts);
+
+/**
  * @api {get} /users/createdposts/:id Get created(activity) posts of user
  * @apiName get created(activity) posts of user
  * @apiGroup User
@@ -214,7 +217,8 @@ router.get('/savedposts/:id', controller.getSavedPosts);
  *       error: "database error"
  *     }
 */
-router.get('/createdposts/:id', controller.getCreatedPosts);
+router.get('/createdposts/:id', requiredPermission(PERMISSION.R), controller.getCreatedPosts);
+
 /**
  * @api {delete} /users/savedposts/ Delete savedpost
  * @apiName deleteSavedPost
@@ -243,5 +247,6 @@ router.get('/createdposts/:id', controller.getCreatedPosts);
  *       error: "database error"
  *     }
  */
-router.delete('/createdposts', controller.deleteSavedPost);
+router.delete('/createdposts', requiredPermission(PERMISSION.W), controller.deleteSavedPost);
+
 export default router;

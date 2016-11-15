@@ -1,5 +1,6 @@
 import express from 'express';
 import Controllers from './controllers';
+import {requiredPermission, PERMISSION} from '../permission';
 
 const router = express.Router();
 
@@ -27,6 +28,6 @@ const router = express.Router();
  *       error: "error message ..."
  *     }
  */
-router.post('/', Controllers.post);
+router.post('/', requiredPermission(PERMISSION.W), Controllers.post);
 
 export default router;
