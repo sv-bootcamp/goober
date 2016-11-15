@@ -96,14 +96,11 @@ export default {
     });
   },
   getSavedPosts(req, res, cb) {
-    console.log('3');
     const userKey = req.params.id;
     SavedPostManager.getPosts(userKey, (err, posts) => {
-      console.log('4');
       if (err) {
         return cb(new APIError());
       }
-      console.log('5');
       res.status(200).send(posts);
       return cb();
     });
