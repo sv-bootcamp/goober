@@ -40,14 +40,14 @@ router.post('/refresh', controller.refreshToken);
  * @apiGroup Auth
  *
  * @apiParam {String} grantType anonymous, facebook
- * @apiParam {String} [userId] user id
+ * @apiParam {String} [userKey] user key
  * @apiParam {String} [secret] user secret
  * @apiParam {String} [facebookToken] facebook token
  *
  * @apiParamExample {json} Request-Example:
  *      {
  *          "grantType": "anonymous",
- *          "userId": "userId"
+ *          "userKey": "userKey"
  *          "secret": "secret",
  *          "facebookToken": "facebookSecret"
  *      }

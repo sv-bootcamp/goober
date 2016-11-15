@@ -45,7 +45,7 @@ router.get('/:id', controller.get);
  *
  * @apiSuccess {String} accessToken access token
  * @apiSuccess {String} refreshToken refresh token
- * @apiSuccess {String} [userId] user id
+ * @apiSuccess {String} [userKey] user key
  * @apiSuccess {String} [secret] user secret
  *
  * @apiSuccessExample Success-Response:
@@ -53,7 +53,7 @@ router.get('/:id', controller.get);
  *     {
  *       "accessToken"  : "accessToken",
  *       "refreshToken" : "refreshToken",
- *       "userId"       : "userId",
+ *       "userKey"      : "userKey",
  *       "secret"       : "userSecret"
  *     }
  *

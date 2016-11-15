@@ -21,7 +21,6 @@ test('generate user key', t => {
 
 test('add Anonymous user', t => {
   const mockUser = {
-    userId: 'userId',
     secret: 'userSecret'
   };
   const expected = {
@@ -57,7 +56,6 @@ test('add Anonymous user', t => {
           t.fail();
           t.end(err);
         });
-      t.equal(savedUser.id, expected.value.userId, 'should have same user id');
       t.end();
     });
   });

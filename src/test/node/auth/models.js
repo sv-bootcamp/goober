@@ -1,10 +1,10 @@
 import test from 'tape';
 import jwt, {TOKEN_TYPE} from '../../../server/auth-token';
 import AuthModel from '../../../server/auth/models';
+import bcrypt from '../../../server/bcrypt';
 import {STATE, ENTITY} from '../../../server/key-utils';
 import {USER_TYPE} from '../../../server/users/models';
 import FacebookManager from '../../../server/users/facebook-manager';
-import bcrypt from '../../../server/bcrypt';
 import {clearDB, putPromise} from '../../../server/database';
 import config from 'config';
 
@@ -48,25 +48,19 @@ test('grant anonymous user', t => {
   const mockUserSecret = 'userSecret';
   const mockUser = {
     key: 'userKey',
-    userId: 'userId',
     type: USER_TYPE.ANONYMOUS
   };
-  let mockUserIdxKey;
 
-  bcrypt.hash(mockUserSecret)
-    .then(hash => {
-      mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.ANONYMOUS}-${mockUser.userId}`;
-      mockUser.hash = hash;
-    })
-    .then(clearDB)
+  clearDB()
     .then(() => {
-      return putPromise(mockUser.key, mockUser);
-    })
-    .then(() => {
-      return putPromise(mockUserIdxKey, {key: mockUser.key});
+      return bcrypt.hash(mockUserSecret)
+        .then(hash => {
+          mockUser.hash = hash;
+          return putPromise(mockUser.key, mockUser);
+        });
     })
     .then(() => {
-      return AuthModel.grantAnonymous(mockUser.userId, mockUserSecret);
+      return AuthModel.grantAnonymous(mockUser.key, mockUserSecret);
     })
     .then(userData => {
       t.equal(userData.userType, mockUser.type, 'should be same user type');

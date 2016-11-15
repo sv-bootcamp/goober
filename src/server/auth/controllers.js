@@ -29,8 +29,8 @@ export default {
     let grant;
     switch (grantType) {
     case GRANT_TYPE.ANONYMOUS:
-      const {userId, secret} = req.body;
-      grant = AuthModel.grantAnonymous(userId, secret);
+      const {userKey, secret} = req.body;
+      grant = AuthModel.grantAnonymous(userKey, secret);
       break;
     case GRANT_TYPE.FACEBOOK:
       grant = AuthModel.grantFacebook(req.body.facebookToken);

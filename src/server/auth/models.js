@@ -34,13 +34,8 @@ const AuthModel = {
         });
     });
   },
-  grantAnonymous: (userId, secret) => {
-    const userIdxKey = UserModel.getUserIndexKey({
-      userType: USER_TYPE.ANONYMOUS,
-      userId
-    });
-    return UserModel.getUserKey(userIdxKey)
-      .then(getPromise)
+  grantAnonymous: (userKey, secret) => {
+    return getPromise(userKey)
       .then(userData => {
         return bcrypt.compare(secret, userData.hash)
           .then(() => {
