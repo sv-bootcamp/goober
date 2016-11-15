@@ -7,23 +7,19 @@ import UserModel, {CreatedPostManager, SavedPostManager, USER_TYPE} from './mode
 import uuid from 'uuid4';
 
 export default {
-  get(req, res, cb) {
-    const key = req.params.id;
-    db.get(key, (err, data) => {
-      if (err) {
-        if (err.notFound) {
-          return cb(new APIError(err, {
-            statusCode: 400,
-            message: 'User was not found'
-          }));
-        }
-        return cb(new APIError(err));
-      }
-      delete data.password;
-      delete data.accountType;
-      res.status(200).send(data);
-      return cb();
-    });
+  getById(req, res, next) {
+    const userKey = req.params.id;
+    return UserModel.getUserProfile(userKey)
+      .then(profile => {
+        res.status(200).send(profile);
+        return next();
+      })
+      .catch(err => {
+        return next(new APIError(err, {
+          statusCode: err.statusCode,
+          message: err.message
+        }));
+      });
   },
   post(req, res, cb) {
     const currentTime = new Date();
