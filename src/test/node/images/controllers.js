@@ -1,17 +1,10 @@
 import test from 'tape';
-import {STATE, KeyUtils} from '../../../server/key-utils';
+import {STATE, KeyUtils, ENTITY} from '../../../server/key-utils';
 import testDB, {clearDB, initMock} from '../../../server/database';
 import controller from '../../../server/images/controllers';
 import httpMocks from 'node-mocks-http';
 import {S3Utils} from '../../../server/aws-s3';
 
-// const MockItem = {
-//   title: 'This is Red Selo',
-//   lat: 30.565398,
-//   lng: 126.9907941,
-//   address: 'Red Selo',
-//   category: 'warning'
-// };
 const MockImageA = {
   key: 'image-8523306706662-c8a94c49-0c3c-414a-bec0-74fc369a105e',
   userKey: 'user-1234uuid',
@@ -133,17 +126,36 @@ test('Post image', t => {
     let error;
     let originImage;
     let idxImage;
+    let createdPost;
     testDB.createReadStream({
       start: '\x00',
       end: '\xFF'
     }).on('data', (data) => {
-      if (KeyUtils.parseTimeHash(data.key) === timeHash) {
-        if (KeyUtils.isOriginKey(data.key)) {
+      if (KeyUtils.parseTimeHash(data.key) !== timeHash) {
+        return;
+      }
+      const entity = data.key.split('-')[0];
+      const isOriginKey = KeyUtils.isOriginKey(data.key);
+      switch (entity) {
+      case ENTITY.IMAGE:
+        if (isOriginKey) {
           originImage = data.value;
         } else {
           idxImage = data.value;
         }
+        break;
+      case ENTITY.CREATED_POST:
+        createdPost = data.value;
+        t.equal(KeyUtils.parseTimeHash(data.key), timeHash,
+        'should be same time hash');
+        t.notEqual(data.key.indexOf(MockImageB.userKey), -1,
+        'should be had user key in createdPost key');
+        break;
+      default :
+        t.fail(`catched wrong key : ${data.key}`);
+        break;
       }
+      return;
     }).on('error', (err) => {
       error = err;
     }).on('close', () => {
@@ -152,6 +164,8 @@ test('Post image', t => {
         t.end();
         return;
       }
+      t.equal(createdPost.imageKey, originImage.key, 'Should be same image key(createdPost)');
+      t.equal(createdPost.itemKey, originImage.itemKey, 'Should be same item key(createdPost)');
       t.equal(originImage.key, idxImage.key, 'Should be same key');
       t.end();
     });
