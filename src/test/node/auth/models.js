@@ -9,19 +9,24 @@ import {clearDB, putPromise} from '../../../server/database';
 import config from 'config';
 
 test('get token set', t => {
-  const mockUserKey = 'userKey';
+  const mockUser = {
+    userType: USER_TYPE.ANONYMOUS,
+    userKey: 'userKey'
+  };
   const expected = {
     accessToken: {
-      type: TOKEN_TYPE.ACCESS,
-      user: mockUserKey
+      tokenType: TOKEN_TYPE.ACCESS,
+      userType: USER_TYPE.ANONYMOUS,
+      userKey: mockUser.userKey
     },
     refreshToken: {
-      type: TOKEN_TYPE.REFRESH,
-      user: mockUserKey
+      tokenType: TOKEN_TYPE.REFRESH,
+      userType: USER_TYPE.ANONYMOUS,
+      userKey: mockUser.userKey
     }
   };
 
-  AuthModel.encodeTokenSet(mockUserKey)
+  AuthModel.encodeTokenSet(mockUser)
     .then(tokenSet => {
       const accessToken = jwt.decode(TOKEN_TYPE.ACCESS, tokenSet.accessToken);
       const refreshToken = jwt.decode(TOKEN_TYPE.REFRESH, tokenSet.refreshToken);
@@ -30,10 +35,12 @@ test('get token set', t => {
     .then(decodedSet => {
       const accessToken = decodedSet[0];
       const refreshToken = decodedSet[1];
-      t.equal(accessToken.type, expected.accessToken.type, 'should be same token type');
-      t.equal(accessToken.user, expected.accessToken.user, 'should be same user');
-      t.equal(refreshToken.type, expected.refreshToken.type, 'should be same token type');
-      t.equal(refreshToken.user, expected.refreshToken.user, 'should be same user');
+      t.equal(accessToken.tokenType, expected.accessToken.tokenType, 'should be same token type');
+      t.equal(accessToken.userKey, expected.accessToken.userKey, 'should be same user key');
+      t.equal(accessToken.userType, expected.accessToken.userType, 'should be same user type');
+      t.equal(refreshToken.tokenType, expected.refreshToken.tokenType, 'should be same token type');
+      t.equal(refreshToken.userKey, expected.refreshToken.userKey, 'should be same user key');
+      t.equal(refreshToken.userType, expected.refreshToken.userType, 'should be same user type');
       t.end();
     });
 });
@@ -61,8 +68,9 @@ test('grant anonymous user', t => {
     .then(() => {
       return AuthModel.grantAnonymous(mockUser.userId, mockUserSecret);
     })
-    .then(userKey => {
-      t.equal(userKey, mockUser.key, 'should be same user key');
+    .then(userData => {
+      t.equal(userData.userType, mockUser.type, 'should be same user type');
+      t.equal(userData.userKey, mockUser.key, 'should be same user key');
       t.end();
     })
     .catch(err => {
@@ -88,8 +96,9 @@ test('grant facebook user', t => {
     })
     .then(FacebookManager.getTestAccessToken)
     .then(AuthModel.grantFacebook)
-    .then(userKey => {
-      t.equal(userKey, mockUser.key, 'should be same user key');
+    .then(userData => {
+      t.equal(userData.userType, mockUser.type, 'should be same user type');
+      t.equal(userData.userKey, mockUser.key, 'should be same user key');
       t.end();
     })
     .catch(err => {

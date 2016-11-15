@@ -1,6 +1,7 @@
 import test from 'tape';
 import httpMocks from 'node-mocks-http';
 import AuthToken, {TOKEN_TYPE} from '../../server/auth-token';
+import {USER_TYPE, USER_PERMISSION} from '../../server/users/models';
 
 test('test auto token instance', t => {
   const payload = {
@@ -24,10 +25,12 @@ test('test auto token instance', t => {
 });
 test('test authenticate user', t => {
   const mockUser = {
-    user: 'mockUserKey'
+    userType: USER_TYPE.ANONYMOUS,
+    userKey: 'mockUserKey'
   };
   const expected = {
-    userKey: mockUser.user
+    permission: USER_PERMISSION[mockUser.userType],
+    userKey: mockUser.userKey
   };
   AuthToken.encode(TOKEN_TYPE.ACCESS, mockUser)
     .then((accessToken) => {
@@ -42,6 +45,7 @@ test('test authenticate user', t => {
 
       AuthToken.authenticate(req, res, () => {
         t.equal(req.headers.userKey, expected.userKey, 'should be same userKey');
+        t.equal(req.headers.permission, expected.permission, 'should be same permission');
         t.end();
       });
     })

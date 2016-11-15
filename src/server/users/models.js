@@ -2,11 +2,18 @@ import {KeyUtils, ENTITY, STATE} from '../key-utils';
 import bcrypt from '../bcrypt';
 import db, {fetchPrefix, putPromise, getPromise} from '../database';
 import FacebookManager from './facebook-manager';
+import {PERMISSION} from '../permission';
 
 export const USER_TYPE = {
   ANONYMOUS: 'anonymous',
   FACEBOOK: 'facebook'
 };
+
+export const USER_PERMISSION = {
+  [USER_TYPE.ANONYMOUS]: PERMISSION.R,
+  [USER_TYPE.FACEBOOK]: PERMISSION.RW
+};
+
 
 const ANONYMOUS_USER_DEFAULT = {
   NAME: 'guest'
@@ -40,7 +47,10 @@ const UserManager = {
         return putPromise(userIdxKey, {key});
       })
       .then(() => {
-        return userValue.key;
+        return {
+          userKey: userValue.key,
+          userType: USER_TYPE.ANONYMOUS
+        };
       });
   },
   addFacebookUser: ({facebookToken}) => {
@@ -69,6 +79,12 @@ const UserManager = {
           facebookId: facebookId
         });
         return putPromise(userIdx, {key});
+      })
+      .then(() => {
+        return {
+          userKey,
+          userType: USER_TYPE.FACEBOOK
+        };
       });
   },
   genUserKey: () => {

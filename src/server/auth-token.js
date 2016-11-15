@@ -1,15 +1,11 @@
 import jwt from 'jsonwebtoken';
 import config from 'config';
 import {APIError} from './ErrorHandler';
+import {USER_PERMISSION} from './users/models';
 
 export const TOKEN_TYPE = {
   ACCESS: 'ACCESS',
   REFRESH: 'REFRESH'
-};
-
-export const TOKEN_STATUS = {
-  VALID: 1,
-  INVALID: 0
 };
 
 const TOKEN_EXPIRE = {
@@ -30,10 +26,14 @@ class AuthToken {
 
   constructor() {}
 
-  encode(type, payload) {
+  encode(tokenType, payload) {
     return new Promise((resolve, reject) => {
-      payload.type = type;
-      jwt.sign(payload, SECRET_KEY[type], {expiresIn: TOKEN_EXPIRE[type]}, (err, token) => {
+      const secretKey = SECRET_KEY[tokenType];
+      const options = {expiresIn: TOKEN_EXPIRE[tokenType]};
+
+      payload.tokenType = tokenType;
+
+      jwt.sign(payload, secretKey, options, (err, token) => {
         if (err) {
           return reject(err);
         }
@@ -58,7 +58,8 @@ class AuthToken {
     const jwtToken = bearerToken.split(' ')[1];
     this.decode(TOKEN_TYPE.ACCESS, jwtToken)
       .then(payload => {
-        req.headers.userKey = payload.user;
+        req.headers.userKey = payload.userKey;
+        req.headers.permission = USER_PERMISSION[payload.userType];
         next();
       })
       .catch(err => {

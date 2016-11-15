@@ -20,3 +20,4 @@ import './aws-s3';
 import './auth-token';
 import './items/models';
 import './reports/controllers';
+import './permission';
