@@ -2,7 +2,6 @@ import test from 'tape';
 import jwt, {TOKEN_TYPE} from '../../../server/auth-token';
 import AuthModel from '../../../server/auth/models';
 import bcrypt from '../../../server/bcrypt';
-import {STATE, ENTITY} from '../../../server/key-utils';
 import {USER_TYPE} from '../../../server/users/models';
 import FacebookManager from '../../../server/users/facebook-manager';
 import {clearDB, putPromise} from '../../../server/database';
@@ -78,18 +77,15 @@ test('grant facebook user', t => {
     type: USER_TYPE.FACEBOOK,
     facebookId: process.env.FACEBOOK_TEST_ID || config.FACEBOOK_TEST_ID
   };
-  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}` +
-    `-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
 
   clearDB()
     .then(() => {
       return putPromise(mockUser.key, mockUser);
     })
-    .then(() => {
-      return putPromise(mockUserIdxKey, {key: mockUser.key});
-    })
     .then(FacebookManager.getTestAccessToken)
-    .then(AuthModel.grantFacebook)
+    .then(facebookToken => {
+      return AuthModel.grantFacebook(mockUser.key, facebookToken);
+    })
     .then(userData => {
       t.equal(userData.userType, mockUser.type, 'should be same user type');
       t.equal(userData.userKey, mockUser.key, 'should be same user key');

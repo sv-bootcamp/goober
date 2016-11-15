@@ -63,26 +63,17 @@ const UserManager = {
       type: USER_TYPE.FACEBOOK,
       key: userKey
     };
-    let facebookId;
     return FacebookManager.getProfile(facebookToken)
       .then(profile => {
         userValue.name = profile.name;
         userValue.email = profile.email;
         userValue.facebookId = profile.id;
-        facebookId = profile.id;
         return profile.id;
       })
       .then(FacebookManager.getProfileImage)
       .then(profileImgUrl => {
         userValue.profileImgUrl = profileImgUrl;
         return putPromise(userKey, userValue);
-      })
-      .then(key => {
-        const userIdx = UserManager.getUserIndexKey({
-          userType: USER_TYPE.FACEBOOK,
-          facebookId: facebookId
-        });
-        return putPromise(userIdx, {key});
       })
       .then(() => {
         return {
@@ -94,17 +85,6 @@ const UserManager = {
   genUserKey: () => {
     const timeHash = KeyUtils.genTimeHash();
     return `user-${timeHash}`;
-  },
-  getUserIndexKey: ({userType, state, userId, facebookId}) => {
-    switch (userType) {
-    case USER_TYPE.ANONYMOUS:
-      return `${ENTITY.USER}-${state || STATE.ALIVE}-${ENTITY.ANONYMOUS}-${userId}`;
-    case USER_TYPE.FACEBOOK:
-      return `${ENTITY.USER}-${state || STATE.ALIVE}` +
-        `-${ENTITY.FACEBOOK}-${facebookId}`;
-    default:
-      return null;
-    }
   },
   modifyUser: (key, value, cb) => {
     return new Promise((resolve, reject) => {

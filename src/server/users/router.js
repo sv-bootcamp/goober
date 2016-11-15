@@ -7,8 +7,6 @@ const router = express.Router();
  * @apiName get information of a user
  * @apiGroup User
  *
- * @apiHeader {String} [accessToken] accessToken
- *
  * @apiParam {String} id of target user
  *
  * @apiSuccess {Object} json
@@ -47,8 +45,8 @@ router.get('/:id', controller.getById);
  *
  * @apiSuccess {String} accessToken access token
  * @apiSuccess {String} refreshToken refresh token
- * @apiSuccess {String} [userKey] user key
- * @apiSuccess {String} [userSecret] user secret
+ * @apiSuccess {String} userKey unique user key
+ * @apiSuccess {String} [userSecret] only anonymous user get user secret
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK

@@ -25,15 +25,16 @@ export default {
     });
   },
   grant: (req, res, next) => {
-    const {grantType} = req.body;
+    const {userKey, grantType} = req.body;
     let grant;
     switch (grantType) {
     case GRANT_TYPE.ANONYMOUS:
-      const {userKey, userSecret} = req.body;
+      const {userSecret} = req.body;
       grant = AuthModel.grantAnonymous(userKey, userSecret);
       break;
     case GRANT_TYPE.FACEBOOK:
-      grant = AuthModel.grantFacebook(req.body.facebookToken);
+      const {facebookToken} = req.body;
+      grant = AuthModel.grantFacebook(userKey, facebookToken);
       break;
     default:
       break;
@@ -50,6 +51,12 @@ export default {
         return next(new APIError(err, {
           statusCode: 400,
           message: 'wrong secret'
+        }));
+      }
+      if (err.message === 'wrong facebook token') {
+        return next(new APIError(err, {
+          statusCode: 400,
+          message: 'wrong facebook token'
         }));
       }
       return next(
