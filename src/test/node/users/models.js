@@ -1,5 +1,5 @@
 import test from 'tape';
-import testDB, {initMock, clearDB, fetchPrefix} from '../../../server/database';
+import testDB, {initMock, clearDB, fetchPrefix, getPromise} from '../../../server/database';
 import {mockUsers, mockCreatedPosts, mockSavedPosts, mockItems, mockImages}
       from '../../../server/database-mock-data';
 import UserModel, {USER_TYPE} from '../../../server/users/models';
@@ -330,3 +330,34 @@ test('delete saved post(SavedPostManager.deletePost)', t => {
     t.end(err);
   });
 });
+test('generate a createdPost key(CreatedPostManager.genKey)', t => {
+  const testBody = {
+    userKey: mockItem.userKey,
+    entitiyKey: mockItem.key,
+    state: STATE.ALIVE
+  };
+  // Key rule : createdPost-{STATE}-{USER_KEY}-{TIMEHASH}
+  const expectedKey = `${ENTITY.CREATED_POST}-${testBody.state}-`
+  + `${testBody.userKey}-${KeyUtils.parseTimeHash(testBody.entitiyKey)}`;
+  const key = CreatedPostManager.genKey(testBody.userKey, testBody.entitiyKey, testBody.state);
+  t.equal(key, expectedKey, 'should be same Key');
+  t.end();
+});
+test('delete created post(CreatedPostManager.deletePost)', t => {
+  const testPost = mockCreatedPosts[0];
+  clearDB().then(initMock)
+  .then(() => {
+    return CreatedPostManager.deletePost(testPost.key);
+  })
+  // deletePost function return new key. e.g. createdPost-2-user-....
+  .then(getPromise)
+  .then((value) => {
+    t.deepEqual(value, testPost.value, 'should be same value');
+    t.end();
+  })
+  .catch((err) => {
+    t.fail();
+    t.end(err);
+  });
+});
+
