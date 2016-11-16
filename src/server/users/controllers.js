@@ -1,11 +1,10 @@
 import {KeyUtils, ENTITY, STATE} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import db from '../database';
-import {APIError} from '../ErrorHandler';
 import AuthModel from '../auth/models';
 import UserModel, {CreatedPostManager, SavedPostManager, USER_TYPE} from './models';
 import uuid from 'uuid4';
-
+import { APIError } from '../ErrorHandler';
 export default {
   getById(req, res, next) {
     const userKey = req.params.id;
@@ -70,10 +69,8 @@ export default {
       return cb(new APIError(err, { statusCode: err.statusCode, message: err.message }));
     });
   },
-  addCreatedPost(req, res, cb) {
-    const timeHash = KeyUtils.genTimeHash();
-    CreatedPostManager.addCreatedPost(req.body.entity, req.body.entityKey, req.body.userKey,
-    timeHash, (err, idxKey) => {
+  addSavedPost(req, res, cb) {
+    SavedPostManager.addPost(req.body.userKey, req.body.itemKey, (err, idxKey) => {
       if (err) {
         return cb(new APIError(err));
       }
@@ -84,16 +81,33 @@ export default {
       return cb();
     });
   },
-  addSavedPost(req, res, cb) {
-    const timeHash = KeyUtils.genTimeHash();
-    SavedPostManager.addSavedPost(req.body.entityKey, req.body.userKey, timeHash, (err, idxKey) => {
-      if (err) {
-        return cb(new APIError(err));
-      }
+  deleteSavedPost(req, res, cb) {
+    const {itemKey, userKey} = req.body;
+    return SavedPostManager.deletePost(userKey, itemKey)
+    .then(()=>{
       res.status(200).send({
-        message: 'success',
-        data: idxKey
+        message: 'success'
       });
+      return cb();
+    });
+  },
+  getSavedPosts(req, res, cb) {
+    const userKey = req.params.id;
+    SavedPostManager.getPosts(userKey, (err, posts) => {
+      if (err) {
+        return cb(new APIError());
+      }
+      res.status(200).send(posts);
+      return cb();
+    });
+  },
+  getCreatedPosts(req, res, cb) {
+    const userKey = req.params.id;
+    CreatedPostManager.getPosts(userKey, (err, posts) => {
+      if (err) {
+        return cb(new APIError());
+      }
+      res.status(200).send(posts);
       return cb();
     });
   },

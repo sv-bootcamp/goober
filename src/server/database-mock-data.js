@@ -50,7 +50,7 @@ export const mockItems = [
       category: 'facility',
       state: 'alive',
       key: 'item-8523910540000-dd3860f5-b82e-473b-1234-ead0f190b005',
-      userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
+      userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid'
     }
   },
   {
@@ -65,7 +65,7 @@ export const mockItems = [
       category: 'facility',
       state: 'alive',
       key: 'item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004',
-      userKey: 'user-8523574664000-dd3860f5-b82e-473b-1234-ead0f54gvr00'
+      userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid'
     }
   },
   {
@@ -352,7 +352,7 @@ export const mockUsers = [
     key: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
     value: {
       key: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
-      userName: 'Moongchi jeong',
+      userName: 'Moongchi Jeong',
       createdDate: '2007-11-22T07:30:38.064Z'
     }
   },
@@ -367,24 +367,49 @@ export const mockUsers = [
 ];
 export const mockCreatedPosts = [
   {
-    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz0',
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz2',
     value: {
-      type: 'item',
+      entity: 'image',
+      itemKey: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+      imageKey: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000'
+    }
+  },
+  {
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz3',
+    value: {
+      entity: 'image',
+      itemKey: 'item-8523910540000-dd3860f5-b82e-473b-1234-ead0f190b005',
+      imageKey: 'image-8523569763000-dd3860f5-b82e-473b-1234-ead0fzr0b000'
+    }
+  },
+  {
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz4',
+    value: {
+      entity: 'item',
+      itemKey: 'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001',
+      imageKey: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000'
+    }
+  },
+  {
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz5',
+    value: {
+      entity: 'image',
+      itemKey: 'item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004',
+      imageKey: 'image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000'
+    }
+  }
+];
+export const mockSavedPosts = [
+  {
+    key: 'savedPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    value: {
       key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'
     }
   },
   {
-    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz1',
+    key: 'savedPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001',
     value: {
-      type: 'item',
       key: 'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001'
-    }
-  },
-  {
-    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz2',
-    value: {
-      type: 'image',
-      key: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000'
     }
   }
 ];
@@ -469,12 +494,13 @@ export const mockImages = [
       createdDate: '2016-10-14T07:31:50.064Z'
     }
   },
+  // this image is used as a created post of mock user.
   {
     key: 'image-8523569763000-dd3860f5-b82e-473b-1234-ead0fzr0b000',
     value: {
       key: 'image-8523569763000-dd3860f5-b82e-473b-1234-ead0fzr0b000',
       itemKey: 'item-8523910540000-dd3860f5-b82e-473b-1234-ead0f190b005',
-      userKey: 'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000',
+      userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
       caption: 'testImage3Caption1',
       createdDate: '2016-10-14T07:31:42.064Z'
     }
@@ -509,12 +535,13 @@ export const mockImages = [
       createdDate: '2016-10-14T07:32:50.064Z'
     }
   },
+  // this image is used as a created post of mock user.
   {
     key: 'image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {
       key: 'image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000',
       itemKey: 'item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004',
-      userKey: 'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000',
+      userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
       caption: 'testImage4Caption1',
       createdDate: '2016-10-14T07:32:42.064Z'
     }
@@ -524,7 +551,7 @@ export const mockImages = [
     value: {
       key: 'image-8523569764000-dd3860f5-b82e-473b-1234-ead0fts0aed0',
       itemKey: 'item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004',
-      userKey: 'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000',
+      userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
       caption: 'testImage4Caption2',
       createdDate: '2016-10-14T07:32:46.064Z'
     }
