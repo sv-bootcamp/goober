@@ -116,7 +116,7 @@ export default {
         itemKey: image.itemKey,
         imageKey: image.key
       };
-      CreatedPostManager.addPost(image.userKey, createdPost, timeHash);
+      return CreatedPostManager.addPost(image.userKey, createdPost, timeHash);
     })
     .then(() => {
       res.status(200).send({message: 'success', data: key });
