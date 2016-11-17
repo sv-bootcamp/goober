@@ -206,7 +206,7 @@ test('get by area from database', t => {
   });
 });
 test('add an item to database', t => {
-  const mockItem = JSON.parse(JSON.stringify(itemRedSelo));
+  const mockItem = mockItems[0].value;
   const expected = {
     status: 200,
     message: 'success',
@@ -215,7 +215,7 @@ test('add an item to database', t => {
   };
   const req = httpMocks.createRequest({
     method: 'POST',
-    url: '/items',
+    url: 'api/items',
     body: mockItem
   });
   const res = httpMocks.createResponse();
@@ -248,6 +248,7 @@ test('add an item to database', t => {
     let addedItem;
     const addedIdxItems = [];
     let addedImage;
+    let addedCreatedPost;
     testDB.createReadStream({
       start: '\x00',
       end: '\xFF'
@@ -256,22 +257,36 @@ test('add an item to database', t => {
         t.fail(`TimeHash is wrong : ${KeyUtils.parseTimeHash(data.key)}`);
         t.end();
       }
+      const entity = data.key.split('-')[0];
       const isOriginKey = KeyUtils.isOriginKey(data.key);
-      const isItem = data.key.startsWith('item-');
-      // Case of origin item having information about event data(title, geolocation..).
-      if (isItem && isOriginKey) {
-        addedItem = data.value;
-        t.equal(data.value.address, expected.address, 'should be same address');
-      // Case of indexing item to search in levelDB.
-      } else if (isItem && !isOriginKey) {
-        addedIdxItems.push(data.value);
-        if (data.value.key !== key) {
-          t.fail(`Indexing item's key is wrong : ${data.value.key}`);
-          t.end();
+      switch (entity) {
+      case ENTITY.ITEM:
+        if (isOriginKey) {
+          addedItem = data.value;
+          t.equal(data.value.address, expected.address, 'should be same address');
+        } else {
+          addedIdxItems.push(data.value);
+          if (data.value.key !== key) {
+            t.fail(`Indexing item's key is wrong : ${data.value.key}`);
+            t.end();
+          }
         }
-        // Case of origin image having information about image data(userKey, caption...).
-      } else if (!isItem && isOriginKey) {
-        addedImage = data.value;
+        break;
+      case ENTITY.IMAGE:
+        if (isOriginKey) {
+          addedImage = data.value;
+        }
+        break;
+      case ENTITY.CREATED_POST:
+        t.equal(KeyUtils.parseTimeHash(data.key), timeHash,
+        'should be same time hash');
+        t.notEqual(data.key.indexOf(mockItem.userKey), -1,
+        'should be had user key in createdPost key');
+        addedCreatedPost = data.value;
+        break;
+      default :
+        t.fail(`catched wrong key : ${data.key}`);
+        break;
       }
     }).on('error', (err) => {
       error = err;
@@ -285,13 +300,16 @@ test('add an item to database', t => {
       'should be same number of indexing items');
       t.equal(addedItem.createdTime, addedImage.createdTime,
       'should be created time');
+      t.equal(addedCreatedPost.itemKey, key,
+      'should be same itemKey');
+      t.equal(addedCreatedPost.imageKey, addedImage.key,
+      'should be same imageKey');
       t.end();
     });
   })
   .catch((err) => {
-    /* eslint-disable no-console */
-    console.log(err);
-    /* eslint-enable */
+    t.fail();
+    t.end(err);
   });
 });
 test('modify an item in database', t => {

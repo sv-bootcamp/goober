@@ -3,6 +3,7 @@ import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import {APIError} from '../ErrorHandler';
 import ImageManager from './models';
+import {CreatedPostManager} from '../users/models';
 
 export default {
   get(req, res, cb) {
@@ -95,6 +96,7 @@ export default {
           key,
           url,
           userKey: req.body.userKey,
+          itemKey: req.body.itemKey,
           caption: req.body.caption,
           createdDate: currentTime.toISOString()
         };
@@ -104,9 +106,17 @@ export default {
           {type: 'put', key: idxKey, value: idxImage}
         ];
         db.batch(ops, (err) => {
-          return (err) ? reject(err) : resolve();
+          return (err) ? reject(err) : resolve(image);
         });
       });
+    })
+    .then((image) => {
+      const createdPost = {
+        entity: ENTITY.ITEM,
+        itemKey: image.itemKey,
+        imageKey: image.key
+      };
+      return CreatedPostManager.addPost(image.userKey, createdPost, timeHash);
     })
     .then(() => {
       res.status(200).send({message: 'success', data: key });

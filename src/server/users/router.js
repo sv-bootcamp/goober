@@ -105,6 +105,8 @@ router.post('/', requiredPermission(PERMISSION.W), controller.post);
 
 /**
  *
+=======
+>>>>>>>  update apidoc
  * @api {add} /users/savedposts Add a saved post of a user
  * @apiName addASavedpost
  * @apiGroup User
@@ -115,7 +117,7 @@ router.post('/', requiredPermission(PERMISSION.W), controller.post);
  *      {
  *          "entity"      : "item",
  *          "userKey"     : "user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000",
- *          "itemKey"   : "item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000",
+ *          "itemKey"     : "item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000",
  *      }
  *
  * @apiSuccess {String} message success

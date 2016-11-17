@@ -3,6 +3,7 @@ import {APIError} from '../ErrorHandler';
 import {KeyUtils, STATE, ENTITY, CATEGORY} from '../key-utils';
 import ItemManager, {STATE_STRING} from './models';
 import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
+import {CreatedPostManager} from '../../server/users/models';
 
 export default {
   getAll: (req, res, cb) => {
@@ -201,7 +202,7 @@ export default {
     const imageKey = `${ENTITY.IMAGE}-${timeHash}`;
     const imageIdxKey = KeyUtils.getIdxKey(ENTITY.IMAGE, timeHash, key);
     const item = {
-      key: key,
+      key,
       title: req.body.title,
       lat: req.body.lat,
       lng: req.body.lng,
@@ -219,6 +220,11 @@ export default {
       userKey: req.body.userKey,
       caption: req.body.caption,
       createdDate: currentTime.toISOString()
+    };
+    const createdPost = {
+      entity: ENTITY.ITEM,
+      itemKey: key,
+      imageKey
     };
     const opt = {key: imageKey, body: req.body.image};
     new Promise((resolve, reject) => {
@@ -244,6 +250,7 @@ export default {
         });
       });
     })
+    .then(CreatedPostManager.addPost(req.body.userKey, createdPost, timeHash))
     .then(() => {
       res.status(200).send({message: 'success', data: key });
       return cb();

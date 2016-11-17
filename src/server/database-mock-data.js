@@ -367,7 +367,7 @@ export const mockUsers = [
 ];
 export const mockCreatedPosts = [
   {
-    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz2',
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {
       entity: 'image',
       itemKey: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
@@ -375,7 +375,7 @@ export const mockCreatedPosts = [
     }
   },
   {
-    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz3',
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-image-8523569763000-dd3860f5-b82e-473b-1234-ead0fzr0b000',
     value: {
       entity: 'image',
       itemKey: 'item-8523910540000-dd3860f5-b82e-473b-1234-ead0f190b005',
@@ -383,7 +383,7 @@ export const mockCreatedPosts = [
     }
   },
   {
-    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz4',
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001',
     value: {
       entity: 'item',
       itemKey: 'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001',
@@ -391,7 +391,7 @@ export const mockCreatedPosts = [
     }
   },
   {
-    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8888888888888-aaaabbbb-cccc-dddd-eeee-xxxxyyyyzzz5',
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {
       entity: 'image',
       itemKey: 'item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004',
