@@ -9,6 +9,10 @@ const router = express.Router();
  * @apiName getAllItem
  * @apiGroup Item
  *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
  * @apiParam {None} None
  *
  * @apiSuccess {Object} items items list.
@@ -70,6 +74,10 @@ router.get('/', requiredPermission(PERMISSION.R), ItemControllers.getAll);
  * @apiName addAnItem
  * @apiGroup Item
  *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
  * @apiParam {String} title title
  * @apiParam {Number} lat lat(e.g. 37.565398)
  * @apiParam {Number} lng lng(e.g. 126.9907941)
@@ -117,6 +125,10 @@ router.post('/', requiredPermission(PERMISSION.W), ItemControllers.add);
  * @apiName removeAllItem
  * @apiGroup Item
  *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
  * @apiParam {None} None
  *
  * @apiSuccess {String} message success
@@ -140,6 +152,10 @@ router.delete('/', requiredPermission(PERMISSION.W), ItemControllers.removeAll);
  * @api {get} /items/:id Get an item by id
  * @apiName getItem
  * @apiGroup Item
+ *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
  *
  * @apiParam {String} id Unique id of the item.
  *
@@ -191,6 +207,10 @@ router.get('/:id', requiredPermission(PERMISSION.R), ItemControllers.getById);
  * @apiName modifyAnItem
  * @apiGroup Item
  *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
  * @apiParam {String} title title
  * @apiParam {Number} lat lat(e.g. 37.565398)
  * @apiParam {Number} lng lng(e.g. 126.9907941)
@@ -241,6 +261,10 @@ router.put('/:id', requiredPermission(PERMISSION.W), ItemControllers.modify);
  * @api {delete} /items/:id Remove an item
  * @apiName removeAnItem
  * @apiGroup Item
+ *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
  *
  * @apiParam {String} id Item's own id
  *
