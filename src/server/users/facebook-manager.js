@@ -11,6 +11,14 @@ export const APP_ACCESS_TOKEN = process.env.FACEBOOK_APP_ACCESS_TOKEN ||
 export const FACEBOOK_TEST_ID = process.env.FACEBOOK_TEST_ID ||
     config.FACEBOOK_TEST_ID;
 
+
+// @TODO There are many other errors. Need to checkout below url.
+// https://developers.facebook.com/docs/graph-api/using-graph-api
+
+export const FACEBOOK_ERROR = {
+  OAUTH_EXCEPTION: 'OAuthException'
+};
+
 const FacebookManager = {
   getProfile: (accessToken) => {
     return request({
