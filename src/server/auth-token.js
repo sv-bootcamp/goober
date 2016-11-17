@@ -19,6 +19,11 @@ const SECRET_KEY = {
 };
 
 /*
+  If you want to handle error
+  check err.JsonWebTokenError
+*/
+
+/*
   @TODO
   for better security, you need to encrypt payload(claims in jwt)
  */

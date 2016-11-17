@@ -66,7 +66,14 @@ router.post('/refresh', controller.refreshToken);
  * @apiErrorExample {json} Not-Granted-Error-Response
  *     HTTP/1.1 400 Bad Request
  *     {
- *       error: "error message ..."
+ *       error: "wrong facebook access token"
+ *     }
+ *
+ * @apiError (Error 400) error not granted.
+ * @apiErrorExample {json} Not-Granted-Error-Response
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       error: "wrong secret"
  *     }
  *
  * @apiError (Error 500) error database error
