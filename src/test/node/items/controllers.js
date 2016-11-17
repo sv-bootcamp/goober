@@ -264,7 +264,6 @@ test('add an item to database', t => {
         if (isOriginKey) {
           addedItem = data.value;
           t.equal(data.value.address, expected.address, 'should be same address');
-          break;
         } else {
           addedIdxItems.push(data.value);
           if (data.value.key !== key) {
@@ -276,7 +275,6 @@ test('add an item to database', t => {
       case ENTITY.IMAGE:
         if (isOriginKey) {
           addedImage = data.value;
-          break;
         }
         break;
       case ENTITY.CREATED_POST:
