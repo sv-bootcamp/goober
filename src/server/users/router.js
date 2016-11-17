@@ -65,7 +65,7 @@ router.get('/:id', requiredPermission(PERMISSION.R), controller.getById);
  *       error: "error message ..."
  *     }
  */
-router.post('/signup', requiredPermission(PERMISSION.W), controller.signup);
+router.post('/signup', controller.signup);
 
 /**
  * @api {add} /users Add a user
