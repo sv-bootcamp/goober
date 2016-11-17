@@ -31,7 +31,7 @@ class AuthToken {
 
   constructor() {}
 
-  encode(tokenType, payload) {
+  static encode(tokenType, payload) {
     return new Promise((resolve, reject) => {
       const secretKey = SECRET_KEY[tokenType];
       const options = {expiresIn: TOKEN_EXPIRE[tokenType]};
@@ -47,7 +47,7 @@ class AuthToken {
     });
   }
 
-  decode(type, token) {
+  static decode(type, token) {
     return new Promise((resolve, reject) => {
       jwt.verify(token, SECRET_KEY[type], (err, payload) => {
         if (err) {
@@ -58,13 +58,13 @@ class AuthToken {
     });
   }
 
-  authenticate(req, res, next) {
+  static authenticate(req, res, next) {
     const bearerToken = req.headers.authorization;
     if (!bearerToken) {
       return next();
     }
     const jwtToken = bearerToken.split(' ')[1];
-    return this.decode(TOKEN_TYPE.ACCESS, jwtToken)
+    return AuthToken.decode(TOKEN_TYPE.ACCESS, jwtToken)
       .then(payload => {
         req.headers.userKey = payload.userKey;
         req.headers.permission = USER_PERMISSION[payload.userType];
@@ -79,4 +79,4 @@ class AuthToken {
   }
 }
 
-export default AuthToken = new AuthToken();
+export default AuthToken;
