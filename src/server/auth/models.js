@@ -1,6 +1,6 @@
 import jwt, {TOKEN_TYPE} from '../auth-token';
 import bcrypt from '../bcrypt';
-import UserModel, {USER_TYPE} from '../users/models';
+import {USER_TYPE} from '../users/models';
 import FacebookManager from '../users/facebook-manager';
 import {getPromise} from '../database';
 
@@ -34,15 +34,10 @@ const AuthModel = {
         });
     });
   },
-  grantAnonymous: (userId, secret) => {
-    const userIdxKey = UserModel.getUserIndexKey({
-      userType: USER_TYPE.ANONYMOUS,
-      userId
-    });
-    return UserModel.getUserKey(userIdxKey)
-      .then(getPromise)
+  grantAnonymous: (userKey, userSecret) => {
+    return getPromise(userKey)
       .then(userData => {
-        return bcrypt.compare(secret, userData.hash)
+        return bcrypt.compare(userSecret, userData.hash)
           .then(() => {
             return {
               userKey: userData.key,
@@ -51,20 +46,19 @@ const AuthModel = {
           });
       });
   },
-  grantFacebook: (facebookToken) => {
+  grantFacebook: (userKey, facebookToken) => {
     return FacebookManager.getId(facebookToken)
-      .then(id => {
-        const idxKey = UserModel.getUserIndexKey({
-          userType: USER_TYPE.FACEBOOK,
-          facebookId: id
-        });
-        return UserModel.getUserKey(idxKey);
-      })
-      .then(userKey => {
-        return {
-          userKey,
-          userType: USER_TYPE.FACEBOOK
-        };
+      .then(facebookId => {
+        return getPromise(userKey)
+          .then(userData => {
+            if (userData.facebookId === facebookId) {
+              return {
+                userKey,
+                userType: USER_TYPE.FACEBOOK
+              };
+            }
+            throw new Error('wrong facebook token');
+          });
       });
   }
 };

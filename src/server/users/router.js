@@ -7,7 +7,7 @@ const router = express.Router();
  * @apiName get information of a user
  * @apiGroup User
  *
- * @apiParam {String} ID of target user
+ * @apiParam {String} id of target user
  *
  * @apiSuccess {Object} json
  *
@@ -17,7 +17,7 @@ const router = express.Router();
  *        key: 'user-unique-key',
  *        name: 'test-user',
  *        email: 'test@email.com',
- *        imageUrl: 'url-of-image'
+ *        profileImgUrl: 'url-of-image'
  *     }
  *
  * @apiError (Error 500) Internal Server Error.
@@ -28,7 +28,7 @@ const router = express.Router();
  *       error: "database error"
  *     }
  */
-router.get('/:id', controller.get);
+router.get('/:id', controller.getById);
 
 /**
  * @api {add} /users/signup signup user
@@ -45,16 +45,16 @@ router.get('/:id', controller.get);
  *
  * @apiSuccess {String} accessToken access token
  * @apiSuccess {String} refreshToken refresh token
- * @apiSuccess {String} [userId] user id
- * @apiSuccess {String} [secret] user secret
+ * @apiSuccess {String} userKey unique user key
+ * @apiSuccess {String} [userSecret] only anonymous user get user secret
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
  *       "accessToken"  : "accessToken",
  *       "refreshToken" : "refreshToken",
- *       "userId"       : "userId",
- *       "secret"       : "userSecret"
+ *       "userKey"      : "userKey",
+ *       "userSecret"   : "userSecret"
  *     }
  *
  * @apiError (Error 500) error Database Internal error

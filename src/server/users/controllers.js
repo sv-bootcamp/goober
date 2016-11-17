@@ -6,23 +6,19 @@ import UserModel, {CreatedPostManager, SavedPostManager, USER_TYPE} from './mode
 import uuid from 'uuid4';
 import { APIError } from '../ErrorHandler';
 export default {
-  get(req, res, cb) {
-    const key = req.params.id;
-    db.get(key, (err, data) => {
-      if (err) {
-        if (err.notFound) {
-          return cb(new APIError(err, {
-            statusCode: 400,
-            message: 'User was not found'
-          }));
-        }
-        return cb(new APIError(err));
-      }
-      delete data.password;
-      delete data.accountType;
-      res.status(200).send(data);
-      return cb();
-    });
+  getById(req, res, next) {
+    const userKey = req.params.id;
+    return UserModel.getUserProfile(userKey)
+      .then(profile => {
+        res.status(200).send(profile);
+        return next();
+      })
+      .catch(err => {
+        return next(new APIError(err, {
+          statusCode: err.statusCode,
+          message: err.message
+        }));
+      });
   },
   post(req, res, cb) {
     const currentTime = new Date();
@@ -120,7 +116,6 @@ export default {
     let addUser;
     switch (userType) {
     case USER_TYPE.ANONYMOUS:
-      req.body.userId = uuid();
       req.body.secret = uuid();
       addUser = UserModel.addAnonymousUser(req.body);
       break;
@@ -135,14 +130,20 @@ export default {
     }
 
     return addUser
-      .then(AuthModel.encodeTokenSet)
-      .then((tokenSet) => {
-        if (userType === USER_TYPE.ANONYMOUS) {
-          tokenSet.userId = req.body.userId;
-          tokenSet.secret = req.body.secret;
-        }
-        res.status(200).send(tokenSet);
-        next();
+      .then(userData => {
+        const tokenPayload = {
+          userType: userData.userType,
+          userKey: userData.userKey
+        };
+        return AuthModel.encodeTokenSet(tokenPayload)
+          .then(tokenSet => {
+            tokenSet.userKey = userData.userKey;
+            if (userData.userType === USER_TYPE.ANONYMOUS) {
+              tokenSet.userSecret = userData.userSecret;
+            }
+            res.status(200).send(tokenSet);
+            next();
+          });
       })
       .catch((err) => {
         next(new APIError(err, {

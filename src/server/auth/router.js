@@ -40,16 +40,16 @@ router.post('/refresh', controller.refreshToken);
  * @apiGroup Auth
  *
  * @apiParam {String} grantType anonymous, facebook
- * @apiParam {String} [userId] user id
- * @apiParam {String} [secret] user secret
- * @apiParam {String} [facebookToken] facebook token
+ * @apiParam {String} userKey user key
+ * @apiParam {String} [userSecret] user secret; only for anonymous grant
+ * @apiParam {String} [facebookToken] facebook token; only for facebook grant
  *
  * @apiParamExample {json} Request-Example:
  *      {
- *          "grantType": "anonymous",
- *          "userId": "userId"
- *          "secret": "secret",
- *          "facebookToken": "facebookSecret"
+ *          "grantType"     : "anonymous",
+ *          "userKey"       : "userKey"
+ *          "userSecret"    : "userSecret",
+ *          "facebookToken" : "facebookSecret"
  *      }
  *
  * @apiSuccess {String} accessToken new access token
@@ -66,7 +66,14 @@ router.post('/refresh', controller.refreshToken);
  * @apiErrorExample {json} Not-Granted-Error-Response
  *     HTTP/1.1 400 Bad Request
  *     {
- *       error: "error message ..."
+ *       error: "wrong facebook access token"
+ *     }
+ *
+ * @apiError (Error 400) error not granted.
+ * @apiErrorExample {json} Not-Granted-Error-Response
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       error: "wrong secret"
  *     }
  *
  * @apiError (Error 500) error database error

@@ -19,6 +19,11 @@ const SECRET_KEY = {
 };
 
 /*
+  If you want to handle error
+  check err.JsonWebTokenError
+*/
+
+/*
   @TODO
   for better security, you need to encrypt payload(claims in jwt)
  */
@@ -55,8 +60,11 @@ class AuthToken {
 
   authenticate(req, res, next) {
     const bearerToken = req.headers.authorization;
+    if (!bearerToken) {
+      return next();
+    }
     const jwtToken = bearerToken.split(' ')[1];
-    this.decode(TOKEN_TYPE.ACCESS, jwtToken)
+    return this.decode(TOKEN_TYPE.ACCESS, jwtToken)
       .then(payload => {
         req.headers.userKey = payload.userKey;
         req.headers.permission = USER_PERMISSION[payload.userType];

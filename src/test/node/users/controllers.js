@@ -14,8 +14,7 @@ test('get a user from database', t => {
     key: 'user-unique-key',
     name: 'test-user',
     email: 'test@email.com',
-    password: 'secret-password',
-    imageUrl: 'url-of-image'
+    profileImgUrl: 'url-of-image'
   };
   testDB.put(expected.key, expected, (err) => {
     if (err) {
@@ -31,10 +30,12 @@ test('get a user from database', t => {
       }
     });
     const res = httpMocks.createResponse();
-    Controller.get(req, res, () => {
+    Controller.getById(req, res, () => {
       const value = res._getData();
       t.equal(value.key, expected.key, 'should be same key');
       t.equal(value.name, expected.name, 'should be same name');
+      t.equal(value.email, expected.email, 'should be same email');
+      t.equal(value.profileImgUrl, expected.profileImgUrl, 'should be same profileImgUrl');
       t.end();
     });
   });
@@ -105,9 +106,7 @@ test('add a user to database', t => {
 
 test('signup as a anonymous user to database', t => {
   const mockUser = {
-    userType: USER_TYPE.ANONYMOUS,
-    userId: 'anonymousId',
-    secret: 'anonymousSecret'
+    userType: USER_TYPE.ANONYMOUS
   };
 
   const req = httpMocks.createRequest({
@@ -135,6 +134,10 @@ test('signup as a anonymous user to database', t => {
           })
           .then(decodedRefreshToken => {
             t.ok(decodedRefreshToken.userKey, 'should be valid refresh token');
+          })
+          .then(() => {
+            t.ok(data.userKey, 'should have user key');
+            t.ok(data.userSecret, 'should have user secret');
             t.end();
           })
           .catch(jwtErr => {

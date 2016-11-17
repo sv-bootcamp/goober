@@ -76,7 +76,6 @@ test('add Anonymous user', t => {
           t.fail();
           t.end(err);
         });
-      t.equal(savedUser.id, expected.value.userId, 'should have same user id');
       t.end();
     });
   });
@@ -93,7 +92,7 @@ test('add Facebook user', t => {
       };
       return UserModel.addFacebookUser(testUser);
     })
-    .then(() => {
+    .then((returnData) => {
       let savedUser;
       testDB.createReadStream({
         start: `${ENTITY.USER}-\x00`,
@@ -105,6 +104,8 @@ test('add Facebook user', t => {
         t.end(err);
       }).on('close', () => {
         t.equal(savedUser.type, expected.type, 'should have same user type facebook');
+        t.ok(returnData.userKey, 'should have user key');
+        t.equal(returnData.userType, expected.type, 'should have user type facebook');
         t.end();
       });
     });

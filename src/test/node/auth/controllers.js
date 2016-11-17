@@ -4,7 +4,6 @@ import AuthController from '../../../server/auth/controllers';
 import {GRANT_TYPE} from '../../../server/auth/models';
 import {USER_TYPE} from '../../../server/users/models';
 import FacebookManager from '../../../server/users/facebook-manager';
-import {STATE, ENTITY} from '../../../server/key-utils';
 import {clearDB, putPromise} from '../../../server/database';
 import bcrypt from '../../../server/bcrypt';
 import httpMocks from 'node-mocks-http';
@@ -69,10 +68,8 @@ test('grant anonymous user in userController', t => {
   const mockUserSecret = 'userSecret';
   const mockUser = {
     key: 'userKey',
-    userId: 'userId',
     type: USER_TYPE.ANONYMOUS
   };
-  let mockUserIdxKey;
 
   const expected = {
     accessToken: {
@@ -89,7 +86,6 @@ test('grant anonymous user in userController', t => {
 
   bcrypt.hash(mockUserSecret)
     .then(hash => {
-      mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.ANONYMOUS}-${mockUser.userId}`;
       mockUser.hash = hash;
     })
     .then(clearDB)
@@ -97,16 +93,13 @@ test('grant anonymous user in userController', t => {
       return putPromise(mockUser.key, mockUser);
     })
     .then(() => {
-      return putPromise(mockUserIdxKey, {key: mockUser.key});
-    })
-    .then(() => {
       const req = httpMocks.createRequest({
         method: 'POST',
         url: 'api/auth/grant',
         body: {
           grantType: GRANT_TYPE.ANONYMOUS,
-          userId: mockUser.userId,
-          secret: mockUserSecret
+          userKey: mockUser.key,
+          userSecret: mockUserSecret
         }
       });
       const res = httpMocks.createResponse();
@@ -148,8 +141,6 @@ test('grant facebook user in controller', t => {
     type: USER_TYPE.FACEBOOK,
     facebookId: process.env.FACEBOOK_TEST_ID || config.FACEBOOK_TEST_ID
   };
-  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}` +
-    `-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
   const expected = {
     accessToken: {
       tokenType: TOKEN_TYPE.ACCESS,
@@ -166,9 +157,6 @@ test('grant facebook user in controller', t => {
     .then(() => {
       return putPromise(mockUser.key, mockUser);
     })
-    .then(() => {
-      return putPromise(mockUserIdxKey, {key: mockUser.key});
-    })
     .then(FacebookManager.getTestAccessToken)
     .then(mockFacebookToken => {
       const req = httpMocks.createRequest({
@@ -176,6 +164,7 @@ test('grant facebook user in controller', t => {
         url: 'api/auth/grant',
         body: {
           grantType: GRANT_TYPE.FACEBOOK,
+          userKey: mockUser.key,
           facebookToken: mockFacebookToken
         }
       });
