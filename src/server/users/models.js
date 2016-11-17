@@ -204,6 +204,28 @@ export class CreatedPostManager {
       return cb(err);
     });
   }
+  static genKey(userKey, entityKey, state) {
+    const timeHash = KeyUtils.parseTimeHash(entityKey);
+    return `${ENTITY.CREATED_POST}-${state}-${userKey}-${timeHash}`;
+  }
+  static deletePost(key) {
+    const newKey = KeyUtils.replaceState(key, STATE.REMOVED);
+    return getPromise(key)
+    .then((value) => {
+      const ops = [
+        {type: 'del', key},
+        {type: 'put', key: newKey, value}
+      ];
+      return ops;
+    })
+    .then((ops) => {
+      return new Promise((resolve, reject) => {
+        db.batch(ops, (err) => {
+          return (err) ? reject(err) : resolve(newKey);
+        });
+      });
+    });
+  }
 }
 export class SavedPostManager {
   static addPost(userKey, entityKey) {
