@@ -9,6 +9,10 @@ const router = express.Router();
  * @apiName reportAnItem
  * @apiGroup Report
  *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
  * @apiParamExample {json} Request-Example:
  *      {
  *      }

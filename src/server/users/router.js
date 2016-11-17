@@ -8,6 +8,10 @@ const router = express.Router();
  * @apiName get information of a user
  * @apiGroup User
  *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
  * @apiParam {String} id of target user
  *
  * @apiSuccess {Object} json
@@ -72,6 +76,10 @@ router.post('/signup', controller.signup);
  * @apiName addAUser
  * @apiGroup User
  *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
  * @apiParam {String} name user name
  * @apiParam {String} email email
  * @apiParam {String} password password
@@ -111,6 +119,10 @@ router.post('/', requiredPermission(PERMISSION.W), controller.post);
  * @apiName addASavedpost
  * @apiGroup User
  *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
  * @apiParam {String} userKey userKey
  * @apiParam {String} itemKey itemKey
  * @apiParamExample {json} Request-Example:
@@ -142,6 +154,10 @@ router.post('/savedposts', requiredPermission(PERMISSION.W), controller.addSaved
  * @api {get} /users/savedposts/:id Get saved(favorite) posts of user
  * @apiName get saved(favorite) posts of user
  * @apiGroup User
+ *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
  *
  * @apiParam {String} ID of target user
  *
@@ -186,6 +202,10 @@ router.get('/savedposts/:id', requiredPermission(PERMISSION.R), controller.getSa
  * @apiName get created(activity) posts of user
  * @apiGroup User
  *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
  * @apiParam {String} ID of target user
  *
  * @apiSuccess {Object} json
@@ -225,6 +245,10 @@ router.get('/createdposts/:id', requiredPermission(PERMISSION.R), controller.get
  * @api {delete} /users/savedposts/ Delete savedpost
  * @apiName deleteSavedPost
  * @apiGroup User
+ *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
  *
  * @apiParam {String} itemKey item key
  * @apiParam {String} userKey user key
