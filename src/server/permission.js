@@ -20,7 +20,7 @@ export const requiredPermission = (permission) => {
 
     if ((requireR && requireR !== permittedR) ||
       (requireW && requireW !== permittedW)) {
-      res.send(403);
+      res.sendStatus(403);
       return;
     }
     next();

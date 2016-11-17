@@ -21,6 +21,7 @@ router.use('/*', (req, res) => {
 });
 
 router.use((errHandler, req, res, next) => {
+  errHandler.statusCode = errHandler.statusCode ? errHandler.statusCode : 500;
   res.status(errHandler.statusCode).send({
     error: errHandler.message
   });

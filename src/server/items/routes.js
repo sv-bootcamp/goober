@@ -1,5 +1,6 @@
 import express from 'express';
 import ItemControllers from './controllers';
+import {requiredPermission, PERMISSION} from '../permission';
 
 const router = express.Router();
 
@@ -62,7 +63,7 @@ const router = express.Router();
  *       error: "database error"
  *     }
  */
-router.get('/', ItemControllers.getAll);
+router.get('/', requiredPermission(PERMISSION.R), ItemControllers.getAll);
 
 /**
  * @api {add} /items Add an item
@@ -109,11 +110,7 @@ router.get('/', ItemControllers.getAll);
  *       error: "error message ..."
  *     }
  */
-router.post('/', ItemControllers.add);
-
-router.put('/', (req, res, next) => {
-  next();
-});
+router.post('/', requiredPermission(PERMISSION.W), ItemControllers.add);
 
 /**
  * @api {delete} /items Remove all item
@@ -137,7 +134,7 @@ router.put('/', (req, res, next) => {
  *       error: "error message..."
  *     }
  */
-router.delete('/', ItemControllers.removeAll);
+router.delete('/', requiredPermission(PERMISSION.W), ItemControllers.removeAll);
 
 /**
  * @api {get} /items/:id Get an item by id
@@ -187,7 +184,7 @@ router.delete('/', ItemControllers.removeAll);
  *       error: "database error"
  *     }
  */
-router.get('/:id', ItemControllers.getById);
+router.get('/:id', requiredPermission(PERMISSION.R), ItemControllers.getById);
 
 /**
  * @api {modify} /items/:id Modify an item
@@ -238,7 +235,7 @@ router.get('/:id', ItemControllers.getById);
  *       error: "error message..."
  *     }
  */
-router.put('/:id', ItemControllers.modify);
+router.put('/:id', requiredPermission(PERMISSION.W), ItemControllers.modify);
 
 /**
  * @api {delete} /items/:id Remove an item
@@ -269,6 +266,6 @@ router.put('/:id', ItemControllers.modify);
  *       error: "error message..."
  *     }
  */
-router.delete('/:id', ItemControllers.remove);
+router.delete('/:id', requiredPermission(PERMISSION.W), ItemControllers.remove);
 
 export default router;

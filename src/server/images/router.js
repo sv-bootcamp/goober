@@ -1,5 +1,6 @@
 import express from 'express';
 import controller from './controllers';
+import {requiredPermission, PERMISSION} from '../permission';
 
 const router = express.Router();
 
@@ -65,7 +66,7 @@ const router = express.Router();
  *       error: "database error"
  *     }
  */
-router.get('/', controller.get);
+router.get('/', requiredPermission(PERMISSION.R), controller.get);
 
 /**
  * @api {add} /images Add an image
@@ -100,6 +101,6 @@ router.get('/', controller.get);
  *       error: "error message ..."
  *     }
  */
-router.post('/', controller.post);
+router.post('/', requiredPermission(PERMISSION.W), controller.post);
 
 export default router;

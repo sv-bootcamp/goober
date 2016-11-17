@@ -1,5 +1,6 @@
 import express from 'express';
 import controller from './controllers';
+import {requiredPermission, PERMISSION} from '../permission';
 
 const router = express.Router();
 
@@ -32,7 +33,7 @@ const router = express.Router();
  *     }
  *
  */
-router.post('/refresh', controller.refreshToken);
+router.post('/refresh', requiredPermission(PERMISSION.W), controller.refreshToken);
 
 /**
  * @api  /auth/grant authentication grant
@@ -83,7 +84,7 @@ router.post('/refresh', controller.refreshToken);
  *       error: "error message ..."
  *     }
  */
-router.post('/grant', controller.grant);
+router.post('/grant', requiredPermission(PERMISSION.W), controller.grant);
 
 
 /**
@@ -114,6 +115,6 @@ router.post('/grant', controller.grant);
  *     }
  *
  */
-router.post('/validate', controller.validate);
+router.post('/validate', requiredPermission(PERMISSION.W), controller.validate);
 
 export default router;
