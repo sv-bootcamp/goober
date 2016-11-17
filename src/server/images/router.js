@@ -9,6 +9,10 @@ const router = express.Router();
  * @apiName get an image
  * @apiGroup Image
  *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
  * @apiParam {String} image ID of target image
  *
  * @apiSuccess {String} image object
@@ -38,6 +42,10 @@ const router = express.Router();
  * @api {get} /images?item=item-unique-id Get all images of an item
  * @apiName get all image of an item
  * @apiGroup Image
+ *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
  *
  * @apiParam {String} item ID of target item
  *
@@ -72,6 +80,10 @@ router.get('/', requiredPermission(PERMISSION.R), controller.get);
  * @api {add} /images Add an image
  * @apiName addAnImage
  * @apiGroup Image
+ *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
  *
  * @apiParam {String} itemKey Item key that include a image
  * @apiParam {String} userKey User Key that post a image
