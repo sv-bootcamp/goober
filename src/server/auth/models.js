@@ -56,7 +56,10 @@ const AuthModel = {
       })
       .then(getPromise)
       .then(idxData => {
-        return idxData.key;
+        return {
+          userKey: idxData.key,
+          userType: USER_TYPE.FACEBOOK
+        };
       });
   }
 };
