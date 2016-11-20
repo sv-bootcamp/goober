@@ -8,6 +8,7 @@ import FacebookManager from '../../../server/users/facebook-manager';
 import {KeyUtils, ENTITY, STATE, CATEGORY} from '../../../server/key-utils';
 import bcrypt from './../../../server/bcrypt';
 import {STATE_STRING} from '../../../server/items/models';
+import config from 'config';
 const mockItem = {
   title: 'mock item',
   lat: 37.765432,
