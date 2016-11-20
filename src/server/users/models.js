@@ -77,8 +77,15 @@ const UserManager = {
         return putPromise(userKey, userValue);
       })
       .then(() => {
+        const userIdx = UserManager.getUserIndexKey({
+          userType: USER_TYPE.FACEBOOK,
+          facebookId: userValue.facebookId
+        });
+        return putPromise(userIdx, {key: userKey});
+      })
+      .then(() => {
         return {
-          userKey: userKey,
+          userKey,
           userType: USER_TYPE.FACEBOOK
         };
       });
