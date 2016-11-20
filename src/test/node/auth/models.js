@@ -90,8 +90,9 @@ test('grant facebook user', t => {
     })
     .then(FacebookManager.getTestAccessToken)
     .then(AuthModel.grantFacebook)
-    .then(userKey => {
-      t.equal(userKey, mockUser.key, 'should be same user key');
+    .then(userData => {
+      t.equal(userData.userKey, mockUser.key, 'should be same user key');
+      t.equal(userData.userType, mockUser.type, 'should be same user type');
       t.end();
     })
     .catch(err => {

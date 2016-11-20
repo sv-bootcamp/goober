@@ -146,12 +146,14 @@ test('grant facebook user in controller', t => {
     `-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
   const expected = {
     accessToken: {
-      type: TOKEN_TYPE.ACCESS,
-      user: mockUser.key
+      tokenType: TOKEN_TYPE.ACCESS,
+      userKey: mockUser.key,
+      userType: USER_TYPE.FACEBOOK
     },
     refreshToken: {
-      type: TOKEN_TYPE.REFRESH,
-      user: mockUser.key
+      tokenType: TOKEN_TYPE.REFRESH,
+      userKey: mockUser.key,
+      userType: USER_TYPE.FACEBOOK
     }
   };
   clearDB()
@@ -180,14 +182,18 @@ test('grant facebook user in controller', t => {
           .then(decodedSet => {
             const decodedAccessToken = decodedSet[0];
             const decodedRefreshToken = decodedSet[1];
-            t.equal(decodedAccessToken.type, expected.accessToken.type,
+            t.equal(decodedAccessToken.tokenType, expected.accessToken.tokenType,
               'should be same token type');
-            t.equal(decodedAccessToken.user, expected.accessToken.user,
-              'should be same user');
-            t.equal(decodedRefreshToken.type, expected.refreshToken.type,
+            t.equal(decodedAccessToken.userKey, expected.accessToken.userKey,
+              'should be same user key');
+            t.equal(decodedAccessToken.userType, expected.accessToken.userType,
+              'should be same user type');
+            t.equal(decodedRefreshToken.tokenType, expected.refreshToken.tokenType,
               'should be same token type');
-            t.equal(decodedRefreshToken.user, expected.refreshToken.user,
-              'should be same user');
+            t.equal(decodedRefreshToken.userKey, expected.refreshToken.userKey,
+              'should be same user key');
+            t.equal(decodedRefreshToken.userType, expected.refreshToken.userType,
+              'should be same user type');
             t.end();
           })
           .catch(err => {
