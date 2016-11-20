@@ -87,12 +87,12 @@ test('add Facebook user', t => {
   clearDB()
     .then(FacebookManager.getTestAccessToken)
     .then(mockFacebookToken => {
-      const testUser = {
+      const mockFacebookUser = {
         facebookToken: mockFacebookToken
       };
-      return UserModel.addFacebookUser(testUser);
+      return UserModel.addFacebookUser(mockFacebookUser);
     })
-    .then((returnData) => {
+    .then(() => {
       let savedUser;
       testDB.createReadStream({
         start: `${ENTITY.USER}-\x00`,
@@ -104,8 +104,6 @@ test('add Facebook user', t => {
         t.end(err);
       }).on('close', () => {
         t.equal(savedUser.type, expected.type, 'should have same user type facebook');
-        t.ok(returnData.userKey, 'should have user key');
-        t.equal(returnData.userType, expected.type, 'should have user type facebook');
         t.end();
       });
     });

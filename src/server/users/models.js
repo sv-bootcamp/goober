@@ -87,6 +87,17 @@ const UserManager = {
     const timeHash = KeyUtils.genTimeHash();
     return `user-${timeHash}`;
   },
+  getUserIndexKey: ({userType, state, userId, facebookId}) => {
+    switch (userType) {
+    case USER_TYPE.ANONYMOUS:
+      return `${ENTITY.USER}-${state || STATE.ALIVE}-${ENTITY.ANONYMOUS}-${userId}`;
+    case USER_TYPE.FACEBOOK:
+      return `${ENTITY.USER}-${state || STATE.ALIVE}` +
+        `-${ENTITY.FACEBOOK}-${facebookId}`;
+    default:
+      return null;
+    }
+  },
   modifyUser: (key, value, cb) => {
     return new Promise((resolve, reject) => {
       db.get(key, (err) => {
