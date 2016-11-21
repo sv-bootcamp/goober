@@ -6,6 +6,7 @@ import {USER_TYPE} from '../../../server/users/models';
 import FacebookManager from '../../../server/users/facebook-manager';
 import {clearDB, putPromise} from '../../../server/database';
 import config from 'config';
+import {STATE, ENTITY} from '../../../server/key-utils';
 
 test('get token set', t => {
   const mockUser = {
@@ -77,18 +78,21 @@ test('grant facebook user', t => {
     type: USER_TYPE.FACEBOOK,
     facebookId: process.env.FACEBOOK_TEST_ID || config.FACEBOOK_TEST_ID
   };
+  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}` +
+    `-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
 
   clearDB()
     .then(() => {
       return putPromise(mockUser.key, mockUser);
     })
-    .then(FacebookManager.getTestAccessToken)
-    .then(facebookToken => {
-      return AuthModel.grantFacebook(mockUser.key, facebookToken);
+    .then(() => {
+      return putPromise(mockUserIdxKey, {key: mockUser.key});
     })
+    .then(FacebookManager.getTestAccessToken)
+    .then(AuthModel.grantFacebook)
     .then(userData => {
-      t.equal(userData.userType, mockUser.type, 'should be same user type');
       t.equal(userData.userKey, mockUser.key, 'should be same user key');
+      t.equal(userData.userType, mockUser.type, 'should be same user type');
       t.end();
     })
     .catch(err => {

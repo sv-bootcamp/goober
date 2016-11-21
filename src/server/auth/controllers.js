@@ -35,7 +35,7 @@ export default {
       break;
     case GRANT_TYPE.FACEBOOK:
       const {facebookToken} = req.body;
-      grant = AuthModel.grantFacebook(userKey, facebookToken);
+      grant = AuthModel.grantFacebook(facebookToken);
       break;
     default:
       break;

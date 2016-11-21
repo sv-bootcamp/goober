@@ -8,6 +8,7 @@ import FacebookManager from '../../../server/users/facebook-manager';
 import {KeyUtils, ENTITY, STATE, CATEGORY} from '../../../server/key-utils';
 import bcrypt from './../../../server/bcrypt';
 import {STATE_STRING} from '../../../server/items/models';
+import config from 'config';
 const mockItem = {
   title: 'mock item',
   lat: 37.765432,
@@ -81,31 +82,43 @@ test('add Anonymous user', t => {
   });
 });
 test('add Facebook user', t => {
+  const testFacebookId = process.env.FACEBOOK_TEST_ID || config.FACEBOOK_TEST_ID;
   const expected = {
-    type: USER_TYPE.FACEBOOK
+    type: USER_TYPE.FACEBOOK,
+    facebookId: testFacebookId,
+    idxKey: `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.FACEBOOK}-${testFacebookId}`
   };
   clearDB()
     .then(FacebookManager.getTestAccessToken)
     .then(mockFacebookToken => {
-      const testUser = {
+      const mockFacebookUser = {
         facebookToken: mockFacebookToken
       };
-      return UserModel.addFacebookUser(testUser);
+      return UserModel.addFacebookUser(mockFacebookUser);
     })
-    .then((returnData) => {
+    .then(() => {
       let savedUser;
+      let savedIdxKey;
+      let savedIdxValue;
       testDB.createReadStream({
         start: `${ENTITY.USER}-\x00`,
         end: `${ENTITY.USER}-\xFF`
       }).on('data', (data) => {
+        if (data.key.startsWith('user-0-')) {
+          savedIdxKey = data.key;
+          savedIdxValue = data.value;
+          return;
+        }
         savedUser = data.value;
+        return;
       }).on('error', (err) => {
         t.fail('Error while read Facebook User from DB');
         t.end(err);
       }).on('close', () => {
         t.equal(savedUser.type, expected.type, 'should have same user type facebook');
-        t.ok(returnData.userKey, 'should have user key');
-        t.equal(returnData.userType, expected.type, 'should have user type facebook');
+        t.equal(savedUser.facebookId, expected.facebookId, 'should have same facebook id');
+        t.equal(savedUser.key, savedIdxValue.key, 'should have same user key');
+        t.equal(savedIdxKey, expected.idxKey, 'should have same user idx key');
         t.end();
       });
     });

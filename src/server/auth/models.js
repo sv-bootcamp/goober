@@ -1,6 +1,6 @@
 import jwt, {TOKEN_TYPE} from '../auth-token';
 import bcrypt from '../bcrypt';
-import {USER_TYPE} from '../users/models';
+import UserModel, {USER_TYPE} from '../users/models';
 import FacebookManager from '../users/facebook-manager';
 import {getPromise} from '../database';
 
@@ -46,19 +46,20 @@ const AuthModel = {
           });
       });
   },
-  grantFacebook: (userKey, facebookToken) => {
+  grantFacebook: (facebookToken) => {
     return FacebookManager.getId(facebookToken)
-      .then(facebookId => {
-        return getPromise(userKey)
-          .then(userData => {
-            if (userData.facebookId === facebookId) {
-              return {
-                userKey,
-                userType: USER_TYPE.FACEBOOK
-              };
-            }
-            throw new Error('wrong facebook token');
-          });
+      .then(id => {
+        return UserModel.getUserIndexKey({
+          userType: USER_TYPE.FACEBOOK,
+          facebookId: id
+        });
+      })
+      .then(getPromise)
+      .then(idxData => {
+        return {
+          userKey: idxData.key,
+          userType: USER_TYPE.FACEBOOK
+        };
       });
   }
 };

@@ -8,6 +8,7 @@ import {clearDB, putPromise} from '../../../server/database';
 import bcrypt from '../../../server/bcrypt';
 import httpMocks from 'node-mocks-http';
 import config from 'config';
+import {STATE, ENTITY} from '../../../server/key-utils';
 
 test('refresh token', t => {
   const mockUser = {
@@ -141,21 +142,26 @@ test('grant facebook user in controller', t => {
     type: USER_TYPE.FACEBOOK,
     facebookId: process.env.FACEBOOK_TEST_ID || config.FACEBOOK_TEST_ID
   };
+  const mockUserIdxKey = `${ENTITY.USER}-${STATE.ALIVE}` +
+    `-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
   const expected = {
     accessToken: {
       tokenType: TOKEN_TYPE.ACCESS,
-      userType: USER_TYPE.FACEBOOK,
-      userKey: mockUser.key
+      userKey: mockUser.key,
+      userType: USER_TYPE.FACEBOOK
     },
     refreshToken: {
       tokenType: TOKEN_TYPE.REFRESH,
-      userType: USER_TYPE.FACEBOOK,
-      userKey: mockUser.key
+      userKey: mockUser.key,
+      userType: USER_TYPE.FACEBOOK
     }
   };
   clearDB()
     .then(() => {
       return putPromise(mockUser.key, mockUser);
+    })
+    .then(() => {
+      return putPromise(mockUserIdxKey, {key: mockUser.key});
     })
     .then(FacebookManager.getTestAccessToken)
     .then(mockFacebookToken => {
@@ -164,7 +170,6 @@ test('grant facebook user in controller', t => {
         url: 'api/auth/grant',
         body: {
           grantType: GRANT_TYPE.FACEBOOK,
-          userKey: mockUser.key,
           facebookToken: mockFacebookToken
         }
       });
@@ -179,16 +184,16 @@ test('grant facebook user in controller', t => {
             const decodedRefreshToken = decodedSet[1];
             t.equal(decodedAccessToken.tokenType, expected.accessToken.tokenType,
               'should be same token type');
-            t.equal(decodedAccessToken.userType, expected.accessToken.userType,
-              'should be same user key');
             t.equal(decodedAccessToken.userKey, expected.accessToken.userKey,
+              'should be same user key');
+            t.equal(decodedAccessToken.userType, expected.accessToken.userType,
               'should be same user type');
             t.equal(decodedRefreshToken.tokenType, expected.refreshToken.tokenType,
               'should be same token type');
-            t.equal(decodedRefreshToken.userType, expected.refreshToken.userType,
-              'should be same user type');
             t.equal(decodedRefreshToken.userKey, expected.refreshToken.userKey,
               'should be same user key');
+            t.equal(decodedRefreshToken.userType, expected.refreshToken.userType,
+              'should be same user type');
             t.end();
           })
           .catch(err => {
@@ -202,7 +207,6 @@ test('grant facebook user in controller', t => {
       t.end(err);
     });
 });
-
 test('should valid access token', t => {
   const mockUser = {
     userId: 'mockUserId',
