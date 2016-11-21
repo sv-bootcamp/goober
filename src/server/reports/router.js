@@ -32,6 +32,6 @@ const router = express.Router();
  *       error: "error message ..."
  *     }
  */
-router.post('/', requiredPermission(PERMISSION.W), Controllers.post);
+router.post('/', requiredPermission(PERMISSION.R), Controllers.post);
 
 export default router;
