@@ -206,7 +206,7 @@ export default {
       title: req.body.title,
       lat: req.body.lat,
       lng: req.body.lng,
-      userKey: req.body.userKey,
+      userKey: req.headers.userKey,
       address: req.body.address,
       category: req.body.category,
       startTime: req.body.startTime,
@@ -217,7 +217,7 @@ export default {
     };
     const image = {
       key: imageKey,
-      userKey: req.body.userKey,
+      userKey: req.headers.userKey,
       caption: req.body.caption,
       createdDate: currentTime.toISOString()
     };
@@ -250,7 +250,7 @@ export default {
         });
       });
     })
-    .then(CreatedPostManager.addPost(req.body.userKey, createdPost, timeHash))
+    .then(CreatedPostManager.addPost(req.headers.userKey, createdPost, timeHash))
     .then(() => {
       res.status(200).send({message: 'success', data: key });
       return cb();

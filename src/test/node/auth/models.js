@@ -8,6 +8,7 @@ import {clearDB, putPromise} from '../../../server/database';
 import config from 'config';
 import {STATE, ENTITY} from '../../../server/key-utils';
 
+
 test('get token set', t => {
   const mockUser = {
     userType: USER_TYPE.ANONYMOUS,

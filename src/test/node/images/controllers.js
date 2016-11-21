@@ -101,6 +101,7 @@ test('Post image', t => {
     url: '/images',
     body: MockImageB
   });
+  req.headers.userKey = MockImageB.userKey;
   const res = httpMocks.createResponse();
   new Promise((resolve, reject) => {
     S3Utils.imgToBase64('src/test/node/test.png', (err, base64Img) => {

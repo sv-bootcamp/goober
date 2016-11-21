@@ -33,7 +33,7 @@ const router = express.Router();
  *       error: "database error"
  *     }
  */
-router.get('/:id', requiredPermission(PERMISSION.R), controller.getById);
+router.get('/', requiredPermission(PERMISSION.R), controller.getById);
 
 /**
  * @api {add} /users/signup signup user
@@ -86,10 +86,10 @@ router.post('/signup', controller.signup);
  * @apiParam {String} image base64 encoding image
  * @apiParamExample {json} Request-Example:
  *      {
- *          "title"         : "textTitle",
+ *          "title"       : "textTitle",
  *          "name"		    : "Hewon Jeong",
  *    	    "email"		    : "hewonjeong@goober.com",
- *   	    "password"	    : "ghldnjs!@#123",
+ *   	      "password"	  : "ghldnjs!@#123",
  *    	    "image"		    : "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAOCAMAAAAPOFwLAAAACXBIWXMAA"
  *      }
  *
@@ -113,8 +113,6 @@ router.post('/', requiredPermission(PERMISSION.W), controller.post);
 
 /**
  *
-=======
->>>>>>>  update apidoc
  * @api {add} /users/savedposts Add a saved post of a user
  * @apiName addASavedpost
  * @apiGroup User
@@ -129,7 +127,7 @@ router.post('/', requiredPermission(PERMISSION.W), controller.post);
  *      {
  *          "entity"      : "item",
  *          "userKey"     : "user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000",
- *          "itemKey"     : "item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000",
+ *          "itemKey"     : "item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004",
  *      }
  *
  * @apiSuccess {String} message success
@@ -151,15 +149,13 @@ router.post('/', requiredPermission(PERMISSION.W), controller.post);
 router.post('/savedposts', requiredPermission(PERMISSION.W), controller.addSavedPost);
 
 /**
- * @api {get} /users/savedposts/:id Get saved(favorite) posts of user
+ * @api {get} /users/savedposts Get saved posts of user
  * @apiName get saved(favorite) posts of user
  * @apiGroup User
  *
  * @apiHeader {String} authorization access token.
  * @apiHeaderExample {json} Request-Example:
  * { "authorization": "bearer access_token" }
- *
- * @apiParam {String} ID of target user
  *
  * @apiSuccess {Object} json
  *
@@ -195,7 +191,7 @@ router.post('/savedposts', requiredPermission(PERMISSION.W), controller.addSaved
  *       error: "database error"
  *     }
 */
-router.get('/savedposts/:id', requiredPermission(PERMISSION.R), controller.getSavedPosts);
+router.get('/savedposts', requiredPermission(PERMISSION.R), controller.getSavedPosts);
 
 /**
  * @api {get} /users/createdposts/:id Get created(activity) posts of user
@@ -239,10 +235,10 @@ router.get('/savedposts/:id', requiredPermission(PERMISSION.R), controller.getSa
  *       error: "database error"
  *     }
 */
-router.get('/createdposts/:id', requiredPermission(PERMISSION.R), controller.getCreatedPosts);
+router.get('/createdposts', requiredPermission(PERMISSION.R), controller.getCreatedPosts);
 
 /**
- * @api {delete} /users/savedposts/ Delete savedpost
+ * @api {delete} /users/savedposts Delete savedpost
  * @apiName deleteSavedPost
  * @apiGroup User
  *

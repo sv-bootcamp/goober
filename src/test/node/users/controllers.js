@@ -103,7 +103,6 @@ test('add a user to database', t => {
     t.end(err);
   });
 });
-
 test('signup as a anonymous user to database', t => {
   const mockUser = {
     userType: USER_TYPE.ANONYMOUS
@@ -151,7 +150,6 @@ test('signup as a anonymous user to database', t => {
       t.end();
     });
 });
-
 test('signup as a facebook user to database', t => {
   clearDB()
   .then(FacebookManager.getTestAccessToken)
@@ -192,7 +190,6 @@ test('signup as a facebook user to database', t => {
     t.end(err);
   });
 });
-
 test('get saved posts using user controller', t => {
   const testUser = mockUsers[0].value;
   const expected = {
@@ -206,11 +203,9 @@ test('get saved posts using user controller', t => {
   };
   const req = httpMocks.createRequest({
     method: 'GET',
-    url: `/api/users/savedposts/${testUser.key}`,
-    params: {
-      id: `${testUser.key}`
-    }
+    url: '/api/users/savedposts'
   });
+  req.headers.userKey = testUser.key;
   const res = httpMocks.createResponse();
   clearDB().then(initMock)
   .then(()=>{
@@ -256,6 +251,7 @@ test('get created posts using user controller', t => {
       id: `${testUser.key}`
     }
   });
+  req.headers.userKey = testUser.key;
   const res = httpMocks.createResponse();
   clearDB().then(initMock)
   .then(()=>{
@@ -295,10 +291,10 @@ test('delete saved post using user controller', t => {
     method: 'DELETE',
     url: '/api/users/savedposts',
     body: {
-      itemKey: testItem.key,
-      userKey: testUser.key
+      itemKey: testItem.key
     }
   });
+  req.headers.userKey = testUser.key;
   const res = httpMocks.createResponse();
   clearDB().then(initMock)
   .then(() => {
