@@ -192,15 +192,13 @@ router.post('/savedposts', requiredPermission(PERMISSION.W), controller.addSaved
 router.get('/savedposts', requiredPermission(PERMISSION.R), controller.getSavedPosts);
 
 /**
- * @api {get} /users/createdposts/:id Get created(activity) posts of user
+ * @api {get} /users/createdposts Get created(activity) posts of user
  * @apiName get created(activity) posts of user
  * @apiGroup User
  *
  * @apiHeader {String} authorization access token.
  * @apiHeaderExample {json} Request-Example:
  * { "authorization": "bearer access_token" }
- *
- * @apiParam {String} ID of target user
  *
  * @apiSuccess {Object} json
  *
