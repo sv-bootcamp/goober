@@ -121,12 +121,10 @@ router.post('/', requiredPermission(PERMISSION.W), controller.post);
  * @apiHeaderExample {json} Request-Example:
  * { "authorization": "bearer access_token" }
  *
- * @apiParam {String} userKey userKey
  * @apiParam {String} itemKey itemKey
  * @apiParamExample {json} Request-Example:
  *      {
  *          "entity"      : "item",
- *          "userKey"     : "user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000",
  *          "itemKey"     : "item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004",
  *      }
  *
@@ -247,11 +245,9 @@ router.get('/createdposts', requiredPermission(PERMISSION.R), controller.getCrea
  * { "authorization": "bearer access_token" }
  *
  * @apiParam {String} itemKey item key
- * @apiParam {String} userKey user key
  * @apiParamExample {json} Request-Example:
  *      {
  *          "itemKey"       : 'item-8523193492003-2d5f3460-d53a-42d3-a138-ae201070f27c',
- *          "userKey"       : 'user-8523574664000-b82eb82e-473b-1234-1234-ead0f54gvr00'
  *      }
  *
  * @apiSuccess {String} message message
@@ -269,6 +265,6 @@ router.get('/createdposts', requiredPermission(PERMISSION.R), controller.getCrea
  *       error: "database error"
  *     }
  */
-router.delete('/createdposts', requiredPermission(PERMISSION.W), controller.deleteSavedPost);
+router.delete('/savedposts', requiredPermission(PERMISSION.W), controller.deleteSavedPost);
 
 export default router;
