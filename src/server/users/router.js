@@ -33,7 +33,7 @@ const router = express.Router();
  *       error: "database error"
  *     }
  */
-router.get('/', requiredPermission(PERMISSION.R), controller.getById);
+router.get('/:id', requiredPermission(PERMISSION.R), controller.getById);
 
 /**
  * @api {add} /users/signup signup user
