@@ -2,6 +2,8 @@ import {APIError} from '../ErrorHandler';
 import AuthToken, {TOKEN_TYPE} from '../auth-token';
 import AuthModel, {GRANT_TYPE} from './models';
 import {FACEBOOK_ERROR} from '../users/facebook-manager';
+import logger from 'winston';
+
 export default {
   refreshToken: (req, res, next) => {
     AuthToken.decode(TOKEN_TYPE.REFRESH, req.body.refreshToken)
@@ -9,16 +11,18 @@ export default {
       if (decoded.tokenType === TOKEN_TYPE.REFRESH) {
         return AuthModel.encodeTokenSet(decoded)
           .then(tokenSet => {
+            logger.info(`Refresh token success`);
             res.status(200).send(tokenSet);
             return next();
           });
       }
+      logger.error(`Invalid token type`);
       return next(new APIError(new Error(), {
         statusCode: 400,
         message: 'Not a valid token type'
       }));
-    })
-    .catch(err => {
+    }).catch(err => {
+      logger.error(`Invalid refresh token`);
       return next(new APIError(err, {
         statusCode: 400,
         message: 'Not a valid refresh token'
