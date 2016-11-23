@@ -3,6 +3,94 @@ import controller from './controllers';
 import {requiredPermission, PERMISSION} from '../permission';
 
 const router = express.Router();
+
+/**
+ * @api {get} /users/savedposts Get saved posts of user
+ * @apiName get saved(favorite) posts of user
+ * @apiGroup User
+ *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
+ * @apiSuccess {Object} json
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     [
+ *       {
+ *          title       : 'Lion popup store',
+ *          lat         : 37.756787937,
+ *          lng         : -122.4233365122,
+ *          address     : '310 Dolores St, San Francisco, CA 94110, USA',
+ *          createdDate : '2016-10-13T01:11:46.851Z',
+ *          modifiedDate: '2016-10-13T01:11:46.851Z',
+ *          category    : 'event',
+ *          startTime   : '2016-10-13T01:11:46.851Z',
+ *          endTime     : '2016-11-08T07:28:21.676Z',
+ *          state       : 'alive',
+ *          key         : 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+ *          userKey     : 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
+ *          imageUrls   :
+ *            [ 'url-of-thumbnail-image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',
+ *              'url-of-thumbnail-image-8523569761934-dd3860f5-b82e-473b-1234-ead0f54gvr00',
+ *              'url-of-thumbnail-image-8523569761934-dd3860f5-b82e-473b-1234-ead0fts0b000',
+ *              'url-of-thumbnail-image-8523569761934-dd3860f5-b82e-473b-1234-ead0fts43200'
+ *            ]
+ *        }
+ *      ]
+ * @apiError (Error 500) Internal Server Error.
+ *
+ * @apiErrorExample {json} Database-Error-Response:
+ *     HTTP/1.1 500 InternalError
+ *     {
+ *       error: "database error"
+ *     }
+ */
+router.get('/savedposts', requiredPermission(PERMISSION.R), controller.getSavedPosts);
+
+/**
+ * @api {get} /users/createdposts Get created(activity) posts of user
+ * @apiName get created(activity) posts of user
+ * @apiGroup User
+ *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
+ * @apiSuccess {Object} json
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     [
+ *       {
+ *          title       : 'Lion popup store',
+ *          lat         : 37.756787937,
+ *          lng         : -122.4233365122,
+ *          address     : '310 Dolores St, San Francisco, CA 94110, USA',
+ *          createdDate : '2016-10-13T01:11:46.851Z',
+ *          modifiedDate: '2016-10-13T01:11:46.851Z',
+ *          category    : 'event',
+ *          state       : 'alive',
+ *          startTime   : '2016-10-13T01:11:46.851Z',
+ *          endTime     : '2016-11-08T07:28:21.676Z',
+ *          state       : 'alive',
+ *          key         : 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+ *          userKey     : 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
+ *          entity      : 'image',
+ *          imageUrl    : 'url-of-image-8523569763000-dd3860f5-b82e-473b-1234-ead0fzr0b000'
+ *        }
+ *      ]
+ * @apiError (Error 500) Internal Server Error.
+ *
+ * @apiErrorExample {json} Database-Error-Response:
+ *     HTTP/1.1 500 InternalError
+ *     {
+ *       error: "database error"
+ *     }
+ */
+router.get('/createdposts', requiredPermission(PERMISSION.R), controller.getCreatedPosts);
+
 /**
  * @api {get} /users/:id Get information of a user
  * @apiName get information of a user
@@ -145,93 +233,6 @@ router.post('/', requiredPermission(PERMISSION.W), controller.post);
  *     }
  */
 router.post('/savedposts', requiredPermission(PERMISSION.W), controller.addSavedPost);
-
-/**
- * @api {get} /users/savedposts Get saved posts of user
- * @apiName get saved(favorite) posts of user
- * @apiGroup User
- *
- * @apiHeader {String} authorization access token.
- * @apiHeaderExample {json} Request-Example:
- * { "authorization": "bearer access_token" }
- *
- * @apiSuccess {Object} json
- *
- * @apiSuccessExample Success-Response:
- *     HTTP/1.1 200 OK
- *     [
- *       {
- *          title       : 'Lion popup store',
- *          lat         : 37.756787937,
- *          lng         : -122.4233365122,
- *          address     : '310 Dolores St, San Francisco, CA 94110, USA',
- *          createdDate : '2016-10-13T01:11:46.851Z',
- *          modifiedDate: '2016-10-13T01:11:46.851Z',
- *          category    : 'event',
- *          startTime   : '2016-10-13T01:11:46.851Z',
- *          endTime     : '2016-11-08T07:28:21.676Z',
- *          state       : 'alive',
- *          key         : 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
- *          userKey     : 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
- *          imageUrls   :
- *            [ 'url-of-thumbnail-image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',
- *              'url-of-thumbnail-image-8523569761934-dd3860f5-b82e-473b-1234-ead0f54gvr00',
- *              'url-of-thumbnail-image-8523569761934-dd3860f5-b82e-473b-1234-ead0fts0b000',
- *              'url-of-thumbnail-image-8523569761934-dd3860f5-b82e-473b-1234-ead0fts43200'
- *            ]
- *        }
- *      ]
- * @apiError (Error 500) Internal Server Error.
- *
- * @apiErrorExample {json} Database-Error-Response:
- *     HTTP/1.1 500 InternalError
- *     {
- *       error: "database error"
- *     }
-*/
-router.get('/savedposts', requiredPermission(PERMISSION.R), controller.getSavedPosts);
-
-/**
- * @api {get} /users/createdposts Get created(activity) posts of user
- * @apiName get created(activity) posts of user
- * @apiGroup User
- *
- * @apiHeader {String} authorization access token.
- * @apiHeaderExample {json} Request-Example:
- * { "authorization": "bearer access_token" }
- *
- * @apiSuccess {Object} json
- *
- * @apiSuccessExample Success-Response:
- *     HTTP/1.1 200 OK
- *     [
- *       {
- *          title       : 'Lion popup store',
- *          lat         : 37.756787937,
- *          lng         : -122.4233365122,
- *          address     : '310 Dolores St, San Francisco, CA 94110, USA',
- *          createdDate : '2016-10-13T01:11:46.851Z',
- *          modifiedDate: '2016-10-13T01:11:46.851Z',
- *          category    : 'event',
- *          state       : 'alive',
- *          startTime   : '2016-10-13T01:11:46.851Z',
- *          endTime     : '2016-11-08T07:28:21.676Z',
- *          state       : 'alive',
- *          key         : 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
- *          userKey     : 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
- *          entity      : 'image',
- *          imageUrl    : 'url-of-image-8523569763000-dd3860f5-b82e-473b-1234-ead0fzr0b000'
- *        }
- *      ]
- * @apiError (Error 500) Internal Server Error.
- *
- * @apiErrorExample {json} Database-Error-Response:
- *     HTTP/1.1 500 InternalError
- *     {
- *       error: "database error"
- *     }
-*/
-router.get('/createdposts', requiredPermission(PERMISSION.R), controller.getCreatedPosts);
 
 /**
  * @api {delete} /users/savedposts Delete savedpost
