@@ -10,13 +10,10 @@ export const USER_TYPE = {
   ANONYMOUS: 'anonymous',
   FACEBOOK: 'facebook'
 };
-
 export const USER_PERMISSION = {
   [USER_TYPE.ANONYMOUS]: PERMISSION.R,
   [USER_TYPE.FACEBOOK]: PERMISSION.RW
 };
-
-
 const ANONYMOUS_USER_DEFAULT = {
   NAME: 'guest'
 };

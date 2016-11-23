@@ -70,19 +70,20 @@ export default {
     });
   },
   addSavedPost(req, res, cb) {
-    SavedPostManager.addPost(req.body.userKey, req.body.itemKey, (err, idxKey) => {
-      if (err) {
-        return cb(new APIError(err));
-      }
+    SavedPostManager.addPost(req.headers.userKey, req.body.itemKey)
+    .then((idxKey) => {
       res.status(200).send({
         message: 'success',
         data: idxKey
       });
       return cb();
+    }).catch((err) => {
+      return cb(new APIError(err));
     });
   },
   deleteSavedPost(req, res, cb) {
-    const {itemKey, userKey} = req.body;
+    const {itemKey} = req.body;
+    const {userKey} = req.headers;
     return SavedPostManager.deletePost(userKey, itemKey)
     .then(()=>{
       res.status(200).send({
@@ -92,7 +93,7 @@ export default {
     });
   },
   getSavedPosts(req, res, cb) {
-    const userKey = req.params.id;
+    const {userKey} = req.headers;
     SavedPostManager.getPosts(userKey, (err, posts) => {
       if (err) {
         return cb(new APIError());
@@ -102,7 +103,7 @@ export default {
     });
   },
   getCreatedPosts(req, res, cb) {
-    const userKey = req.params.id;
+    const {userKey} = req.headers;
     CreatedPostManager.getPosts(userKey, (err, posts) => {
       if (err) {
         return cb(new APIError());

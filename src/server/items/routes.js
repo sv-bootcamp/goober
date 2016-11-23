@@ -86,7 +86,6 @@ router.get('/', requiredPermission(PERMISSION.R), ItemControllers.getAll);
  * @apiParam {String} [startTime] startTime
  * @apiParam {String} [endTime] endTime
  * @apiParam {String} image base64 encoding image
- * @apiParam {String} userKey userKey userkey of user who post
  * @apiParam {String} caption caption of image
  * @apiParamExample {json} Request-Example:
  *      {
@@ -94,12 +93,11 @@ router.get('/', requiredPermission(PERMISSION.R), ItemControllers.getAll);
  *          "lat"         : 30.565398,
  *          "lng"         : 126.9907941,
  *          "address"     : "testAddress",
- *          "category"    : 'warning', 'event', 'facility'
- *          "startTime"   : '2016-10-04T04:00:00.578Z',
- *          "endTime"     : '2016-10-10T04:00:00.578Z',
- *          "image"       : 'iVBORw0KGgoAAAANSUhEUgAAAB4AAAAOCAMAAAAPOFwLAAAACXBIWXMAA',
- *          "userKey"     : 'user-8523574664000-b82e-473b-1234-ead0f54gvr00',
- *          "caption"     : 'Zihoon loves zzactae.'
+ *          "category"    : "warning", "event", "acility",
+ *          "startTime"   : "2016-10-04T04:00:00.578Z",
+ *          "endTime"     : "2016-10-10T04:00:00.578Z",
+ *          "image"       : "iVBORw0KGgoAAAANSUhEUgAAAB4AAAAOCAMAAAAPOFwLAAAACXBIWXMAA",
+ *          "caption"     : "Zihoon loves zzactae."
  *      }
  *
  * @apiSuccess {String} message success

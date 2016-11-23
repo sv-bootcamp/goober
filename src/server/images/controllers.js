@@ -95,7 +95,7 @@ export default {
         const image = {
           key,
           url,
-          userKey: req.body.userKey,
+          userKey: req.headers.userKey,
           itemKey: req.body.itemKey,
           caption: req.body.caption,
           createdDate: currentTime.toISOString()

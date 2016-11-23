@@ -218,6 +218,7 @@ test('add an item to database', t => {
     url: 'api/items',
     body: mockItem
   });
+  req.headers.userKey = mockItem.userKey;
   const res = httpMocks.createResponse();
   new Promise((resolve, reject) => {
     S3Utils.imgToBase64('src/test/node/small-test.png', (err, base64Img) => {

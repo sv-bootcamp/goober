@@ -86,13 +86,11 @@ router.get('/', requiredPermission(PERMISSION.R), controller.get);
  * { "authorization": "bearer access_token" }
  *
  * @apiParam {String} itemKey Item key that include a image
- * @apiParam {String} userKey User Key that post a image
  * @apiParam {String} caption caption
  * @apiParam {String} image base64 encoding image
  * @apiParamExample {json} Request-Example:
  *      {
  *          "itemKey"         : "textTitle",
- *          "userKey"         : 'user-8523574664000-b82e-473b-1234-ead0f54gvr00',
  *          "caption"         : 'Je loves soju',
  *          "image"           : 'iVBORw0KGgo...'
  *      }
