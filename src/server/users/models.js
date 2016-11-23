@@ -244,12 +244,9 @@ export class CreatedPostManager {
 }
 export class SavedPostManager {
   static addPost(userKey, entityKey) {
-    return new Promise((resolve, reject) => {
-      const idxKey = `${ENTITY.SAVED_POST}-${STATE.ALIVE}-${userKey}-${entityKey}`;
-      db.put(idxKey, {key: entityKey}, (err) => {
-        return (err) ? reject(err) : resolve(idxKey);
-      });
-    });
+    const key = `${ENTITY.SAVED_POST}-${STATE.ALIVE}-${userKey}-${entityKey}`;
+    const value = {key: entityKey};
+    return putPromise(key, value);
   }
   static getPosts(userKey, cb) {
     const imagePromises = [];

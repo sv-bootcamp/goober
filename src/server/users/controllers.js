@@ -70,8 +70,9 @@ export default {
     });
   },
   addSavedPost(req, res, cb) {
-    SavedPostManager.addPost(req.headers.userKey, req.body.itemKey)
-    .then((idxKey) => {
+    const {userKey} = req.headers;
+    const {itemKey} = req.body;
+    SavedPostManager.addPost(userKey, itemKey).then((idxKey) => {
       res.status(200).send({
         message: 'success',
         data: idxKey

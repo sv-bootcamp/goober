@@ -247,9 +247,7 @@ test('get created posts using user controller', t => {
   const req = httpMocks.createRequest({
     method: 'GET',
     url: `/api/users/createdPosts/${testUser.key}`,
-    params: {
-      id: `${testUser.key}`
-    }
+    headers: `${testUser.key}`
   });
   req.headers.userKey = testUser.key;
   const res = httpMocks.createResponse();
