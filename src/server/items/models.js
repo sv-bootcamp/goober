@@ -37,6 +37,10 @@ export default class ItemManager {
     });
   }
   static isValid(endTime) {
+    // if endTime is '' or undefined or null, it is valid item. (no-time-limit)
+    if (!endTime) {
+      return true;
+    }
     return (new Date().getTime() - new Date(endTime).getTime() < 0) ? true : false;
   }
 }

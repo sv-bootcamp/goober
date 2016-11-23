@@ -22,15 +22,15 @@ const testItem = {
 test('validate expired date', t => {
   const expiredDate = '1999-01-01T01:11:00.851Z';
   const vaildDate = new Date().setDate(new Date().getDate() + 1);
+  const noLimit = '';
   const expected = {
-    results: {
-      expiredDate: false,
-      vaildDate: true
-    }
+    expiredDate: false,
+    vaildDate: true,
+    noLimit: true
   };
-  t.equal(ItemManager.isValid(expiredDate), expected.results.expiredDate,
-    'False when it is expired');
-  t.equal(ItemManager.isValid(vaildDate), expected.results.vaildDate, 'True when it is valid');
+  t.equal(ItemManager.isValid(expiredDate), expected.expiredDate, 'False when it is expired');
+  t.equal(ItemManager.isValid(vaildDate), expected.vaildDate, 'True when it is valid');
+  t.equal(ItemManager.isValid(noLimit), expected.noLimit, 'True when it is no-limit');
   t.end();
 });
 test('remove indexing items', t => {
