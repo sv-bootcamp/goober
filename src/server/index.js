@@ -5,7 +5,6 @@ import reactRoutes from './react-routes';
 import apiRoutes from './routes/api-routes';
 import bodyParser from 'body-parser';
 import {initMock} from './database';
-import AuthToken from './auth-token';
 export default (cb) => {
   const app = express();
   // Please remove it when it's realsed
@@ -24,7 +23,7 @@ export default (cb) => {
   app.use('/static', express.static(path.join(__dirname, '../../dist-client/static')));
   app.use('/docs', express.static(path.join(__dirname, '../../doc')));
 
-  app.use('/api', AuthToken.authenticate, apiRoutes);
+  app.use('/api', apiRoutes);
   app.use(reactRoutes);
 
   // development error handler

@@ -4,10 +4,12 @@ import images from '../images/router';
 import users from '../users/router';
 import reports from '../reports/router';
 import auth from '../auth/router';
+import AuthToken from '../auth-token';
 import validator from '../items/validator';
 
 const router = express.Router();
 
+router.use(AuthToken.authenticate);
 router.use('/items', validator, items);
 router.use('/images', images);
 router.use('/users', users);
