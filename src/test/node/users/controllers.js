@@ -230,7 +230,7 @@ test('get saved posts using user controller', t => {
     t.end(err);
   });
 });
-test('get created posts using user controller', t => {
+test('get created posts', t => {
   const testUser = mockUsers[0].value;
   const expected = {
     status: 200,
@@ -246,10 +246,8 @@ test('get created posts using user controller', t => {
   };
   const req = httpMocks.createRequest({
     method: 'GET',
-    url: `/api/users/createdPosts/${testUser.key}`,
-    params: {
-      id: `${testUser.key}`
-    }
+    url: `/api/users/createdPosts`,
+    headers: `${testUser.key}`
   });
   req.headers.userKey = testUser.key;
   const res = httpMocks.createResponse();
