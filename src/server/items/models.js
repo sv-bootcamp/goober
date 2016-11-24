@@ -1,6 +1,6 @@
 import db from '../database';
-import {KeyUtils, STATE, CATEGORY, DEFAULT_PRECISON} from '../key-utils';
-
+import {KeyUtils, STATE, CATEGORY, DEFAULT_PRECISON, ENTITY} from '../key-utils';
+import UserManager from '../../server/users/models';
 export const STATE_STRING = {
   [STATE.ALIVE]: 'alive',
   [STATE.EXPIRED]: 'expired',
@@ -43,5 +43,37 @@ export default class ItemManager {
     }
     return (new Date().getTime() - new Date(endTime).getTime() < 0) ? true : false;
   }
+  static getIsSaved(userKey, items) {
+    return UserManager.getPostKeys(ENTITY.SAVED_POST, userKey)
+    .then((posts)=>{
+      return new Promise((resolve)=>{
+        posts.sort((a, b) => {
+          return a.key > b.key;
+        });
+        const postKeys = this.getFields(posts, 'key');
+        const itemKeys = this.getFields(items, 'key');
+        let pointer = 0;
+        for (let i = 0; i < postKeys.length; i = i + 1) {
+          const idx = itemKeys.indexOf(postKeys[i], pointer);
+          if (idx !== -1) {
+            items[idx].isSaved = true;
+            for (let j = pointer; j < idx; j = j + 1) {
+              items[j].isSaved = false;
+            }
+            pointer = idx + 1;
+          }
+        }
+        for (let j = pointer; j < items.length; j = j + 1) {
+          items[j].isSaved = false;
+        }
+        resolve(items);
+      });
+    });
+  }
+  static getFields(array, field) {
+    const ans = array.map((obj)=>{
+      return obj[field];
+    });
+    return ans;
+  }
 }
-

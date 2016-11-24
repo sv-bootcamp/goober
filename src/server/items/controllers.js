@@ -12,6 +12,7 @@ export default {
     if (lat && lng && zoom) {
       const precision = KeyUtils.calcPrecisionByZoom(Number(zoom));
       const keys = KeyUtils.getKeysByArea(lat, lng, precision);
+      const {userKey} = req.headers;
       const promises = [];
       const items = [];
       const s3Connector = new S3Connector();
@@ -64,7 +65,11 @@ export default {
           });
         }));
       }
-      Promise.all(promises).then(()=>{
+      Promise.all(promises)
+      .then(() => {
+        return ItemManager.getIsSaved(userKey, items);
+      })
+      .then(() => {
         res.status(200).send({
           items
         });
