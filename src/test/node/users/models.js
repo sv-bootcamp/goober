@@ -327,7 +327,7 @@ test('delete saved post(SavedPostManager.deletePost)', t => {
   };
   clearDB().then(initMock)
   .then(() => {
-    SavedPostManager.deletePost(testUser.key, testItem.key);
+    return SavedPostManager.deletePost(testUser.key, testItem.key);
   }).then(() => {
     fetchPrefix(`${ENTITY.SAVED_POST}-`, (err, values) => {
       if (err) {
