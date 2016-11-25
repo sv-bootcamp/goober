@@ -5,14 +5,27 @@ import apiRoutes from './routes/api-routes';
 import bodyParser from 'body-parser';
 import {initMock} from './database';
 import logger from 'winston';
+
 export default (cb) => {
   const app = express();
   // Please remove it before you release.
   initMock().then(()=>{
-    /* eslint-disable no-console */
     logger.info('Mock data was successfully stored.');
-    /* eslint-enable */
   });
+
+  /*
+    config winston logger
+    @TODO it would be better if you configure winston with log monitoring service(eg. cloudwatch)
+  */
+  const logFileName = `created-logfile`;
+  logger.info(logFileName);
+  logger.configure({
+    transports: [
+      new (logger.transports.Console)(),
+      new (logger.transports.File)({filename: logFileName})
+    ]
+  });
+
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(bodyParser.json({
     limit: 1024 * 1024 * 10
@@ -58,6 +71,7 @@ export default (cb) => {
   const port = process.env.PORT || config.port;
   const server = app.listen(port, cb ? cb : () => {
     /* eslint-disable no-console */
+    logger.info(`Server started to run at ${new Date()}`);
     logger.info(`Listening on port ${port}`);
     /* eslint-enable */
   });
