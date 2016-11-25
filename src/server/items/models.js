@@ -52,14 +52,17 @@ export default class ItemManager {
         });
         const itemKeys = this.getFields(items, 'key');
         const postKeys = this.getFields(posts, 'key');
-        let pointer = 0;
-        for (let i = 0; i < itemKeys.length; i = i + 1) {
+        /*
+          @TODO
+          we can improve its performance more using
+          binaryIndexOf or saving most close index below.
+        */
+        for (let i = 0, pointer = 0; i < itemKeys.length; i = i + 1) {
           const idx = postKeys.indexOf(itemKeys[i], pointer);
           if (idx !== -1) {
             items[i].isSaved = true;
             pointer = idx + 1;
-          }
-          else {
+          } else {
             items[i].isSaved = false;
           }
         }
