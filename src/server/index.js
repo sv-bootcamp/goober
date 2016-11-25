@@ -20,7 +20,7 @@ export default (cb) => {
 
   /* request logger */
   app.use((req, res, next) => {
-    logger.info(`${req.method} - PATH : ${req.originalUrl} - ${new Date()}`);
+    logger.info(`Request - ${req.method} - PATH : ${req.originalUrl} - ${new Date()}`);
     return next();
   });
 
@@ -30,6 +30,13 @@ export default (cb) => {
   app.use('/docs', express.static(path.join(__dirname, '../../doc')));
 
   app.use('/api', apiRoutes);
+
+  app.use((req, res) => {
+    if(!res.headersSent) {
+      res.status(404).send('Request > 404 - Page Not Found');
+      logger.error(`404 Not Found - ${req.method} - PATH : ${req.originalUrl} - ${new Date()}`);
+    }
+  });
 
   // development error handler
   // will print stacktrace
@@ -41,6 +48,7 @@ export default (cb) => {
       /* eslint-enable */
     });
   }
+
 
   process.on('uncaughtException', evt => {
     /* eslint-disable no-console */
