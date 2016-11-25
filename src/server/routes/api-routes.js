@@ -24,11 +24,11 @@ router.use('/*', (req, res) => {
 });
 
 router.use((errHandler, req, res, next) => {
-  logger.error(`${errHandler.statusCode} ${errHandler.message}`);
   errHandler.statusCode = errHandler.statusCode ? errHandler.statusCode : 500;
   res.status(errHandler.statusCode).send({
     error: errHandler.message
   });
+  logger.error(`${errHandler.statusCode} ${errHandler.message}`);
   next(errHandler.error);
 });
 

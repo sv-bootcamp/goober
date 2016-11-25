@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
 import config from 'config';
-import reactRoutes from './react-routes';
 import apiRoutes from './routes/api-routes';
 import bodyParser from 'body-parser';
 import {initMock} from './database';
@@ -24,13 +23,13 @@ export default (cb) => {
     logger.info(`${req.method} - PATH : ${req.originalUrl} - ${new Date()}`);
     return next();
   });
+
   app.use('/javascripts', express.static(path.join(__dirname, '../../dist-client/javascripts')));
   app.use('/stylesheets', express.static(path.join(__dirname, '../../dist-client/stylesheets')));
   app.use('/static', express.static(path.join(__dirname, '../../dist-client/static')));
   app.use('/docs', express.static(path.join(__dirname, '../../doc')));
 
   app.use('/api', apiRoutes);
-  app.use(reactRoutes);
 
   // development error handler
   // will print stacktrace
