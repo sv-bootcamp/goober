@@ -121,13 +121,11 @@ router.get('/createdposts', requiredPermission(PERMISSION.R), controller.getCrea
  *       error: "database error"
  *     }
  */
-router.get('/:id', () => {
-  return (req, res, next) => {
-    if (res.headerSent) {
-      return;
-    }
-    next();
+router.get('/:id', (req, res, next) => {
+  if (res.headersSent) {
+    return;
   }
+  next();
 }, requiredPermission(PERMISSION.R), controller.getById);
 
 /**
