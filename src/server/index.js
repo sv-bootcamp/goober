@@ -17,7 +17,10 @@ export default (cb) => {
     config winston logger
     @TODO it would be better if you configure winston with log monitoring service(eg. cloudwatch)
   */
-  const logFileName = path.join(__dirname, `/logs/created-logfile-${new Date()}.log`);
+
+  const curDate = new Date();
+  const curDateStr = `${curDate.getMonth() + 1}-${curDate.getDate()}-${curDate.getFullYear()}`;
+  const logFileName = `./logs/created-logfile-${curDateStr}.log`;
   logger.configure({
     transports: [
       new (logger.transports.Console)(),
