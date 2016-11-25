@@ -4,7 +4,6 @@ import {KeyUtils, STATE, ENTITY, CATEGORY} from '../key-utils';
 import ItemManager, {STATE_STRING} from './models';
 import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
 import {CreatedPostManager} from '../../server/users/models';
-import logger from 'winston';
 
 export default {
   getAll: (req, res, cb) => {
@@ -66,7 +65,6 @@ export default {
         }));
       }
       Promise.all(promises).then(()=>{
-        logger.info(`Send items to user : ${req.headers.userKey}`);
         res.status(200).send({
           items
         });
