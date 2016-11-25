@@ -42,11 +42,6 @@ export default (cb) => {
     });
   }
 
-  // example of handling 404 pages
-  app.get('*', (req, res) => {
-    res.status(404).send('server/index.js > 404 - Page Not Found');
-  });
-
   process.on('uncaughtException', evt => {
     /* eslint-disable no-console */
     logger.error('uncaughtException: ', evt);
