@@ -21,6 +21,14 @@ Ref: http://keepachangelog.com/en/0.3.0/
 
 ### goober v1
 
+#### [1.0.2] - 2016-11-26
+
+- Updated test (#134)
+- Added logger (#128)
+- Fixed middleware bug (#133)
+- Initialized change-log (#132)
+- Added isSaved property to items 
+
 #### [1.0.1] - 2016-11-25
 
 - Stabilized authentication module
