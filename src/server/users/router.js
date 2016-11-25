@@ -121,7 +121,12 @@ router.get('/createdposts', requiredPermission(PERMISSION.R), controller.getCrea
  *       error: "database error"
  *     }
  */
-router.get('/:id', requiredPermission(PERMISSION.R), controller.getById);
+router.get('/:id', (req, res, next) => {
+  if (res.headersSent) {
+    return;
+  }
+  next();
+}, requiredPermission(PERMISSION.R), controller.getById);
 
 /**
  * @api {add} /users/signup signup user

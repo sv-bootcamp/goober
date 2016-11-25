@@ -54,12 +54,14 @@ router.post('/refresh', controller.refreshToken);
  *
  * @apiSuccess {String} accessToken new access token
  * @apiSuccess {String} refreshToken new refresh token
+ * @apiSuccess {String} userKey unique user key
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
  *       "accessToken"  : "new access token",
- *       "refreshToken" : "new refresh token"
+ *       "refreshToken" : "new refresh token",
+ *       "userKey"      : "unique user key"
  *     }
  *
  * @apiError (Error 400) error not granted.

@@ -109,6 +109,7 @@ test('grant anonymous user in userController', t => {
           return t.end(err);
         }
         const tokenSet = res._getData();
+        t.equal(tokenSet.userKey, mockUser.key, 'should be same user key');
         const accessToken = AuthToken.decode(TOKEN_TYPE.ACCESS, tokenSet.accessToken);
         const refreshToken = AuthToken.decode(TOKEN_TYPE.REFRESH, tokenSet.refreshToken);
         return Promise.all([accessToken, refreshToken])
@@ -176,6 +177,7 @@ test('grant facebook user in controller', t => {
       const res = httpMocks.createResponse();
       return AuthController.grant(req, res, () => {
         const tokenSet = res._getData();
+        t.equal(tokenSet.userKey, mockUser.key, 'should be same user key');
         const accessToken = AuthToken.decode(TOKEN_TYPE.ACCESS, tokenSet.accessToken);
         const refreshToken = AuthToken.decode(TOKEN_TYPE.REFRESH, tokenSet.refreshToken);
         return Promise.all([accessToken, refreshToken])

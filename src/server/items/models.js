@@ -1,6 +1,6 @@
 import db from '../database';
-import {KeyUtils, STATE, CATEGORY, DEFAULT_PRECISON} from '../key-utils';
-
+import {KeyUtils, STATE, CATEGORY, DEFAULT_PRECISON, ENTITY} from '../key-utils';
+import UserManager from '../../server/users/models';
 export const STATE_STRING = {
   [STATE.ALIVE]: 'alive',
   [STATE.EXPIRED]: 'expired',
@@ -43,5 +43,36 @@ export default class ItemManager {
     }
     return (new Date().getTime() - new Date(endTime).getTime() < 0) ? true : false;
   }
+  static fillIsSaved(userKey, items) {
+    return UserManager.getPostKeys(ENTITY.SAVED_POST, userKey)
+    .then((posts)=>{
+      return new Promise((resolve)=>{
+        posts.sort((a, b) => {
+          return a.key > b.key;
+        });
+        const itemKeys = this.getFields(items, 'key');
+        const postKeys = this.getFields(posts, 'key');
+        /*
+          @TODO
+          we can improve its performance more using
+          binaryIndexOf or saving most close index below.
+        */
+        for (let i = 0, pointer = 0; i < itemKeys.length; i = i + 1) {
+          const idx = postKeys.indexOf(itemKeys[i], pointer);
+          if (idx !== -1) {
+            items[i].isSaved = true;
+            pointer = idx + 1;
+          } else {
+            items[i].isSaved = false;
+          }
+        }
+        resolve(items);
+      });
+    });
+  }
+  static getFields(array, field) {
+    return array.map((obj)=>{
+      return obj[field];
+    });
+  }
 }
-

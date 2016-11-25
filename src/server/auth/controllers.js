@@ -26,7 +26,7 @@ export default {
     });
   },
   grant: (req, res, next) => {
-    const {userKey, grantType} = req.body;
+    let {userKey, grantType} = req.body;
     let grant;
     switch (grantType) {
     case GRANT_TYPE.ANONYMOUS:
@@ -42,8 +42,13 @@ export default {
     }
 
     grant
+    .then(tokenPayload => {
+      userKey = userKey || tokenPayload.userKey;
+      return tokenPayload;
+    })
     .then(AuthModel.encodeTokenSet)
     .then(tokenSet => {
+      tokenSet.userKey = userKey;
       res.status(200).send(tokenSet);
       return next();
     })
