@@ -5,12 +5,13 @@ import reactRoutes from './react-routes';
 import apiRoutes from './routes/api-routes';
 import bodyParser from 'body-parser';
 import {initMock} from './database';
+import logger from 'winston';
 export default (cb) => {
   const app = express();
-  // Please remove it when it's realsed
+  // Please remove it before you release.
   initMock().then(()=>{
     /* eslint-disable no-console */
-    console.log('Mock data was successfully stored.');
+    logger.info('Mock data was successfully stored.');
     /* eslint-enable */
   });
   app.use(bodyParser.urlencoded({extended: true}));
@@ -32,7 +33,7 @@ export default (cb) => {
     app.use((err, req, res) => {
       res.status(err.status || 500);
       /* eslint-disable no-console */
-      console.log(err, err.message);
+      logger.error(err, err.message);
       /* eslint-enable */
     });
   }
@@ -45,22 +46,22 @@ export default (cb) => {
   // global error catcher, need four arguments
   app.use((err, req, res) => {
     /* eslint-disable no-console */
-    console.error('Error on request %s %s', req.method, req.url);
-    console.error(err.stack);
+    logger.error('Error on request %s %s', req.method, req.url);
+    logger.error(err.stack);
     /* eslint-enable */
     res.status(500).send('Server error');
   });
 
   process.on('uncaughtException', evt => {
     /* eslint-disable no-console */
-    console.log('uncaughtException: ', evt);
+    logger.error('uncaughtException: ', evt);
     /* eslint-enable */
   });
 
   const port = process.env.PORT || config.port;
   const server = app.listen(port, cb ? cb : () => {
     /* eslint-disable no-console */
-    console.log(`Listening on port ${port}`);
+    logger.info(`Listening on port ${port}`);
     /* eslint-enable */
   });
   return server;
