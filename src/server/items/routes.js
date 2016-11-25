@@ -22,40 +22,42 @@ const router = express.Router();
  *     {
  *       "items": [
  *         {
- *            "title": "Union Square Public Toilet",
- *            "lat": 37.7632684,
- *            "lng": -122.4182374,
- *            "address": "2295 Harrison St, San Francisco, CA 94110, United States",
- *            "createdDate": "2016-10-08T01:11:46.851Z",
+ *            "title"       : "Union Square Public Toilet",
+ *            "lat"         : 37.7632684,
+ *            "lng"         : -122.4182374,
+ *            "address"     : "2295 Harrison St, San Francisco, CA 94110, United States",
+ *            "createdDate" : "2016-10-08T01:11:46.851Z",
  *            "modifiedDate": "2016-10-08T01:11:46.851Z",
- *            "category": "facility",
- *            "startTime": "2016-10-08T01:11:46.851Z",
- *            "endTime": "2016-10-20T01:11:46.851Z",
+ *            "category"    : "facility",
+ *            "startTime"   : "2016-10-08T01:11:46.851Z",
+ *            "endTime"     : "2016-10-20T01:11:46.851Z",
  *            "key": "item-8523910540000-b82e-473b-1234-ead0f190b005",
- *            "imageUrls": [
+ *            "imageUrls"   : [
  *              "https://goober-item-image",
  *              "https://goober-item-image",
  *              "https://goober-item-image",
  *              "https://goober-item-image"
- *            ]
+ *            ],
+ *            "isSaved"     : true
  *          },
  *          {
- *            "title": "Cafe Free Wifi",
- *            "lat": 37.7652022,
- *            "lng": -122.4201257,
- *            "address": "2500 17th St, San Francisco, CA 94110, United State",
- *            "createdDate": "2016-10-09T01:11:46.851Z",
+ *            "title"       : "Cafe Free Wifi",
+ *            "lat"         : 37.7652022,
+ *            "lng"         : -122.4201257,
+ *            "address"     : "2500 17th St, San Francisco, CA 94110, United State",
+ *            "createdDate" : "2016-10-09T01:11:46.851Z",
  *            "modifiedDate": "2016-10-09T01:11:46.851Z",
- *            "category": "facility",
- *            "startTime": "2016-10-09T01:11:46.851Z",
- *            "endTime": "2016-10-19T01:11:46.851Z",
- *           "key": "item-8523910540001-b82e-473b-1234-ead0f190b004",
- *           "imageUrls": [
- *             "https://goober-item-image",
+ *            "category"    : "facility",
+ *            "startTime"   : "2016-10-09T01:11:46.851Z",
+ *            "endTime"     : "2016-10-19T01:11:46.851Z",
+ *            "key"         : "item-8523910540001-b82e-473b-1234-ead0f190b004",
+ *            "imageUrls"   : [
+ *              "https://goober-item-image",
  *              "https://goober-item-image",
  *              "https://goober-item-image",
  *              "https://goober-item-image"
- *            ]
+ *            ],
+ *            "isSaved"     : false
  *          },
  *       ]
  *    }
