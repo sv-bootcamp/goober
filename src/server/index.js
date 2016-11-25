@@ -49,7 +49,6 @@ export default (cb) => {
     });
   }
 
-
   process.on('uncaughtException', evt => {
     /* eslint-disable no-console */
     logger.error('uncaughtException: ', evt);
