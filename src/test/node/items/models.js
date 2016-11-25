@@ -3,6 +3,7 @@ import testDB, {initMock, clearDB} from '../../../server/database';
 import {expiredItem} from '../../../server/database-mock-data';
 import ItemManager, {STATE_STRING} from '../../../server/items/models';
 import {KeyUtils, ENTITY, STATE, DEFAULT_PRECISON, CATEGORY} from '../../../server/key-utils';
+import {mockUsers, mockItems, mockSavedPosts} from '../../../server/database-mock-data';
 
 const testItem = {
   title: 'Lion popup store',
@@ -146,5 +147,56 @@ test('Check endTime value and change indexing items', t => {
   .catch((err)=>{
     t.fail('Error while reading from DB');
     t.end(err);
+  });
+});
+test('make isSaved field in items(ItemManager.fillIsSaved)', t => {
+  const testUser = mockUsers[0];
+  const testItems = mockItems.map((item) => {
+    return item.value;
+  });
+  const expected = {
+    userKey: testUser.key,
+    // get saved posts of test user
+    postKeys: mockSavedPosts.filter((post)=>{
+      const prefix = `${ENTITY.SAVED_POST}-${STATE.ALIVE}-${testUser.key}`;
+      return (post.key.startsWith(prefix));
+    }).map((post)=>{
+      return post.value.key;
+    })
+  };
+  testItems.sort((a, b) => {
+    return a.key > b.key;
+  });
+  if (expected.postKeys.length === 0) {
+    t.fail('There is no expected posts');
+    t.end();
+    return;
+  }
+  ItemManager.fillIsSaved(testUser.key, testItems)
+  .then((items) => {
+    const truePosts = [];
+    const falsePosts = [];
+    items.map((item) => {
+      if (!item.hasOwnProperty('isSaved')) {
+        t.fail('No isSaved field');
+      } else if (item.isSaved) {
+        truePosts.push(item);
+      } else if (!item.isSaved) {
+        falsePosts.push(item);
+      }
+    });
+    t.equal(truePosts.length, expected.postKeys.length,
+     `should be same length : ${expected.postKeys.length}`);
+    truePosts.map((post)=>{
+      if (expected.postKeys.indexOf(post.key) === -1) {
+        t.fail('isSaved value is wrong');
+      }
+    });
+    t.end();
+    return;
+  }).catch((err)=>{
+    t.fail();
+    t.end(err);
+    return;
   });
 });

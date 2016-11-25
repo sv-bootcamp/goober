@@ -246,7 +246,7 @@ test('get created posts', t => {
   };
   const req = httpMocks.createRequest({
     method: 'GET',
-    url: `/api/users/createdPosts`,
+    url: '/api/users/createdPosts',
     headers: `${testUser.key}`
   });
   req.headers.userKey = testUser.key;
