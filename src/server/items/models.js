@@ -43,7 +43,7 @@ export default class ItemManager {
     }
     return (new Date().getTime() - new Date(endTime).getTime() < 0) ? true : false;
   }
-  static getIsSaved(userKey, items) {
+  static fillIsSaved(userKey, items) {
     return UserManager.getPostKeys(ENTITY.SAVED_POST, userKey)
     .then((posts)=>{
       return new Promise((resolve)=>{

@@ -149,7 +149,7 @@ test('Check endTime value and change indexing items', t => {
     t.end(err);
   });
 });
-test('make isSaved field in items(ItemManager.getIsSaved)', t => {
+test('make isSaved field in items(ItemManager.fillIsSaved)', t => {
   const testUser = mockUsers[0];
   const testItems = mockItems.map((item) => {
     return item.value;
@@ -172,7 +172,7 @@ test('make isSaved field in items(ItemManager.getIsSaved)', t => {
     t.end();
     return;
   }
-  ItemManager.getIsSaved(testUser.key, testItems)
+  ItemManager.fillIsSaved(testUser.key, testItems)
   .then((items) => {
     const truePosts = [];
     const falsePosts = [];

@@ -67,7 +67,7 @@ export default {
       }
       Promise.all(promises)
       .then(() => {
-        return ItemManager.getIsSaved(userKey, items);
+        return ItemManager.fillIsSaved(userKey, items);
       })
       .then(() => {
         res.status(200).send({
