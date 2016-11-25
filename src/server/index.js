@@ -47,15 +47,6 @@ export default (cb) => {
     res.status(404).send('server/index.js > 404 - Page Not Found');
   });
 
-  // global error catcher, need four arguments
-  app.use((err, req, res) => {
-    /* eslint-disable no-console */
-    logger.error('Error on request %s %s', req.method, req.url);
-    logger.error(err.stack);
-    /* eslint-enable */
-    res.status(500).send('Server error');
-  });
-
   process.on('uncaughtException', evt => {
     /* eslint-disable no-console */
     logger.error('uncaughtException: ', evt);
