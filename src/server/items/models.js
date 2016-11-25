@@ -50,30 +50,26 @@ export default class ItemManager {
         posts.sort((a, b) => {
           return a.key > b.key;
         });
-        const postKeys = this.getFields(posts, 'key');
         const itemKeys = this.getFields(items, 'key');
+        const postKeys = this.getFields(posts, 'key');
         let pointer = 0;
-        for (let i = 0; i < postKeys.length; i = i + 1) {
-          const idx = itemKeys.indexOf(postKeys[i], pointer);
+        for (let i = 0; i < itemKeys.length; i = i + 1) {
+          const idx = postKeys.indexOf(itemKeys[i], pointer);
           if (idx !== -1) {
-            items[idx].isSaved = true;
-            for (let j = pointer; j < idx; j = j + 1) {
-              items[j].isSaved = false;
-            }
+            items[i].isSaved = true;
             pointer = idx + 1;
           }
-        }
-        for (let j = pointer; j < items.length; j = j + 1) {
-          items[j].isSaved = false;
+          else {
+            items[i].isSaved = false;
+          }
         }
         resolve(items);
       });
     });
   }
   static getFields(array, field) {
-    const ans = array.map((obj)=>{
+    return array.map((obj)=>{
       return obj[field];
     });
-    return ans;
   }
 }
