@@ -2,6 +2,7 @@ import {APIError} from '../ErrorHandler';
 import AuthToken, {TOKEN_TYPE} from '../auth-token';
 import AuthModel, {GRANT_TYPE} from './models';
 import {FACEBOOK_ERROR} from '../users/facebook-manager';
+
 export default {
   refreshToken: (req, res, next) => {
     AuthToken.decode(TOKEN_TYPE.REFRESH, req.body.refreshToken)
@@ -17,8 +18,7 @@ export default {
         statusCode: 400,
         message: 'Not a valid token type'
       }));
-    })
-    .catch(err => {
+    }).catch(err => {
       return next(new APIError(err, {
         statusCode: 400,
         message: 'Not a valid refresh token'
