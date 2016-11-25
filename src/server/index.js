@@ -19,6 +19,11 @@ export default (cb) => {
     limit: 1024 * 1024 * 10
   }));
 
+  /* request logger */
+  app.use((req, res, next) => {
+    logger.info(`${req.method} - PATH : ${req.originalUrl} - ${new Date()}`);
+    return next();
+  });
   app.use('/javascripts', express.static(path.join(__dirname, '../../dist-client/javascripts')));
   app.use('/stylesheets', express.static(path.join(__dirname, '../../dist-client/stylesheets')));
   app.use('/static', express.static(path.join(__dirname, '../../dist-client/static')));
