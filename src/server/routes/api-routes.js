@@ -6,6 +6,7 @@ import reports from '../reports/router';
 import auth from '../auth/router';
 import AuthToken from '../auth-token';
 import validator from '../items/validator';
+import logger from 'winston';
 
 const router = express.Router();
 
@@ -23,6 +24,7 @@ router.use('/*', (req, res) => {
 });
 
 router.use((errHandler, req, res, next) => {
+  logger.error(`${errHandler.statusCode} ${errHandler.message}`);
   errHandler.statusCode = errHandler.statusCode ? errHandler.statusCode : 500;
   res.status(errHandler.statusCode).send({
     error: errHandler.message
