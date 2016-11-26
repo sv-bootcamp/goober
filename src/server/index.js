@@ -43,8 +43,11 @@ export default (cb) => {
   app.use('/stylesheets', express.static(path.join(__dirname, '../../dist-client/stylesheets')));
   app.use('/static', express.static(path.join(__dirname, '../../dist-client/static')));
   app.use('/docs', express.static(path.join(__dirname, '../../doc')));
-
   app.use('/api', apiRoutes);
+  // @TODO: make root page
+  app.use('/', (req, res) => {
+    res.send('Pingo - backend');
+  });
 
   app.use((req, res) => {
     if(!res.headersSent) {
