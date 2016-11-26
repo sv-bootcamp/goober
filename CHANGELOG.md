@@ -21,6 +21,11 @@ Ref: http://keepachangelog.com/en/0.3.0/
 
 ### goober v1
 
+#### [1.0.3] - 2016-11-27
+
+- Added root page route for AWS-ELB health checking and our HTTPS domain
+- Added root page route for health checking (ELB)
+
 #### [1.0.2] - 2016-11-26
 
 - Updated test (#134)
