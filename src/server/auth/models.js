@@ -1,7 +1,7 @@
 import jwt, {TOKEN_TYPE} from '../auth-token';
 import bcrypt from '../bcrypt';
-import UserModel, {USER_TYPE} from '../users/models';
-import FacebookManager from '../users/facebook-manager';
+import {USER_TYPE} from '../users/models';
+import FacebookManager, {FacebookModel} from '../users/facebook-manager';
 import {getPromise} from '../database';
 
 export const GRANT_TYPE = {
@@ -48,12 +48,7 @@ const AuthModel = {
   },
   grantFacebook: (facebookToken) => {
     return FacebookManager.getId(facebookToken)
-      .then(id => {
-        return UserModel.getUserIndexKey({
-          userType: USER_TYPE.FACEBOOK,
-          facebookId: id
-        });
-      })
+      .then(FacebookModel.getIdxKey)
       .then(getPromise)
       .then(idxData => {
         return {
