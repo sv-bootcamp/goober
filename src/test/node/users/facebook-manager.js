@@ -1,7 +1,7 @@
 import test from 'tape';
 import FacebookManager, {FacebookModel, APP_ID, FACEBOOK_TEST_ID}
   from '../../../server/users/facebook-manager';
-import {ENTITY, STATE} from '../../../server/key-utils'
+import {ENTITY, STATE} from '../../../server/key-utils';
 import {clearDB, putPromise} from '../../../server/database';
 
 test('should get user profile', t => {
@@ -96,10 +96,10 @@ test('should be check duplicated facebook user', t => {
       t.end();
     })
     .then(() => {
-      return putPromise(mockIdxKey, {key : mockUser.key})
+      return putPromise(mockIdxKey, {key: mockUser.key});
     })
     .then(() => {
-      return FacebookModel.isDuplicated(mockUser.facebookId)
+      return FacebookModel.isDuplicated(mockUser.facebookId);
     })
     .then(() => {
       t.fail('facebook user duplicate check failed.');
