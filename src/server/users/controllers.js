@@ -148,6 +148,12 @@ export default {
           });
       })
       .catch((err) => {
+        if (err.message === "Already exist.") {
+          return next(new APIError(err, {
+            statusCode: 400,
+            message: err.message
+          }));
+        }
         next(new APIError(err, {
           statusCode: 500,
           message: err.message

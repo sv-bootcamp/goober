@@ -1,7 +1,7 @@
 import {KeyUtils, ENTITY, STATE} from '../key-utils';
 import bcrypt from '../bcrypt';
 import db, {fetchPrefix, putPromise, getPromise} from '../database';
-import FacebookManager from './facebook-manager';
+import FacebookManager, {FacebookModel} from './facebook-manager';
 import {PERMISSION} from '../permission';
 import {STATE_STRING} from '../../server/items/models';
 import ImageManager from '../../server/images/models';
@@ -68,16 +68,14 @@ const UserManager = {
         userValue.facebookId = profile.id;
         return profile.id;
       })
+      .then(FacebookModel.isDuplicated)
       .then(FacebookManager.getProfileImage)
       .then(profileImgUrl => {
         userValue.profileImgUrl = profileImgUrl;
         return putPromise(userKey, userValue);
       })
       .then(() => {
-        const userIdx = UserManager.getUserIndexKey({
-          userType: USER_TYPE.FACEBOOK,
-          facebookId: userValue.facebookId
-        });
+        const userIdx = FacebookModel.getIdxKey(userValue.facebookId);
         return putPromise(userIdx, {key: userKey});
       })
       .then(() => {
@@ -90,17 +88,6 @@ const UserManager = {
   genUserKey: () => {
     const timeHash = KeyUtils.genTimeHash();
     return `user-${timeHash}`;
-  },
-  getUserIndexKey: ({userType, state, userId, facebookId}) => {
-    switch (userType) {
-    case USER_TYPE.ANONYMOUS:
-      return `${ENTITY.USER}-${state || STATE.ALIVE}-${ENTITY.ANONYMOUS}-${userId}`;
-    case USER_TYPE.FACEBOOK:
-      return `${ENTITY.USER}-${state || STATE.ALIVE}` +
-        `-${ENTITY.FACEBOOK}-${facebookId}`;
-    default:
-      return null;
-    }
   },
   modifyUser: (key, value, cb) => {
     return new Promise((resolve, reject) => {
