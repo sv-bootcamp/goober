@@ -50,7 +50,7 @@ export default (cb) => {
   });
 
   app.use((req, res) => {
-    if(!res.headersSent) {
+    if (!res.headersSent) {
       res.status(404).send('Request > 404 - Page Not Found');
       logger.error(`404 Not Found - ${req.method} - PATH : ${req.originalUrl} - ${new Date()}`);
     }
@@ -61,24 +61,18 @@ export default (cb) => {
   if (app.get('env') !== 'PROD') {
     app.use((err, req, res) => {
       res.status(err.status || 500);
-      /* eslint-disable no-console */
       logger.error(err, err.message);
-      /* eslint-enable */
     });
   }
 
   process.on('uncaughtException', evt => {
-    /* eslint-disable no-console */
     logger.error('uncaughtException: ', evt);
-    /* eslint-enable */
   });
 
   const port = process.env.PORT || config.port;
   const server = app.listen(port, cb ? cb : () => {
-    /* eslint-disable no-console */
     logger.info(`Server started to run at ${new Date()}`);
     logger.info(`Listening on port ${port}`);
-    /* eslint-enable */
   });
   return server;
 };
