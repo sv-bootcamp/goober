@@ -112,7 +112,7 @@ router.post('/grant', controller.grant);
  * @apiErrorExample {json} Invalid-Token-Error-Response
  *     HTTP/1.1 400 Bad Request
  *     {
- *       "message": "Access Token is invalid"
+ *       "error": "Access Token is invalid"
  *     }
  *
  */
