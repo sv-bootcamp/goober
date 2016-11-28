@@ -71,7 +71,7 @@ export const FacebookModel = {
       })
       .catch(err => {
         if (err.message === 'Already exist.') {
-          throw new Error('Already exist');
+          throw err;
         }
         return facebookId;
       });

@@ -81,7 +81,8 @@ test('should be check duplicated facebook user', t => {
   };
   const mockIdxKey = `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
   const expected = {
-    facebookId: mockUser.facebookId
+    facebookId: mockUser.facebookId,
+    message: 'Already exist.'
   };
   clearDB()
     .then(() => {
@@ -105,7 +106,7 @@ test('should be check duplicated facebook user', t => {
       t.end();
     })
     .catch(err => {
-      t.ok(err.message);
+      t.equal(err.message, expected.message, 'shoulde be same error message.');
       t.end();
     });
 });
