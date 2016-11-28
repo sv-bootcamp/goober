@@ -19,8 +19,8 @@ export default (cb) => {
   */
 
   const curDate = new Date();
-  const curDateStr = `${curDate.getMonth() + 1}-${curDate.getDate()}-${curDate.getFullYear()}`;
-  const logFileName = `./logs/created-logfile-${curDateStr}.log`;
+  const curDateStr = `${curDate.getDate()}-${curDate.getMonth() + 1}-${curDate.getFullYear()}`;
+  const logFileName = `./logs/${curDateStr}.log`;
   logger.configure({
     transports: [
       new (logger.transports.Console)(),
