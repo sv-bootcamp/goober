@@ -59,6 +59,7 @@ export default {
           message: 'Internal Database Error'
         }));
       });
+      return;
     } else if (image) {
       // get an images
       ImageManager.fetchImage([image], (errFetch, values) => {
@@ -75,7 +76,12 @@ export default {
         cb();
         return;
       });
+      return;
     }
+    cb(new APIError(new Error(), {
+      statusCode: 400,
+      message: 'Bad Request : No query string'
+    }));
   },
   post(req, res, cb) {
     assert(req.headers.userKey, 'userKey should be provided.');
