@@ -154,7 +154,7 @@ export default {
             message: err.message
           }));
         }
-        next(new APIError(err, {
+        return next(new APIError(err, {
           statusCode: 500,
           message: err.message
         }));
