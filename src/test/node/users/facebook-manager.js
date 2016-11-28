@@ -81,32 +81,22 @@ test('should be check duplicated facebook user', t => {
   };
   const mockIdxKey = `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
   const expected = {
-    facebookId: mockUser.facebookId,
-    message: 'Already exist.'
+    isExist: true
   };
-  clearDB()
-    .then(() => {
-      return FacebookModel.isDuplicated(mockUser.facebookId);
-    })
-    .then(facebookId => {
-      t.equal(facebookId, expected.facebookId, 'should be same facebook id.');
-    })
-    .catch(err => {
-      t.fail(err.message);
-      t.end();
-    })
-    .then(() => {
-      return putPromise(mockIdxKey, {key: mockUser.key});
-    })
-    .then(() => {
-      return FacebookModel.isDuplicated(mockUser.facebookId);
-    })
-    .then(() => {
-      t.fail('facebook user duplicate check failed.');
-      t.end();
-    })
-    .catch(err => {
-      t.equal(err.message, expected.message, 'shoulde be same error message.');
-      t.end();
-    });
+
+  clearDB().then(() => {
+    return FacebookModel.isDuplicated(mockUser.facebookId);
+  }).then((isExist) => {
+    t.notEqual(isExist, expected.isExist, 'Facebook id is not exist');
+    return putPromise(mockIdxKey, {key: mockUser.key});
+  }).then(() => {
+    return FacebookModel.isDuplicated(mockUser.facebookId);
+  }).then((isExist) => {
+    t.equal(isExist, expected.isExist, 'Facebook id is already exist exist');
+    t.end();
+  }).catch(err => {
+    t.comment(err.message);
+    t.fail();
+    t.end();
+  });
 });
