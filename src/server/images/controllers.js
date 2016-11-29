@@ -78,7 +78,7 @@ export default {
     }
   },
   post(req, res, cb) {
-    assert(req.body.userKey, 'userKey should be provided.');
+    assert(req.headers.userKey, 'userKey should be provided.');
     assert(req.body.itemKey, 'itemKey should be provided.');
     const currentTime = new Date();
     const timeHash = KeyUtils.genTimeHash(currentTime);
