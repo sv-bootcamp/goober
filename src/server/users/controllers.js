@@ -148,7 +148,7 @@ export default {
           });
       })
       .catch((err) => {
-        if (err.message === 'Already exist.') {
+        if (err.message === 'Already exists.') {
           return next(new APIError(err, {
             statusCode: 400,
             message: err.message

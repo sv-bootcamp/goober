@@ -71,7 +71,7 @@ const UserManager = {
       .then(FacebookModel.isDuplicated)
       .then((isExist) => {
         if (isExist) {
-          throw new Error('Already exist');
+          throw new Error('Already exists');
         }
         FacebookManager.getProfileImage();
       })

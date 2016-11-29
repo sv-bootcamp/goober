@@ -92,7 +92,7 @@ test('should be check duplicated facebook user', t => {
   }).then(() => {
     return FacebookModel.isDuplicated(mockUser.facebookId);
   }).then((isExist) => {
-    t.equal(isExist, expected.isExist, 'Facebook id is already exist exist');
+    t.equal(isExist, expected.isExist, 'Facebook id is already exist');
     t.end();
   }).catch(err => {
     t.comment(err.message);
