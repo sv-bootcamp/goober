@@ -4,6 +4,7 @@ import {S3Connector} from '../aws-s3';
 import {APIError} from '../ErrorHandler';
 import ImageManager from './models';
 import {CreatedPostManager} from '../users/models';
+import assert from 'assert';
 
 export default {
   get(req, res, cb) {
@@ -77,6 +78,8 @@ export default {
     }
   },
   post(req, res, cb) {
+    assert(req.headers.userKey, 'userKey should be provided.');
+    assert(req.body.itemKey, 'itemKey should be provided.');
     const currentTime = new Date();
     const timeHash = KeyUtils.genTimeHash(currentTime);
     const key = `${ENTITY.IMAGE}-${timeHash}`;
