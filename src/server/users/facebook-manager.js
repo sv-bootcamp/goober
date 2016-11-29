@@ -1,7 +1,7 @@
 import request from 'request-promise';
 import config from 'config';
 import {ENTITY, STATE} from '../key-utils';
-import {getPromise} from '../database';
+import db from '../database';
 
 const FACEBOOK_BASE_URL = 'https://graph.facebook.com';
 const FACEBOOK_USER_PROFILE_URL = '/me';
@@ -65,16 +65,19 @@ export const FacebookModel = {
   },
   isDuplicated: (facebookId) => {
     const idxKey = FacebookModel.getIdxKey(facebookId);
-    return getPromise(idxKey)
-      .then(() => {
-        throw new Error('Already exist.');
-      })
-      .catch(err => {
-        if (err.message === 'Already exist.') {
-          throw err;
+    return new Promise((resolve, reject) => {
+      db.get(idxKey, (err) => {
+        if (err) {
+          if (err.notFound) {
+            resolve(false);
+            return;
+          }
+          reject(err);
+          return;
         }
-        return facebookId;
+        resolve(true);
       });
+    });
   }
 };
 

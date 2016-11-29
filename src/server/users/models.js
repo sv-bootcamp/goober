@@ -69,7 +69,12 @@ const UserManager = {
         return profile.id;
       })
       .then(FacebookModel.isDuplicated)
-      .then(FacebookManager.getProfileImage)
+      .then((isExist) => {
+        if (isExist) {
+          throw new Error('Already exist');
+        }
+        FacebookManager.getProfileImage();
+      })
       .then(profileImgUrl => {
         userValue.profileImgUrl = profileImgUrl;
         return putPromise(userKey, userValue);
