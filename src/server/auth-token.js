@@ -61,10 +61,7 @@ class AuthToken {
   static authenticate(req, res, next) {
     const bearerToken = req.headers.authorization;
     if (!bearerToken) {
-      next(new APIError(new Error('No token in request header'), {
-        statusCode: 403,
-        message: 'No token in header'
-      }));
+      next();
       return;
     }
     const jwtToken = bearerToken.split(' ')[1];
