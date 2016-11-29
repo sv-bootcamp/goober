@@ -61,21 +61,25 @@ class AuthToken {
   static authenticate(req, res, next) {
     const bearerToken = req.headers.authorization;
     if (!bearerToken) {
-      return next();
+      next(new APIError(new Error('No token in request header'), {
+        statusCode: 403,
+        message: 'No token in header'
+      }));
+      return;
     }
     const jwtToken = bearerToken.split(' ')[1];
-    return AuthToken.decode(TOKEN_TYPE.ACCESS, jwtToken)
-      .then(payload => {
-        req.headers.userKey = payload.userKey;
-        req.headers.permission = USER_PERMISSION[payload.userType];
-        next();
-      })
-      .catch(err => {
-        next(new APIError(err, {
-          statusCode: 400,
-          message: err.message
-        }));
-      });
+    AuthToken.decode(TOKEN_TYPE.ACCESS, jwtToken)
+    .then(payload => {
+      req.headers.userKey = payload.userKey;
+      req.headers.permission = USER_PERMISSION[payload.userType];
+      next();
+    })
+    .catch(err => {
+      next(new APIError(err, {
+        statusCode: 400,
+        message: err.message
+      }));
+    });
   }
 }
 
