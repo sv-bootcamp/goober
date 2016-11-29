@@ -121,7 +121,7 @@ export default {
     })
     .then((image) => {
       const createdPost = {
-        entity: ENTITY.ITEM,
+        entity: ENTITY.IMAGE,
         itemKey: image.itemKey,
         imageKey: image.key
       };
