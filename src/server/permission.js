@@ -1,4 +1,4 @@
-import assert from 'assert';
+import {APIError} from './ErrorHandler';
 
 export const PERMISSION = {
   RW: 'rw',
@@ -9,7 +9,13 @@ export const PERMISSION = {
 
 export const requiredPermission = (permission) => {
   return (req, res, next) => {
-    assert(req.headers.permission, 'No permission in request header');
+    if (!req.headers.permission) {
+      next(new APIError(new Error('No permission in request header'), {
+        statusCode: 403,
+        message: 'No permission in request header'
+      }));
+      return;
+    }
 
     let requireR = permission[0] ? permission[0] : null;
     let requireW = permission[1] ? permission[1] : null;
