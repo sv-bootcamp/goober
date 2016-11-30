@@ -21,6 +21,18 @@ Ref: http://keepachangelog.com/en/0.3.0/
 
 ### goober v1
 
+#### [1.0.4] - 2016-11-30
+
+- Blocked duplicated signup. (#138)
+- Changed response status code in case un-authorized request (#144)
+- CreatedPosts/image bug fix (#145)
+- Added error-handler to image-controller (GET) (#139)
+- Updated apidoc (#141)
+- Added property assertion to image/post (#143)
+- Changed log file name (#136)
+- Added ping address for health-checking (#140)
+- Removed lint warnings (#137)
+
 #### [1.0.3] - 2016-11-27
 
 - Added root page route for AWS-ELB health checking and our HTTPS domain
@@ -32,7 +44,7 @@ Ref: http://keepachangelog.com/en/0.3.0/
 - Added logger (#128)
 - Fixed middleware bug (#133)
 - Initialized change-log (#132)
-- Added isSaved property to items 
+- Added isSaved property to items
 
 #### [1.0.1] - 2016-11-25
 
