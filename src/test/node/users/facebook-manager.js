@@ -65,6 +65,7 @@ test('should get facebook test user token from facebook', t => {
       t.end(err);
     });
 });
+
 test('should get facebook user index key', t => {
   const MOCK_FACEBOOK_ID = 'mockFacebookId';
   const expected = {
@@ -74,6 +75,7 @@ test('should get facebook user index key', t => {
   t.equal(idxKey, expected.idxKey, 'should be same facebook index key.');
   t.end();
 });
+
 test('should be check duplicated facebook user', t => {
   const mockUser = {
     key: 'mockUserKey',
