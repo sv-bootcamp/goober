@@ -37,10 +37,11 @@ test('required RW permitted R', t => {
   t.end();
 });
 
-test('required RW permitted R', t => {
+test('required RW permitted nothing', t => {
   const expected = {
-    name: 'AssertionError'
+    statusCode: 403
   };
+  
   const req = httpMock.createRequest({
     method: 'GET/POST/PUT/DELETE',
     url: '/all/urls',
@@ -48,13 +49,14 @@ test('required RW permitted R', t => {
   });
   const res = httpMock.createResponse();
 
-  try {
-    requiredPermission(PERMISSION.RW)(req, res, () => {
-      t.fail();
-    });
-  } catch (error) {
-    t.equal(error.name, expected.name, 'should be same error');
-  } finally {
+  requiredPermission(PERMISSION.RW)(req, res, (err) => {
+    if (err) {
+      t.skip('error is occured (valid)');
+      t.equal(err.statusCode, expected.statusCode, 'should be same status');
+      t.end();
+      return;
+    }
+    t.fail();
     t.end();
-  }
+  });
 });
