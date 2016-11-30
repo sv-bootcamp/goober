@@ -1,5 +1,8 @@
 import test from 'tape';
-import FacebookManager, {APP_ID, FACEBOOK_TEST_ID} from '../../../server/users/facebook-manager';
+import FacebookManager, {FacebookModel, APP_ID, FACEBOOK_TEST_ID}
+  from '../../../server/users/facebook-manager';
+import {ENTITY, STATE} from '../../../server/key-utils';
+import {clearDB, putPromise} from '../../../server/database';
 
 test('should get user profile', t => {
   const expected = {
@@ -61,4 +64,41 @@ test('should get facebook test user token from facebook', t => {
       t.fail();
       t.end(err);
     });
+});
+
+test('should get facebook user index key', t => {
+  const MOCK_FACEBOOK_ID = 'mockFacebookId';
+  const expected = {
+    idxKey: `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.FACEBOOK}-${MOCK_FACEBOOK_ID}`
+  };
+  const idxKey = FacebookModel.getIdxKey(MOCK_FACEBOOK_ID);
+  t.equal(idxKey, expected.idxKey, 'should be same facebook index key.');
+  t.end();
+});
+
+test('should be check duplicated facebook user', t => {
+  const mockUser = {
+    key: 'mockUserKey',
+    facebookId: 'mockFacebookId'
+  };
+  const mockIdxKey = `${ENTITY.USER}-${STATE.ALIVE}-${ENTITY.FACEBOOK}-${mockUser.facebookId}`;
+  const expected = {
+    isExist: true
+  };
+
+  clearDB().then(() => {
+    return FacebookModel.isDuplicated(mockUser.facebookId);
+  }).then((isExist) => {
+    t.notEqual(isExist, expected.isExist, 'Facebook id is not exist');
+    return putPromise(mockIdxKey, {key: mockUser.key});
+  }).then(() => {
+    return FacebookModel.isDuplicated(mockUser.facebookId);
+  }).then((isExist) => {
+    t.equal(isExist, expected.isExist, 'Facebook id is already exist');
+    t.end();
+  }).catch(err => {
+    t.comment(err.message);
+    t.fail();
+    t.end();
+  });
 });

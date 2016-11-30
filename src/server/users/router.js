@@ -155,6 +155,13 @@ router.get('/:id', (req, res, next) => {
  *       "userSecret"   : "userSecret"
  *     }
  *
+ * @apiError (Error 400) error user is already exist.
+ * @apiErrorExample {json} USER-ALREADY-EXIST-Response:
+ *     HTTP/1.1 400 Internal Server Error
+ *     {
+ *       error: "Already exist."
+ *     }
+ *
  * @apiError (Error 500) error Database Internal error
  * @apiErrorExample {json} Database-Error-Response:
  *     HTTP/1.1 500 Internal Server Error

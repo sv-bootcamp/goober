@@ -1,5 +1,7 @@
 import request from 'request-promise';
 import config from 'config';
+import {ENTITY, STATE} from '../key-utils';
+import db from '../database';
 
 const FACEBOOK_BASE_URL = 'https://graph.facebook.com';
 const FACEBOOK_USER_PROFILE_URL = '/me';
@@ -54,6 +56,28 @@ const FacebookManager = {
       .then(res => {
         return res.data[0].access_token;
       });
+  }
+};
+
+export const FacebookModel = {
+  getIdxKey: (facebookId, state) => {
+    return `${ENTITY.USER}-${state || STATE.ALIVE}-${ENTITY.FACEBOOK}-${facebookId}`;
+  },
+  isDuplicated: (facebookId) => {
+    const idxKey = FacebookModel.getIdxKey(facebookId);
+    return new Promise((resolve, reject) => {
+      db.get(idxKey, (err) => {
+        if (err) {
+          if (err.notFound) {
+            resolve(false);
+            return;
+          }
+          reject(err);
+          return;
+        }
+        resolve(true);
+      });
+    });
   }
 };
 
