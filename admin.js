@@ -3,10 +3,10 @@ const levelup = require('levelup');
 
 const Commands = {
   db: levelup(config.database, {valueEncoding: 'json'}),
-  db_get_all: function() {
+  db_get_all: function(prefix = '') {
     this.db.createReadStream({
-      start: '\x00',
-      end: '\xFF'
+      start: `${prefix}\x00`,
+      end: `${prefix}\xFF`
     })
     .on('data', console.log)
     .on('error', console.log);
