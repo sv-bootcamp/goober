@@ -63,4 +63,5 @@ config/aws.json
 .editorconfig
 .travis.yml
 
-
+# admin js file
+admin.js
