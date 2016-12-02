@@ -1,9 +1,11 @@
 import db from '../database';
+import {APIError} from '../ErrorHandler';
 
 export default {
   db_get: (req, res, next) => { // eslint-disable-line camelcase
     const prefix = req.query.prefix ? req.query.prefix : '';
     const collection = [];
+    let error;
 
     db.createReadStream({
       start: `${prefix}`,
@@ -13,11 +15,11 @@ export default {
       collection.push(val);
     })
     .on('error', (err) => {
-      res.status(500).send(err);
-      return next();
+      error = err;
+      return next(new APIError(err));
     })
     .on('close', () => {
-      if (res.headersSent) {
+      if (error) {
         return;
       }
       res.send(collection);
@@ -30,8 +32,7 @@ export default {
     const {key, value} = req.body;
     db.put(key, value, (err) => {
       if (err) {
-        res.status(500).send(err);
-        return next();
+        return next(new APIError(err));
       }
       res.sendStatus(200);
       return next();
@@ -42,8 +43,7 @@ export default {
     const key = req.params.id;
     db.del(key, (err) => {
       if (err) {
-        res.status(500).send(err);
-        return next();
+        return next(new APIError(err));
       }
       res.sendStatus(200);
       return next();

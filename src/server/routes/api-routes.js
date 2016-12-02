@@ -12,7 +12,7 @@ import logger from 'winston';
 
 const router = express.Router();
 
-router.use('/admin', requiredAdmin(), admin);
+router.use('/admin', requiredAdmin(), admin, () => {});
 router.use(AuthToken.authenticate);
 router.use('/items', validator, items);
 router.use('/images', images);
