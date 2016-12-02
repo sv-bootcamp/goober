@@ -1,7 +1,7 @@
 import {APIError} from './ErrorHandler';
 import config from 'config';
 
-export const ADMIN_SECRET = process.env.ADMIN_SECRET ? process.env.ADMIN_SECRET : config.adminSecret; // eslint-disable-line max-len
+export const ADMIN_SECRET = process.env.ADMIN_SECRET || config.adminSecret;
 
 export const PERMISSION = {
   RW: 'rw',

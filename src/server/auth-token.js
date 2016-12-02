@@ -59,9 +59,6 @@ class AuthToken {
   }
 
   static authenticate(req, res, next) {
-    if (res.headersSent) {
-      return;
-    }
     const bearerToken = req.headers.authorization;
     if (!bearerToken) {
       next();
