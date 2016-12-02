@@ -2,6 +2,7 @@
   "name": "goober",
   "port": 5000,
   "database": "goober-db",
+  "adminSecret": "adminSecretKey",
   "awsConfig": "config/aws.json",
   "awsImageBucket": "goober-item-image",
   "fb": {

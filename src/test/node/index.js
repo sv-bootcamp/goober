@@ -15,6 +15,7 @@ import './users/models';
 import './users/facebook-manager';
 import './auth/models';
 import './auth/controllers';
+import './admin/controllers';
 import './database';
 import './aws-s3';
 import './auth-token';

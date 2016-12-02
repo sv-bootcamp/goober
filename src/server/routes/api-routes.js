@@ -4,12 +4,15 @@ import images from '../images/router';
 import users from '../users/router';
 import reports from '../reports/router';
 import auth from '../auth/router';
+import admin from '../admin/router';
 import AuthToken from '../auth-token';
 import validator from '../items/validator';
+import {requiredAdmin} from '../permission';
 import logger from 'winston';
 
 const router = express.Router();
 
+router.use('/admin', requiredAdmin(), admin);
 router.use(AuthToken.authenticate);
 router.use('/items', validator, items);
 router.use('/images', images);

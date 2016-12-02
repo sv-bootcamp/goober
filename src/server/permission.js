@@ -1,4 +1,7 @@
 import {APIError} from './ErrorHandler';
+import config from 'config';
+
+export const ADMIN_SECRET = process.env.ADMIN_SECRET ? process.env.ADMIN_SECRET : config.adminSecret; // eslint-disable-line max-len
 
 export const PERMISSION = {
   RW: 'rw',
@@ -27,6 +30,19 @@ export const requiredPermission = (permission) => {
     if ((requireR && requireR !== permittedR) ||
       (requireW && requireW !== permittedW)) {
       res.sendStatus(403);
+      return;
+    }
+    next();
+  };
+};
+
+export const requiredAdmin = () => {
+  return (req, res, next) => {
+    if (!req.headers.authorization || req.headers.authorization !== ADMIN_SECRET) {
+      next(new APIError(new Error('Unauthorized request'), {
+        statusCode: 403,
+        message: 'Unauthorized request'
+      }));
       return;
     }
     next();
