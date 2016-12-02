@@ -21,6 +21,12 @@ Ref: http://keepachangelog.com/en/0.3.0/
 
 ### goober v1
 
+#### [1.0.5] - 2016-12-02
+
+- Admin module for manipulating the database
+- Add admin module (#147)
+- Add Admin script file (#146)
+
 #### [1.0.4] - 2016-11-30
 
 - Blocked duplicated signup. (#138)
