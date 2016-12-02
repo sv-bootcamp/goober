@@ -1,6 +1,7 @@
 import test from 'tape';
 import httpMock from 'node-mocks-http';
-import {requiredPermission, PERMISSION} from '../../server/permission';
+import {requiredPermission, requiredAdmin, PERMISSION, ADMIN_SECRET}
+  from '../../server/permission';
 
 test('required RW permitted RW', t => {
   const req = httpMock.createRequest({
@@ -41,7 +42,7 @@ test('required RW permitted nothing', t => {
   const expected = {
     statusCode: 403
   };
-  
+
   const req = httpMock.createRequest({
     method: 'GET/POST/PUT/DELETE',
     url: '/all/urls',
@@ -53,6 +54,49 @@ test('required RW permitted nothing', t => {
     if (err) {
       t.skip('error is occured (valid)');
       t.equal(err.statusCode, expected.statusCode, 'should be same status');
+      t.end();
+      return;
+    }
+    t.fail();
+    t.end();
+  });
+});
+
+test('required Admin permitted as administrator', t => {
+  const req = httpMock.createRequest({
+    method: 'GET/POST/PUT/DELETE',
+    url: '/all/urls',
+    headers: {
+      authorization: ADMIN_SECRET
+    }
+  });
+  const res = httpMock.createResponse();
+
+  requiredAdmin(PERMISSION.RW)(req, res, (err) => {
+    if (err) {
+      t.comment(err.message);
+      t.fail();
+      t.end();
+      return;
+    }
+    t.pass('error is occured (valid)');
+    t.end();
+  });
+});
+
+test('required Admin permitted nothing', t => {
+  const req = httpMock.createRequest({
+    method: 'GET/POST/PUT/DELETE',
+    url: '/all/urls',
+    headers: {
+      authorization: 'i am not administrator'
+    }
+  });
+  const res = httpMock.createResponse();
+
+  requiredAdmin(PERMISSION.RW)(req, res, (err) => {
+    if (err) {
+      t.pass('error is occured (valid)');
       t.end();
       return;
     }
