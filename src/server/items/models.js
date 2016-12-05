@@ -47,6 +47,9 @@ export default class ItemManager {
     return UserManager.getPostKeys(ENTITY.SAVED_POST, userKey)
     .then((posts)=>{
       return new Promise((resolve)=>{
+        items.sort((a, b) => {
+          return a.key > b.key;
+        });
         posts.sort((a, b) => {
           return a.key > b.key;
         });
