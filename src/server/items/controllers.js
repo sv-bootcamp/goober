@@ -143,7 +143,7 @@ export default {
     const TARGET_STATE = [STATE.ALIVE, STATE.EXPIRED];
     const key = req.params.id;
     const timeHash = KeyUtils.parseTimeHash(key);
-    db.get(key, (getErr, item) => {
+    return db.get(key, (getErr, item) => {
       if (getErr) {
         if (getErr.notFound) {
           return cb(new APIError(getErr, {
@@ -168,10 +168,17 @@ export default {
         if (itemErr) {
           return cb(new APIError(itemErr));
         }
-        res.status(200).send({
-          message: 'success'
+        const createdPostKey = CreatedPostManager.genKey(item.userKey, item.key, STATE.ALIVE);
+        return CreatedPostManager.deletePost(createdPostKey)
+        .then(() => {
+          res.status(200).send({
+            message: 'success'
+          });
+          return cb();
+        })
+        .catch((err) => {
+          return cb(new APIError(err, {statusCode: err.statusCode, message: err.message}));
         });
-        return cb();
       });
     });
   },
