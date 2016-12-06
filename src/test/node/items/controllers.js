@@ -358,7 +358,7 @@ test('modify an item in database', t => {
   });
 });
 test('delete an item from database', t => {
-  const testItem = mockItems[0].value;
+  const testItem = mockItems[1].value;
   const timeHash = KeyUtils.parseTimeHash(testItem.key);
   const expected = {
     status: 200,
@@ -392,83 +392,56 @@ test('delete an item from database', t => {
         resolve();
       });
     }).then(()=>{
-      testDB.createReadStream({
-        start: `${ENTITY.ITEM}-\x00`,
-        end: `${ENTITY.ITEM}-\xFF`
-      }).on('data', (data) => {
-        if (data.key.includes(timeHash)) {
-          if (KeyUtils.isOriginKey(data.key)) {
-            // in case of an original key
-            t.equal(data.value.title, expected.title, 'should be same title');
-            t.equal(data.value.state, expected.stateString,
-            `should be same state : ${expected.stateString}`);
-          } else {
-            // in case of indexing keys
-            const stateCode = KeyUtils.parseState(data.key);
-            t.equal(stateCode, expected.stateCode, 'should be same stateCode');
-            t.equal(data.value.key, expected.key, 'should be same key');
+      return new Promise((resolve, reject)=> {
+        testDB.createReadStream({
+          start: `${ENTITY.ITEM}-`,
+          end: `${ENTITY.ITEM}-\xFF`
+        }).on('data', (data) => {
+          if (data.key.includes(timeHash)) {
+            if (KeyUtils.isOriginKey(data.key)) {
+              // in case of an original key
+              t.equal(data.value.title, expected.title, 'should be same title');
+              t.equal(data.value.state, expected.stateString,
+              `should be same state : ${expected.stateString}`);
+            } else {
+              // in case of indexing keys
+              const stateCode = KeyUtils.parseState(data.key);
+              if (stateCode !== STATE.REMOVED) {
+                t.fail(`wrong state code : ${stateCode}`);
+              }
+              if (data.value.key !== expected.key) {
+                t.faile(`wrong key : ${data.value.key}`);
+              }
+            }
           }
+        }).on('error', (err) => {
+          reject(err);
+          return;
+        }).on('close', () => {
+          resolve();
+        });
+      });
+    }).then(()=>{
+      let removedCreatedPost;
+      testDB.createReadStream({
+        start: `${ENTITY.CREATED_POST}-${STATE.REMOVED}-`,
+        end: `${ENTITY.CREATED_POST}-${STATE.REMOVED}-\xFF`
+      }).on('data', (data) => {
+        if (data.key.indexOf(KeyUtils.parseTimeHash(testItem.key)) !== -1) {
+          removedCreatedPost = data.value;
         }
       }).on('error', (err) => {
-        t.fail('Error while reading from DB');
+        t.fail();
         t.end(err);
+        return;
       }).on('close', () => {
+        t.equal(removedCreatedPost.itemKey, expected.key,
+        'Should be same key(removed created post).');
         t.end();
       });
     }).catch((err)=>{
       t.fail();
       t.end(err);
-    });
-  });
-});
-
-test('delete all item from database', t => {
-  const redSeloKey = `item-${uuid()}`;
-  const alaskaKey = `item-${uuid()}`;
-  const ops = [
-    { type: 'put', key: redSeloKey, value: itemRedSelo },
-    { type: 'put', key: alaskaKey, value: itemAlaska }
-  ];
-
-  testDB.batch(ops, (err) => {
-    if (err) {
-      t.end(err);
-    }
-
-    const expected = {
-      status: 200,
-      message: 'success'
-    };
-
-    const req = httpMocks.createRequest({
-      method: 'DELETE',
-      url: '/items'
-    });
-
-    const res = httpMocks.createResponse();
-
-    ItemController.removeAll(req, res, () => {
-      const status = res.statusCode;
-      const message = res._getData().message;
-      testDB.get(redSeloKey, (err1) => {
-        if (err1 && err1.notFound) {
-          testDB.get(alaskaKey, (err2) => {
-            if (err2 && err2.notFound) {
-              t.equal(status, expected.status,
-                'should be same status');
-              t.equal(message, expected.message,
-                'should be same message');
-              t.end();
-              return;
-            }
-            t.fail('alaska is not removed');
-            t.end();
-          });
-          return;
-        }
-        t.fail('redSelo is not removed');
-        t.end();
-      });
     });
   });
 });

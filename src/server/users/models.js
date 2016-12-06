@@ -197,7 +197,9 @@ export class CreatedPostManager {
               reject(err);
               return;
             }
-            posts.push(item);
+            if (item.state !== STATE.REMOVED) {
+              posts.push(item);
+            }
             resolve();
           });
         }));

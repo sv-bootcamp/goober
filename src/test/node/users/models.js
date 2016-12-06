@@ -253,6 +253,10 @@ test('get saved posts of a user(SavedPostManager.getPosts)', t => {
         t.fail(`wrong user key : ${post.userKey}`);
         return;
       }
+      if (post.state === STATE.REMOVED) {
+        t.fail('removed item should not return');
+        return;
+      }
       t.notEqual(post.imageUrls.length, 0,
       `valid length of image url : ${post.imageUrls.length}`);
     });
@@ -373,4 +377,3 @@ test('delete created post(CreatedPostManager.deletePost)', t => {
     t.end(err);
   });
 });
-

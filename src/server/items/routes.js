@@ -121,34 +121,6 @@ router.get('/', requiredPermission(PERMISSION.R), ItemControllers.getAll);
 router.post('/', requiredPermission(PERMISSION.W), ItemControllers.add);
 
 /**
- * @api {delete} /items Remove all item
- * @apiName removeAllItem
- * @apiGroup Item
- *
- * @apiHeader {String} authorization access token.
- * @apiHeaderExample {json} Request-Example:
- * { "authorization": "bearer access_token" }
- *
- * @apiParam {None} None
- *
- * @apiSuccess {String} message success
- *
- * @apiSuccessExample Success-Response:
- *     HTTP/1.1 200 OK
- *     {
- *       message: "success"
- *     }
- *
- * @apiError (Error 500) Internal server error
- * @apiErrorExample {json} Internal Server Error Response:
- *     HTTP/1.1 500 Internal Server Error
- *     {
- *       error: "error message..."
- *     }
- */
-router.delete('/', requiredPermission(PERMISSION.W), ItemControllers.removeAll);
-
-/**
  * @api {get} /items/:id Get an item by id
  * @apiName getItem
  * @apiGroup Item
