@@ -8,11 +8,6 @@ import logger from 'winston';
 
 export default (cb) => {
   const app = express();
-  // Please remove it before you release.
-  initMock().then(()=>{
-    logger.info('Mock data was successfully stored.');
-  });
-
   /*
     config winston logger
     @TODO it would be better if you configure winston with log monitoring service(eg. cloudwatch)
