@@ -19,10 +19,12 @@ Ref: http://keepachangelog.com/en/0.3.0/
 
 ## Official Releases
 
-### goober v1
+### goober v1 
 
-#### [1.0.6] - 2016-12-06
+#### [1.0.7, 1.0.6] - 2016-12-06
 
+- Removed initMock (#150)
+- Added user-property assertion to signup (#149)
 - Fixed facebook profile-image bug
 - Removed delete-all-item apidoc
 - Added caskade delete logic for created-post in item-remove
