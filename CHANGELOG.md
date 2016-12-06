@@ -21,6 +21,13 @@ Ref: http://keepachangelog.com/en/0.3.0/
 
 ### goober v1
 
+#### [1.0.6] - 2016-12-06
+
+- Fixed facebook profile-image bug
+- Removed delete-all-item apidoc
+- Added caskade delete logic for created-post in item-remove
+- Api/remove update to remove created post with item (#148) 
+
 #### [1.0.5] - 2016-12-02
 
 - Admin module for manipulating the database
