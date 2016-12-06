@@ -3,16 +3,10 @@ import path from 'path';
 import config from 'config';
 import apiRoutes from './routes/api-routes';
 import bodyParser from 'body-parser';
-import {initMock} from './database';
 import logger from 'winston';
 
 export default (cb) => {
   const app = express();
-  // Please remove it before you release.
-  initMock().then(()=>{
-    logger.info('Mock data was successfully stored.');
-  });
-
   /*
     config winston logger
     @TODO it would be better if you configure winston with log monitoring service(eg. cloudwatch)
