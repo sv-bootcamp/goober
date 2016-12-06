@@ -6,6 +6,8 @@ import {PERMISSION} from '../permission';
 import {STATE_STRING} from '../../server/items/models';
 import ImageManager from '../../server/images/models';
 import {S3Connector} from '../aws-s3';
+import assert from 'assert';
+
 export const USER_TYPE = {
   ANONYMOUS: 'anonymous',
   FACEBOOK: 'facebook'
@@ -77,6 +79,12 @@ const UserManager = {
       })
       .then(profileImgUrl => {
         userValue.profileImgUrl = profileImgUrl;
+
+        assert(userValue.name, 'Invalid proerty - name');
+        assert(userValue.facebookId, 'Invalid proerty - facebook id');
+        assert(userValue.profileImgUrl, 'Invalid proerty - profile image url');
+        userValue.email = userValue.email || 'N/A';
+
         return putPromise(userKey, userValue);
       })
       .then(() => {
