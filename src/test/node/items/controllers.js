@@ -394,7 +394,7 @@ test('delete an item from database', t => {
     }).then(()=>{
       return new Promise((resolve, reject)=> {
         testDB.createReadStream({
-          start: `${ENTITY.ITEM}-\x00`,
+          start: `${ENTITY.ITEM}-`,
           end: `${ENTITY.ITEM}-\xFF`
         }).on('data', (data) => {
           if (data.key.includes(timeHash)) {
@@ -424,7 +424,7 @@ test('delete an item from database', t => {
     }).then(()=>{
       let removedCreatedPost;
       testDB.createReadStream({
-        start: `${ENTITY.CREATED_POST}-${STATE.REMOVED}-\x00`,
+        start: `${ENTITY.CREATED_POST}-${STATE.REMOVED}-`,
         end: `${ENTITY.CREATED_POST}-${STATE.REMOVED}-\xFF`
       }).on('data', (data) => {
         if (data.key.indexOf(KeyUtils.parseTimeHash(testItem.key)) !== -1) {
@@ -442,56 +442,6 @@ test('delete an item from database', t => {
     }).catch((err)=>{
       t.fail();
       t.end(err);
-    });
-  });
-});
-test('delete all item from database', t => {
-  const redSeloKey = `item-${uuid()}`;
-  const alaskaKey = `item-${uuid()}`;
-  const ops = [
-    { type: 'put', key: redSeloKey, value: itemRedSelo },
-    { type: 'put', key: alaskaKey, value: itemAlaska }
-  ];
-
-  testDB.batch(ops, (err) => {
-    if (err) {
-      t.end(err);
-    }
-
-    const expected = {
-      status: 200,
-      message: 'success'
-    };
-
-    const req = httpMocks.createRequest({
-      method: 'DELETE',
-      url: '/items'
-    });
-
-    const res = httpMocks.createResponse();
-
-    ItemController.removeAll(req, res, () => {
-      const status = res.statusCode;
-      const message = res._getData().message;
-      testDB.get(redSeloKey, (err1) => {
-        if (err1 && err1.notFound) {
-          testDB.get(alaskaKey, (err2) => {
-            if (err2 && err2.notFound) {
-              t.equal(status, expected.status,
-                'should be same status');
-              t.equal(message, expected.message,
-                'should be same message');
-              t.end();
-              return;
-            }
-            t.fail('alaska is not removed');
-            t.end();
-          });
-          return;
-        }
-        t.fail('redSelo is not removed');
-        t.end();
-      });
     });
   });
 });
