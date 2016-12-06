@@ -3,7 +3,6 @@ import path from 'path';
 import config from 'config';
 import apiRoutes from './routes/api-routes';
 import bodyParser from 'body-parser';
-import {initMock} from './database';
 import logger from 'winston';
 
 export default (cb) => {
