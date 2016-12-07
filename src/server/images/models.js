@@ -53,7 +53,6 @@ export default class ImageManager {
       return cb(err);
     });
   }
-
   /**
    *
    * @countImageOfItem
@@ -77,6 +76,26 @@ export default class ImageManager {
       return lengthList.reduce((sum, num) => {
         return sum + num;
       });
+    });
+  }
+  /**
+  * @getImageObjList
+  * make simple image object list containing image key and url.
+  * @param {Array} imageKeys imageKeys
+  * @return {Array} objs
+  * @example
+  * const imageKeys = ['image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000'];
+  * ImageManager.getImageObjList(imageKeys);
+  * // →[
+  * //   { imageKey: 'image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000',
+  * //     imageUrl: 'url-of-image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000'
+  * //   }
+  * //  ]
+  */
+  static getImageObjList(imageKeys) {
+    const s3 = new S3Connector();
+    return imageKeys.map((imageKey)=>{
+      return {imageKey, imageUrl: s3.getImageUrl(imageKey)};
     });
   }
 }

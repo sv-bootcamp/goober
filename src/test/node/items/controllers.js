@@ -358,7 +358,7 @@ test('modify an item in database', t => {
   });
 });
 test('delete an item from database', t => {
-  const testItem = mockItems[1].value;
+  const testItem = mockItems[0].value;
   const timeHash = KeyUtils.parseTimeHash(testItem.key);
   const expected = {
     status: 200,

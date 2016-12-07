@@ -2,7 +2,7 @@ import test from 'tape';
 import testDB, {clearDB, fetchPrefix, putPromise} from '../../../server/database';
 import {ENTITY, STATE} from '../../../server/key-utils';
 import ImageManager from '../../../server/images/models';
-
+import {mockImages} from '../../../server/database-mock-data';
 test('fetch prefix ImageManager', t => {
   const prefix = 'this-is-prefix';
   const keys = [
@@ -77,3 +77,23 @@ test('count image of item', t => {
     t.end();
   });
 });
+test('make simple image objects(ImageManager.getImageObjList)', t => {
+  const testImageKeys = mockImages.map((image)=>{
+    return image.key;
+  });
+  const expected = {
+    length: testImageKeys.length
+  };
+  const result = ImageManager.getImageObjList(testImageKeys).map(obj=>{
+    if (!obj.hasOwnProperty('imageKey')) {
+      t.fail('there is no imageKey Field');
+    }
+    if (!obj.hasOwnProperty('imageUrl')) {
+      t.fail('there is no imageUrl Field');
+    }
+  });
+  t.equal(result.length, expected.length,
+    `should be same length: ${result.length}`);
+  t.end();
+});
+
