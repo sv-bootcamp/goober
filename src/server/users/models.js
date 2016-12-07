@@ -83,7 +83,7 @@ const UserManager = {
         assert(userValue.name, 'Invalid proerty - name');
         assert(userValue.facebookId, 'Invalid proerty - facebook id');
         assert(userValue.profileImgUrl, 'Invalid proerty - profile image url');
-        assert(userValue.email, 'Invalid proerty - email');
+        userValue.email = userValue.email || 'N/A';
 
         return putPromise(userKey, userValue);
       })
