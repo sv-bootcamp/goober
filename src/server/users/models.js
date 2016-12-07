@@ -75,7 +75,7 @@ const UserManager = {
         if (isExist) {
           throw new Error('Already exists');
         }
-        return FacebookManager.getProfileImage();
+        return FacebookManager.getProfileImage(userValue.facebookId);
       })
       .then(profileImgUrl => {
         userValue.profileImgUrl = profileImgUrl;
