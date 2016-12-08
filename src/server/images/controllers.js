@@ -1,4 +1,4 @@
-import db, {fetchPrefix} from '../database';
+import db, {fetchPrefix, getPromise, fetchKeys} from '../database';
 import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import {APIError} from '../ErrorHandler';
@@ -133,6 +133,101 @@ export default {
     })
     .catch((err) => {
       return cb(new APIError(err, {statusCode: err.statusCode, message: err.message}));
+    });
+  },
+  remove(req, res, cb) {
+    const {userKey} = req.headers;
+    const imageKey = req.params.id;
+    assert(userKey, 'user-key should be provided');
+    assert(imageKey, 'image-key should be provided');
+
+    let itemKey;
+    let imageIndexKey;
+    let createdPostKey;
+    let imageIndexValue;
+    let createdPostValue;
+
+    const promises = [];
+
+    getPromise(imageKey).then((value) => {
+      // make keys
+      itemKey = value.itemKey;
+      const timeHash = imageKey.slice(6);
+      imageIndexKey = KeyUtils.getIdxKey(ENTITY.IMAGE, timeHash, itemKey);
+      createdPostKey = KeyUtils.getIdxKey(ENTITY.CREATED_POST, timeHash, userKey);
+    }).then(() => {
+      // save values
+      return getPromise(imageIndexKey).then((value) => {
+        imageIndexValue = value;
+        return getPromise(createdPostKey);
+      }).then((value) => {
+        createdPostValue = value;
+      });
+    }).then(() => {
+      console.log('here2');
+      // delete ALIVE state
+      const opts = [
+        { type: 'del', key: imageIndexKey },
+        { type: 'del', key: createdPostKey }
+      ];
+      return new Promise((resolve, reject) => {
+        db.batch(opts, (err) => {
+          return err ? reject(err) : resolve();
+        });
+      });
+    }).then(() => {
+      // add REMOVED state
+      function replaceAt(str, index, char) {
+        return str.substr(0, index) + char + str.substr(index + char.length);
+      }
+      const removedImageIndexKey =
+        replaceAt(imageIndexKey, imageIndexKey.indexOf('0'), STATE.REMOVED);
+      const removedCreatedPostKey =
+        replaceAt(createdPostKey, createdPostKey.indexOf('0'), STATE.REMOVED);
+      const opts = [
+        { type: 'put', key: removedImageIndexKey, value: imageIndexValue },
+        { type: 'put', key: removedCreatedPostKey, value: createdPostValue }
+      ];
+      return new Promise((resolve, reject) => {
+        db.batch(opts, (err) => {
+          return err ? reject(err) : resolve();
+        });
+      });
+    }).then(() => {
+      // count image of item
+      const prefixes = [];
+      prefixes.push(KeyUtils.getPrefix(ENTITY.IMAGE, STATE.ALIVE, itemKey));
+      prefixes.push(KeyUtils.getPrefix(ENTITY.IMAGE, STATE.EXPIRED, itemKey));
+
+      prefixes.map((prefix) => {
+        promises.push(new Promise((resolve, reject) => {
+          fetchKeys(prefix, (err, keys) => {
+            if (err) {
+              return reject(err);
+            }
+            return resolve(keys.length);
+          });
+        }));
+      });
+    // }).all(promises).then((keyLengthList) => {
+    //   // Remove item, if it is needed
+    //   return new Promise((resolve, reject) => {
+    //     const totalLength = keyLengthList.reduce((acc ,num) => {
+    //       return acc + num;
+    //     });
+    //     if (totalLength == 0) {
+    //       getPromise(itemKey).then(value => {
+    //
+    //       })
+    //     }
+    //     resolve();
+    //   });
+    }).then(() => {
+      res.sendStatus(200);
+      cb();
+    }).catch((err) => {
+      console.log(err); // disable-eslint no-console
+      cb(new APIError(err, {statusCode: 400, message: err.message}));
     });
   }
 };
