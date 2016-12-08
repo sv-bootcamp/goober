@@ -194,18 +194,16 @@ export default {
     }).then(() => {
       // count image of item
       const prefixes = [];
-      const promises = [];
       prefixes.push(KeyUtils.getPrefix(ENTITY.IMAGE, STATE.ALIVE, itemKey));
       prefixes.push(KeyUtils.getPrefix(ENTITY.IMAGE, STATE.EXPIRED, itemKey));
 
-      prefixes.map((prefix) => {
-        promises.push(new Promise((resolve, reject) => {
+      return Promise.all(prefixes.map((prefix) => {
+        return new Promise((resolve, reject) => {
           fetchKeys(prefix, (err, keys) => {
             return err ? reject(err) : resolve(keys.length);
           });
-        }));
-      });
-      return Promise.all(promises);
+        });
+      }));
     }).then((keyLengthList) => {
       // Remove item, if it is needed
       return new Promise((resolve, reject) => {
