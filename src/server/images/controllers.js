@@ -147,8 +147,6 @@ export default {
     let imageIndexValue;
     let createdPostValue;
 
-    const promises = [];
-
     getPromise(imageKey).then((value) => {
       // make keys
       itemKey = value.itemKey;
@@ -164,7 +162,6 @@ export default {
         createdPostValue = value;
       });
     }).then(() => {
-      console.log('here2');
       // delete ALIVE state
       const opts = [
         { type: 'del', key: imageIndexKey },
@@ -178,6 +175,7 @@ export default {
     }).then(() => {
       // add REMOVED state
       function replaceAt(str, index, char) {
+        // TODO: Refactoring : This function is duplicated with replaceState
         return str.substr(0, index) + char + str.substr(index + char.length);
       }
       const removedImageIndexKey =
@@ -196,6 +194,7 @@ export default {
     }).then(() => {
       // count image of item
       const prefixes = [];
+      const promises = [];
       prefixes.push(KeyUtils.getPrefix(ENTITY.IMAGE, STATE.ALIVE, itemKey));
       prefixes.push(KeyUtils.getPrefix(ENTITY.IMAGE, STATE.EXPIRED, itemKey));
 
@@ -209,24 +208,48 @@ export default {
           });
         }));
       });
-    // }).all(promises).then((keyLengthList) => {
-    //   // Remove item, if it is needed
-    //   return new Promise((resolve, reject) => {
-    //     const totalLength = keyLengthList.reduce((acc ,num) => {
-    //       return acc + num;
-    //     });
-    //     if (totalLength == 0) {
-    //       getPromise(itemKey).then(value => {
-    //
-    //       })
-    //     }
-    //     resolve();
-    //   });
+      return Promise.all(promises);
+    }).then((keyLengthList) => {
+      // Remove item, if it is needed
+      return new Promise((resolve, reject) => {
+        const totalLength = keyLengthList.reduce((acc, num) => {
+          return acc + num;
+        });
+        if (totalLength > 0) {
+          return resolve();
+        }
+        const timeHash = KeyUtils.parseTimeHash(itemKey);
+        return getPromise(itemKey).then(value => {
+          const opts = [];
+          const indexingValue = {key: itemKey};
+          const willBeAddedKeys =
+            KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.REMOVED);
+          const willBeRemovedKeys = [];
+          willBeRemovedKeys.concat(
+            KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.ALIVE));
+          willBeRemovedKeys.concat(
+            KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.EXPIRED));
+
+          willBeAddedKeys.map(key => {
+            opts.push({type: 'put', key: key, value: indexingValue});
+          });
+          willBeRemovedKeys.map(key => {
+            opts.push({type: 'del', key: key});
+          });
+
+          db.batch(opts, (err) => {
+            if (err) {
+              return reject(err);
+            }
+            return resolve();
+          });
+        });
+      });
     }).then(() => {
       res.sendStatus(200);
       cb();
     }).catch((err) => {
-      console.log(err); // disable-eslint no-console
+      console.log(err); // eslint-disable-line no-console
       cb(new APIError(err, {statusCode: 400, message: err.message}));
     });
   }
