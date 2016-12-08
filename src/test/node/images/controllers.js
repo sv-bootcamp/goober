@@ -185,14 +185,9 @@ test('Remove an image', t => {
     return new Promise((resolve, reject) => {
       testDB.get(key, (err) => {
         if (err) {
-          if (err.notFound) {
-            resolve();
-            return;
-          }
-          reject('Database internal error');
-          return;
+          return err.notFound ? resolve() : reject('Database internal error');
         }
-        reject('key still exists');
+        return reject('key still exists');
       });
     });
   }
@@ -218,11 +213,8 @@ test('Remove an image', t => {
   initMock().then(() => {
     return new Promise((resolve, reject) => {
       controller.remove(req, res, () => {
-        if (res.statusCode !== expected.statusCode) {
-          reject('StatusCode is different');
-          return;
-        }
-        resolve();
+        return res.statusCode !== expected.statusCode ?
+          reject('StatusCode is different') : resolve();
       });
     });
   }).then(() => { return notExistInDB(mockImageIndex.key); }) // eslint-disable-line brace-style
