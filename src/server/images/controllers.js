@@ -209,8 +209,8 @@ export default {
     }).then((keyLengthList) => {
       // Remove item, if it is needed
       return new Promise((resolve, reject) => {
-        const totalLength = keyLengthList.reduce((acc, num) => {
-          return acc + num;
+        const totalLength = keyLengthList.reduce((sum, num) => {
+          return sum + num;
         });
         if (totalLength > 0) {
           return resolve();
