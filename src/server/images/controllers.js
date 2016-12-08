@@ -201,10 +201,7 @@ export default {
       prefixes.map((prefix) => {
         promises.push(new Promise((resolve, reject) => {
           fetchKeys(prefix, (err, keys) => {
-            if (err) {
-              return reject(err);
-            }
-            return resolve(keys.length);
+            return err ? reject(err) : resolve(keys.length);
           });
         }));
       });
@@ -238,10 +235,7 @@ export default {
           });
 
           db.batch(opts, (err) => {
-            if (err) {
-              return reject(err);
-            }
-            return resolve();
+            return err ? reject(err) : resolve();
           });
         });
       });
