@@ -3,6 +3,7 @@ import path from 'path';
 import config from 'config';
 import apiRoutes from './routes/api-routes';
 import bodyParser from 'body-parser';
+import {handle404} from './ErrorHandler';
 import logger from 'winston';
 
 export default (cb) => {
@@ -43,12 +44,7 @@ export default (cb) => {
   app.use('/api', apiRoutes);
   // @TODO: make root page
 
-  app.use('*', (req, res) => {
-    if (!res.headersSent) {
-      res.status(404).send('Request > 404 - Page Not Found');
-      logger.error(`404 Not Found - ${req.method} - PATH : ${req.originalUrl} - ${new Date()}`);
-    }
-  });
+  app.use('*', handle404);
 
   // development error handler
   // will print stacktrace
