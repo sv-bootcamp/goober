@@ -59,6 +59,26 @@ export const fetchPrefix = (prefix, cb) => {
   });
 };
 
+export const fetchKeys = (prefix, cb) => {
+  const keys = [];
+  let error;
+  db.createReadStream({
+    keys: true,
+    values: false,
+    start: `${prefix}`,
+    end: `${prefix}\xFF`
+  }).on('data', (key) => {
+    keys.push(key);
+  }).on('error', (err) => {
+    error = err;
+  }).on('close', () => {
+    if (error) {
+      return cb(error);
+    }
+    return cb(null, keys);
+  });
+};
+
 export const initMock = () => {
   return new Promise((resolve, reject) => {
     const arrs = [];
