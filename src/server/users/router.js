@@ -244,7 +244,7 @@ router.post('/', requiredPermission(PERMISSION.W), controller.post);
  *       error: "error message ..."
  *     }
  */
-router.post('/savedposts', requiredPermission(PERMISSION.W), controller.addSavedPost);
+router.post('/savedposts', requiredPermission(PERMISSION.R), controller.addSavedPost);
 
 /**
  * @api {delete} /users/savedposts Delete savedpost
