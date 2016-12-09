@@ -45,7 +45,7 @@ test('get all image of an item', t => {
       }
       const req = httpMocks.createRequest({
         method: 'GET',
-        url: `/api/images`,
+        url: '/api/images',
         query: {
           item: itemKey
         }
