@@ -207,7 +207,7 @@ export default {
         return ItemManager.removeItem(itemKey);
       });
     }).then(() => {
-      res.sendStatus(200);
+      res.status(200).send({ message: 'success', data: `${imageKey}` });
       cb();
     }).catch((err) => {
       console.log(err); // eslint-disable-line no-console

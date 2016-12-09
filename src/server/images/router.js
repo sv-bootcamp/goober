@@ -113,4 +113,32 @@ router.get('/', requiredPermission(PERMISSION.R), controller.get);
  */
 router.post('/', requiredPermission(PERMISSION.W), controller.post);
 
+/**
+ * @api {Delete} /images/image-unique-id Remove an image
+ * @apiName RemoveAnImage
+ * @apiGroup Image
+ *
+ * @apiHeader {String} authorization access token.
+ * @apiHeaderExample {json} Request-Example:
+ * { "authorization": "bearer access_token" }
+ *
+ *
+ * @apiSuccess {String} message success
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "message": "success",
+ *       "data"   : "image-8523193492003-2d5f3460-d53a-42d3-a138-ae201070f27c"
+ *     }
+ *
+ * @apiError (Error 500) error The id of the error occured while putting an Item in DB
+ * @apiErrorExample {json} Database-Error-Response:
+ *     HTTP/1.1 500 Internal Server Error
+ *     {
+ *       error: "error message ..."
+ *     }
+ */
+router.delete('/:id', requiredPermission(PERMISSION.W), controller.remove);
+
 export default router;
