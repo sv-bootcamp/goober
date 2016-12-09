@@ -7,6 +7,12 @@ import {CreatedPostManager} from '../users/models';
 import {ItemManager} from '../items/models';
 import assert from 'assert';
 
+// add REMOVED state
+function replaceAt(str, index, char) {
+  // TODO: Refactoring : This function is duplicated with replaceState
+  return str.substr(0, index) + char + str.substr(index + char.length);
+}
+
 export default {
   get(req, res, cb) {
     const {item, image} = req.query;
@@ -174,11 +180,6 @@ export default {
         });
       });
     }).then(() => {
-      // add REMOVED state
-      function replaceAt(str, index, char) {
-        // TODO: Refactoring : This function is duplicated with replaceState
-        return str.substr(0, index) + char + str.substr(index + char.length);
-      }
       const removedImageIndexKey =
         replaceAt(imageIndexKey, imageIndexKey.indexOf('0'), STATE.REMOVED);
       const removedCreatedPostKey =
