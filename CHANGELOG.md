@@ -21,6 +21,20 @@ Ref: http://keepachangelog.com/en/0.3.0/
 
 ### goober v1 
 
+#### [1.0.9] - 2016-12-09
+
+- Updated images/get (#155)
+- Updated createdPosts/get return data form (#154)
+- Added image-remove module (#156)
+- Added 404 handler to admin module (#158)
+- Updated POST / api/users/savedposts permission from W to R (#160) 
+- Fixed FB email bug (#153)
+
+#### [1.0.8] - 2016-12-07
+
+- Fixed FB profile image bug
+- Added argument to FB-getProfileImage (#152)
+
 #### [1.0.7, 1.0.6] - 2016-12-06
 
 - Removed initMock (#150)
