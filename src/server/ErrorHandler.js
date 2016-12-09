@@ -13,7 +13,4 @@ export function handle404(req, res) {
     res.status(404).send('Request > 404 - Page Not Found');
     logger.error(`404 Not Found - ${req.method} - PATH : ${req.originalUrl} - ${new Date()}`);
   }
-  if (res.statusCode === 200 || res.statusCode === 304) {
-    return;
-  }
 }
