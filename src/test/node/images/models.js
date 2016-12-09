@@ -60,18 +60,15 @@ test('count image of item', t => {
   .then(() => { return putPromise(mockImageKeys[1], {}); }) // eslint-disable-line brace-style
   .then(() => {
     return ImageManager.countImageOfItem(mockItemKey, STATE.ALIVE);
-  }).then((lengthList) => {
-    const length = lengthList.reduce((sum, num) => sum + num);
+  }).then((length) => {
     t.equal(length, expected.lengthAlive, 'should be same length');
   }).then(() => {
     return ImageManager.countImageOfItem(mockItemKey, STATE.EXPIRED);
-  }).then((lengthList) => {
-    const length = lengthList.reduce((sum, num) => sum + num);
+  }).then((length) => {
     t.equal(length, expected.lengthExpired, 'should be same length');
   }).then(() => {
     return ImageManager.countImageOfItem(mockItemKey, STATE.ALIVE, STATE.EXPIRED);
-  }).then((lengthList) => {
-    const length = lengthList.reduce((sum, num) => sum + num);
+  }).then((length) => {
     t.equal(length, expected.lengthBoth, 'should be same length');
     t.end();
   }).catch(err => {

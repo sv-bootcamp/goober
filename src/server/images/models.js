@@ -58,12 +58,9 @@ export default class ImageManager {
    *
    * @countImageOfItem
    *
-   * This function does not check the exception before return.
-   * You must check the type of element of Array.
-   *
    * @param {string} itemKey - The key of target item.
    * @param {string} stateList - The list of state which is checked.
-   * @return {Array} An array of number of key that begin with a specific prefix
+   * @return {Number} number of images of an item
    */
   static countImageOfItem(itemKey, ...stateList) {
     const prefixes = stateList.map(state => {
@@ -76,6 +73,10 @@ export default class ImageManager {
           return err ? reject(err) : resolve(keys.length);
         });
       });
-    }));
+    })).then(lengthList => {
+      return lengthList.reduce((sum, num) => {
+        return sum + num;
+      });
+    });
   }
 }

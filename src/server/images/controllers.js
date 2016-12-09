@@ -196,13 +196,10 @@ export default {
     }).then(() => {
       // count image of item
       return ImageManager.countImageOfItem(itemKey, STATE.ALIVE, STATE.EXPIRED);
-    }).then((keyLengthList) => {
+    }).then((numOfImages) => {
       // Remove item, if it is needed
       return new Promise((resolve) => {
-        const totalLength = keyLengthList.reduce((sum, num) => {
-          return sum + num;
-        });
-        if (totalLength > 0) {
+        if (numOfImages > 0) {
           return resolve();
         }
         return ItemManager.removeItem(itemKey);
