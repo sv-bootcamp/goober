@@ -10,6 +10,7 @@ export const PERMISSION = {
   None: '--'
 };
 
+// @TODO add a user aspect to permission policy like UNIX.
 export const requiredPermission = (permission) => {
   return (req, res, next) => {
     if (!req.headers.permission) {
