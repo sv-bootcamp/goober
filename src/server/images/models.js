@@ -1,4 +1,4 @@
-import db, {fetchPrefix} from '../database';
+import db, {fetchPrefix, fetchKeys} from '../database';
 import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
 
@@ -52,5 +52,30 @@ export default class ImageManager {
     .catch((err) => {
       return cb(err);
     });
+  }
+
+  /**
+   *
+   * @countImageOfItem
+   *
+   * This function does not check the exception before return.
+   * You must check the type of element of Array.
+   *
+   * @param {string} itemKey - The key of target item.
+   * @param {string} stateList - The list of state which is checked.
+   * @return {Array} An array of number of key that begin with a specific prefix
+   */
+  static countImageOfItem(itemKey, ...stateList) {
+    const prefixes = stateList.map(state => {
+      return KeyUtils.getPrefix(ENTITY.IMAGE, state, itemKey);
+    });
+
+    return Promise.all(prefixes.map((prefix) => {
+      return new Promise((resolve, reject) => {
+        fetchKeys(prefix, (err, keys) => {
+          return err ? reject(err) : resolve(keys.length);
+        });
+      });
+    }));
   }
 }

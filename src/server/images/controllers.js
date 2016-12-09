@@ -1,9 +1,10 @@
-import db, {fetchPrefix, getPromise, fetchKeys} from '../database';
+import db, {fetchPrefix, getPromise} from '../database';
 import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import {APIError} from '../ErrorHandler';
 import ImageManager from './models';
 import {CreatedPostManager} from '../users/models';
+import {ItemManager} from '../items/models';
 import assert from 'assert';
 
 export default {
@@ -193,49 +194,17 @@ export default {
       });
     }).then(() => {
       // count image of item
-      const prefixes = [];
-      prefixes.push(KeyUtils.getPrefix(ENTITY.IMAGE, STATE.ALIVE, itemKey));
-      prefixes.push(KeyUtils.getPrefix(ENTITY.IMAGE, STATE.EXPIRED, itemKey));
-
-      return Promise.all(prefixes.map((prefix) => {
-        return new Promise((resolve, reject) => {
-          fetchKeys(prefix, (err, keys) => {
-            return err ? reject(err) : resolve(keys.length);
-          });
-        });
-      }));
+      return ImageManager.countImageOfItem(itemKey, STATE.ALIVE, STATE.EXPIRED);
     }).then((keyLengthList) => {
       // Remove item, if it is needed
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const totalLength = keyLengthList.reduce((sum, num) => {
           return sum + num;
         });
         if (totalLength > 0) {
           return resolve();
         }
-        const timeHash = KeyUtils.parseTimeHash(itemKey);
-        return getPromise(itemKey).then(value => {
-          const opts = [];
-          const indexingValue = {key: itemKey};
-          const willBeAddedKeys =
-            KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.REMOVED);
-          const willBeRemovedKeys = [];
-          willBeRemovedKeys.concat(
-            KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.ALIVE));
-          willBeRemovedKeys.concat(
-            KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.EXPIRED));
-
-          willBeAddedKeys.map(key => {
-            opts.push({type: 'put', key: key, value: indexingValue});
-          });
-          willBeRemovedKeys.map(key => {
-            opts.push({type: 'del', key: key});
-          });
-
-          db.batch(opts, (err) => {
-            return err ? reject(err) : resolve();
-          });
-        });
+        return ItemManager.removeItem(itemKey);
       });
     }).then(() => {
       res.sendStatus(200);
