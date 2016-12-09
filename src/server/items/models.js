@@ -87,9 +87,8 @@ export default class ItemManager {
       const willBeAddedKeys =
         KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.REMOVED);
       const willBeRemovedKeys =
-        KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.ALIVE);
-      willBeRemovedKeys.concat(
-        KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.EXPIRED));
+        KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.ALIVE)
+          .concat(KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.EXPIRED));
 
       willBeAddedKeys.map(key => {
         opts.push({type: 'put', key: key, value: indexingValue});
