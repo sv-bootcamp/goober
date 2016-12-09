@@ -370,13 +370,14 @@ export const mockUsers = [
     }
   }
 ];
+export const CREATED_POSTS_LENGTH_OF_TEST_USER = 3;
 export const mockCreatedPosts = [
   {
-    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {
       entity: 'image',
       itemKey: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
-      imageKey: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000'
+      imageKey: 'image-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'
     }
   },
   {
@@ -388,15 +389,15 @@ export const mockCreatedPosts = [
     }
   },
   {
-    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001',
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8523569764000-dd3860f5-b82e-473b-1234-ead0fts0bze0',
     value: {
       entity: 'item',
-      itemKey: 'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001',
-      imageKey: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0fts43200'
+      itemKey: 'item-8523910540000-dd3860f5-b82e-473b-1234-ead0f190b005',
+      imageKey: 'image-8523569764000-dd3860f5-b82e-473b-1234-ead0fts0bze0'
     }
   },
   {
-    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'createdPost-0-user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {
       entity: 'image',
       itemKey: 'item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004',
@@ -420,9 +421,9 @@ export const mockSavedPosts = [
 ];
 export const mockImages = [
   {
-    key: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',
+    key: 'image-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
     value: {
-      key: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',
+      key: 'image-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
       itemKey: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
       userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
       caption: 'testImage1Caption1',
@@ -490,9 +491,9 @@ export const mockImages = [
     }
   },
   {
-    key: 'image-8523569766000-bree-473b-1234-ead0f54gvr00',
+    key: 'image-8523569766000-dd3860f5-bree-473b-1234-ead0f54gvr00',
     value: {
-      key: 'image-8523569766000-bree-473b-1234-ead0f54gvr00',
+      key: 'image-8523569766000-dd3860f5-bree-473b-1234-ead0f54gvr00',
       itemKey: 'item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001',
       userKey: 'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000',
       caption: 'testImage2Caption4',
@@ -664,8 +665,8 @@ export const mockImages = [
 ];
 export const mockImageIndexies = [
   {
-    key: 'image-0-item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',
-    value: {key: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000'}
+    key: 'image-0-item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+    value: {key: 'image-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000'}
   },
   {
     key: 'image-0-item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000-8523569761934-dd3860f5-b82e-473b-1234-ead0fts0b000',
@@ -693,7 +694,7 @@ export const mockImageIndexies = [
   },
   {
     key: 'image-0-item-8523910540004-dd3860f5-b82e-473b-1234-ead0f190b001-8523569766000-bree-473b-1234-ead0f54gvr00',
-    value: {key: 'image-8523569766000-bree-473b-1234-ead0f54gvr00'}
+    value: {key: 'image-8523569766000-dd3860f5-bree-473b-1234-ead0f54gvr00'}
   },
   {
     key: 'image-0-item-8523910540000-dd3860f5-b82e-473b-1234-ead0f190b005-8523569763000-dd3860f5-b82e-473b-1234-ead0fzr0b000',

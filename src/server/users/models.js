@@ -5,7 +5,6 @@ import FacebookManager, {FacebookModel} from './facebook-manager';
 import {PERMISSION} from '../permission';
 import {STATE_STRING} from '../../server/items/models';
 import ImageManager from '../../server/images/models';
-import {S3Connector} from '../aws-s3';
 import assert from 'assert';
 
 export const USER_TYPE = {
@@ -158,67 +157,109 @@ export class CreatedPostManager {
     });
   }
 
-/**
- * make Item Json value includes entity and image Url about CreatedPost
- * @param {Object} keySet example:
- * {  entity: 'image',
- *    itemKey: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
- *    imageKey: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000'
- * }
- * @param {function} cb callback function
- * @return {Object} item example:
- * {  title: 'Pingo release party',
- *    lat: 37.756787937,
- *    lng: -122.4233365122,
- *    address: '310 Dolores St, San Francisco, CA 94110, USA',
- *    createdDate: '2016-12-20T01:11:46.851Z',
- *    modifiedDate: '2016-12-21T01:11:46.851Z',
- *    category: 'event',
- *    startTime: '2016-12-24T01:11:46.851Z',
- *    endTime: '2016-12-25T07:51:12.729Z',
- *    state: 'alive',
- *    key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
- *    userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
- *    entity: 'image',
- *    imageUrl: 'url-of-image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000'
- * }
-**/
-  static getPost({entity, itemKey, imageKey}, cb) {
-    db.get(itemKey, (err, item) => {
-      if (err) {
-        return cb(err);
-      }
-      item.entity = entity;
-      item.imageUrl = new S3Connector().getImageUrl(imageKey);
-      return cb(null, item);
+  /**
+   * @fetchPost
+   * make Item Json value includes entity and image Url about CreatedPost
+   * @param {Object} post post object.
+   * @return {object} Promise object returning fetched post object:
+   * @example
+   * const post =
+   *  {  isCreatedByUser: false,
+   *     itemKey: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+   *     imageKeys: ['image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000']
+   *  };
+   *  console.log(CreatedPostManager.fetchPost(post));
+   * // print →
+   * //  {title: 'Pingo release party',
+   * //   lat: 37.756787937,
+   * //   lng: -122.4233365122,
+   * //   address: '310 Dolores St, San Francisco, CA 94110, USA',
+   * //   createdDate: '2016-12-20T01:11:46.851Z',
+   * //   modifiedDate: '2016-12-21T01:11:46.851Z',
+   * //   category: 'event',
+   * //   startTime: '2016-12-24T01:11:46.851Z',
+   * //   endTime: '2016-12-25T07:51:12.729Z',
+   * //   state: 'alive',
+   * //   key: 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+   * //   userKey: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
+   * //   isCreatedByUser: false,
+   * //   images: [
+   * //             {
+   * //               imageKey: 'image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000',
+   * //               imageUrl: 'url-of-image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000'
+   * //             }
+   * //           ]
+   * //  }
+  **/
+  static fetchPost({isCreatedByUser, itemKey, imageKeys}) {
+    return getPromise(itemKey).then((item)=>{
+      item.isCreatedByUser = isCreatedByUser;
+      item.images = ImageManager.getImageObjList(imageKeys);
+      return item;
     });
   }
+/**
+ * @combinePosts
+ * combine key sets for unique item key
+ * @param {Array} posts objects array
+ * @return {Array} combined post objects array
+ * @example
+ * const posts = [
+ *  {  entity  : 'image',
+ *     itemKey : 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+ *     imageKey: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000'
+ *  },
+ *  {  entity  : 'item',
+ *     itemKey : 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+ *     imageKey: 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b999'
+ *  }
+ * ];
+ * console.log(CreatedPostManager.fetchPost(post));
+ * // print →
+ * //   { isCreatedByUser : true,
+ * //      itemKey : 'item-8523910540005-dd3860f5-b82e-473b-1234-ead0f190b000',
+ * //      imageKeys :
+ * //      [ 'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b000',
+ * //        'image-8523569761934-dd3860f5-b82e-473b-1234-ead0f190b999'
+ * //      ]
+ * //   }
+ */
+  static combinePosts(posts) {
+    const objMap = new Map();
+    posts.map((post)=> {
+      if (!objMap.get(post.itemKey)) {
+        // if there's no value of itemKey, init an object.
+        objMap.set(post.itemKey, {
+          isCreatedByUser: 'false',
+          itemKey: post.itemKey,
+          imageKeys: []
+        });
+      }
+      // if this item is created by this user -> isCreatedByUser = true
+      objMap.get(post.itemKey).isCreatedByUser =
+        (post.entity === ENTITY.ITEM) || objMap.get(post.itemKey).isCreatedByUser;
+      objMap.get(post.itemKey).imageKeys.push(post.imageKey);
+    });
+    // convert map to array for return
+    return Array.from(objMap.values());
+  }
   static getPosts(userKey, cb) {
-    const posts = [];
-    const promises = [];
+    const res = [];
     UserManager.getPostKeys(ENTITY.CREATED_POST, userKey)
-    .then((keySets) => {
-      keySets.map((keySet)=>{
-        promises.push(new Promise((resolve, reject) => {
-          CreatedPostManager.getPost(keySet, (err, item) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-            if (item.state !== STATE.REMOVED) {
-              posts.push(item);
-            }
-            resolve();
-          });
-        }));
-      });
-      Promise.all(promises).then(() => {
-        return cb(null, posts);
-      }).catch((err) => {
-        return err;
-      });
-    }).catch((err)=>{
-      return cb(err);
+    .then((posts) => {
+      const combinedPosts = CreatedPostManager.combinePosts(posts);
+      return Promise.all(combinedPosts.map((post)=>{
+        return CreatedPostManager.fetchPost(post).then((fetchedPost)=>{
+          if (fetchedPost.state !== STATE.REMOVED) {
+            res.push(fetchedPost);
+          }
+        });
+      }));
+    }).then(()=>{
+      cb(null, res);
+    })
+    .catch((err)=>{
+      cb(err);
     });
   }
   static genKey(userKey, entityKey, state) {

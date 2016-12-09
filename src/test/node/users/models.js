@@ -1,7 +1,7 @@
 import test from 'tape';
 import testDB, {initMock, clearDB, fetchPrefix, getPromise} from '../../../server/database';
-import {mockUsers, mockCreatedPosts, mockSavedPosts, mockItems, mockImages}
-      from '../../../server/database-mock-data';
+import {mockUsers, mockCreatedPosts, mockSavedPosts, mockItems, mockImages,
+        CREATED_POSTS_LENGTH_OF_TEST_USER} from '../../../server/database-mock-data';
 import UserModel, {USER_TYPE} from '../../../server/users/models';
 import UserManager, {CreatedPostManager, SavedPostManager} from '../../../server/users/models';
 import FacebookManager from '../../../server/users/facebook-manager';
@@ -270,10 +270,7 @@ test('get created posts of a user(CreatedPostManager.getPosts)', t => {
   const testUser = mockUsers[0].value;
   const expected = {
     userKey: testUser.key,
-    // get a number of savedposts of test user
-    length: mockCreatedPosts.filter((post) => {
-      return (post.key.includes(testUser.key)) ? true : false;
-    }).length,
+    length: CREATED_POSTS_LENGTH_OF_TEST_USER,
     // states: [ 'alive', 'expired' ]
     states: [
       STATE_STRING[STATE.ALIVE],
@@ -291,14 +288,21 @@ test('get created posts of a user(CreatedPostManager.getPosts)', t => {
     t.equal(posts.length, expected.length,
     `should ba same length of posts array : ${posts.length}`);
     posts.map((post) => {
-      if (!post.imageUrl) {
-        t.fail('there is no imageUrl Field');
+      if (!post.images) {
+        t.comment('there is no images Field');
+        t.fail();
+      }
+      if (!post.images.length) {
+        t.comment('no image in this item');
+        t.fail();
       }
       if (expected.states.indexOf(post.state) === -1) {
-        t.fail(`invalid state : ${post.state}`);
+        t.comment(`invalid state : ${post.state}`);
+        t.fail();
       }
       if (post.userKey !== expected.userKey) {
-        t.fail(`invalid userKey : ${post.userKey}`);
+        t.comment(`invalid userKey : ${post.userKey}`);
+        t.fail();
       }
     });
     t.end();
@@ -307,18 +311,22 @@ test('get created posts of a user(CreatedPostManager.getPosts)', t => {
     t.end(err);
   });
 });
-test('get created post using key set', t => {
-  const testKeys = mockCreatedPosts[0].value;
-  const expected = {
-    // get test key's indexing item
-    value: mockItems.find((item) => {
-      return (item.key === testKeys.itemKey);
-    }).value
+test('get created post using key set(CreatedPostManager.fetchPost)', t => {
+  const testObj = {
+    isCreatedByUser: false,
+    itemKey: mockItems[0].key,
+    imageKeys: [mockImages[0].key]
   };
-  CreatedPostManager.getPost(testKeys, (err, value) => {
-    t.equal(value.key, expected.value.key, 'should be same item key');
-    t.equal(value.userKey, expected.value.userKey, 'should be same user key');
-    t.equal(value.hasOwnProperty('imageUrl'), true, 'should have imageUrl field');
+  const expected = {
+    itemValue: mockItems[0].value
+  };
+  CreatedPostManager.fetchPost(testObj).then((post)=>{
+    t.equal(post.key, expected.itemValue.key, 'should be same item key');
+    t.equal(post.userKey, expected.itemValue.userKey, 'should be same user key');
+    t.equal(post.hasOwnProperty('isCreatedByUser'), true, 'should have isCreatedByUser field');
+    t.equal(post.hasOwnProperty('images'), true, 'should have images field');
+    t.equal(post.images[0].hasOwnProperty('imageKey'), true, 'should have imageKey field');
+    t.equal(post.images[0].hasOwnProperty('imageUrl'), true, 'should have imageUrl field');
     t.end();
   });
 });

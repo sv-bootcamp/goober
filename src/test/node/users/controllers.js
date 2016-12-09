@@ -6,7 +6,7 @@ import {KeyUtils, ENTITY, STATE} from '../../../server/key-utils';
 import AuthToken, {TOKEN_TYPE} from '../../../server/auth-token';
 import {USER_TYPE} from '../../../server/users/models';
 import FacebookManager from '../../../server/users/facebook-manager';
-import {mockItems, mockSavedPosts, mockUsers, mockCreatedPosts}
+import {mockItems, mockSavedPosts, mockUsers, CREATED_POSTS_LENGTH_OF_TEST_USER}
         from '../../../server/database-mock-data';
 import {STATE_STRING} from '../../../server/items/models';
 test('get a user from database', t => {
@@ -235,10 +235,7 @@ test('get created posts', t => {
   const expected = {
     status: 200,
     userKey: testUser.key,
-    // get a number of creatposts of test user
-    length: mockCreatedPosts.filter((post)=>{
-      return (post.key.indexOf(testUser.key) !== -1);
-    }).length,
+    length: CREATED_POSTS_LENGTH_OF_TEST_USER,
     states: [
       STATE_STRING[STATE.ALIVE],
       STATE_STRING[STATE.EXPIRED]
@@ -260,8 +257,8 @@ test('get created posts', t => {
       t.equal(posts.length, expected.length,
       `should ba same length of posts array : ${posts.length}`);
       posts.map((post) => {
-        if (!post.imageUrl) {
-          t.fail('there is no imageUrl Field');
+        if (!post.images) {
+          t.fail('there is no images Field');
         }
         if (expected.states.indexOf(post.state) === -1) {
           t.fail(`invalid state : ${post.state}`);
