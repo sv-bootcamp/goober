@@ -5,7 +5,7 @@ import {requiredPermission, PERMISSION} from '../permission';
 const router = express.Router();
 
 /**
- * @api {get} /images?image=image-unique-id Get an images
+ * @api {get} /images/:id Get an image
  * @apiName get an image
  * @apiGroup Image
  *
@@ -13,14 +13,13 @@ const router = express.Router();
  * @apiHeaderExample {json} Request-Example:
  * { "authorization": "bearer access_token" }
  *
- * @apiParam {String} image ID of target image
+ * @apiParam {String} id Unique ID of target image
  *
  * @apiSuccess {String} image object
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
-
  *        key: 'image-8523306706662-c8a94c49-0c3c-414a-bec0-74fc369a105e',
  *        userKey: 'user-1234uuid',
  *        caption: 'thisissmaplecode.',
@@ -36,6 +35,7 @@ const router = express.Router();
  *       error: "database error"
  *     }
  */
+router.get('/:id', requiredPermission(PERMISSION.R), controller.getById);
 
 
 /**
@@ -74,7 +74,7 @@ const router = express.Router();
  *       error: "database error"
  *     }
  */
-router.get('/', requiredPermission(PERMISSION.R), controller.get);
+router.get('/', requiredPermission(PERMISSION.R), controller.getAll);
 
 /**
  * @api {add} /images Add an image

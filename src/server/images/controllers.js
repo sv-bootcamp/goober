@@ -14,8 +14,30 @@ function replaceAt(str, index, char) {
 }
 
 export default {
-  get(req, res, cb) {
-    const {item, image} = req.query;
+  getById(req, res, cb) {
+    const imageKey = req.params.id;
+    // get an image
+    getPromise(imageKey)
+    .then((value)=>{
+      value.url = new S3Connector().getImageUrl(imageKey);
+      res.status(200).send(value);
+      cb();
+      return;
+    })
+    .catch((err)=>{
+      if (err.notFound) {
+        cb(new APIError(err, {
+          statusCode: 400,
+          message: 'Item was not found'
+        }));
+        return;
+      }
+      cb(new APIError(err));
+      return;
+    });
+  },
+  getAll(req, res, cb) {
+    const {item} = req.query;
     if (item) {
       // get all images of item
       const keys = [];
@@ -65,23 +87,6 @@ export default {
           statusCode: 500,
           message: 'Internal Database Error'
         }));
-      });
-      return;
-    } else if (image) {
-      // get an images
-      ImageManager.fetchImage([image], (errFetch, values) => {
-        if (errFetch) {
-          cb(new APIError(errFetch, {
-            statusCode: 500,
-            message: 'Internal Database Error'
-          }));
-          return;
-        }
-        const value = values[0];
-        value.url = new S3Connector().getImageUrl(image);
-        res.status(200).send(value);
-        cb();
-        return;
       });
       return;
     }
