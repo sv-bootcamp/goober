@@ -8,26 +8,19 @@ import admin from '../admin/router';
 import AuthToken from '../auth-token';
 import validator from '../items/validator';
 import {requiredAdmin} from '../permission';
+import {handle404} from '../ErrorHandler';
 import logger from 'winston';
 
 const router = express.Router();
 
-router.use('/admin', requiredAdmin(), admin, () => {});
+router.use('/admin', requiredAdmin(), admin, handle404);
 router.use(AuthToken.authenticate);
 router.use('/items', validator, items);
 router.use('/images', images);
 router.use('/users', users);
 router.use('/reports', reports);
 router.use('/auth', auth);
-router.use((req, res) => {
-  if (!res.headersSent) {
-    res.status(404).send('API Request > 404 - Page Not Found');
-    logger.error(`404 Not Found - ${req.method} - PATH : ${req.originalUrl} - ${new Date()}`);
-  }
-  if (res.statusCode === 200 || res.statusCode === 304) {
-    return;
-  }
-});
+router.use(handle404);
 
 /* eslint-disable no-unused-vars */
 router.use((errHandler, req, res, next) => {
