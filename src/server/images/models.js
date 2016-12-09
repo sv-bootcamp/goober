@@ -1,4 +1,4 @@
-import db, {fetchPrefix} from '../database';
+import db, {fetchPrefix, fetchKeys} from '../database';
 import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
 
@@ -51,6 +51,32 @@ export default class ImageManager {
     })
     .catch((err) => {
       return cb(err);
+    });
+  }
+
+  /**
+   *
+   * @countImageOfItem
+   *
+   * @param {string} itemKey - The key of target item.
+   * @param {string} stateList - The list of state which is checked.
+   * @return {Number} number of images of an item
+   */
+  static countImageOfItem(itemKey, ...stateList) {
+    const prefixes = stateList.map(state => {
+      return KeyUtils.getPrefix(ENTITY.IMAGE, state, itemKey);
+    });
+
+    return Promise.all(prefixes.map((prefix) => {
+      return new Promise((resolve, reject) => {
+        fetchKeys(prefix, (err, keys) => {
+          return err ? reject(err) : resolve(keys.length);
+        });
+      });
+    })).then(lengthList => {
+      return lengthList.reduce((sum, num) => {
+        return sum + num;
+      });
     });
   }
 }

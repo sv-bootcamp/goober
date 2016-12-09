@@ -1,9 +1,10 @@
 import test from 'tape';
-import testDB, {initMock, clearDB} from '../../../server/database';
+import testDB, {initMock, clearDB, getPromise} from '../../../server/database';
 import {expiredItem} from '../../../server/database-mock-data';
 import ItemManager, {STATE_STRING} from '../../../server/items/models';
 import {KeyUtils, ENTITY, STATE, DEFAULT_PRECISON, CATEGORY} from '../../../server/key-utils';
-import {mockUsers, mockItems, mockSavedPosts} from '../../../server/database-mock-data';
+import {mockUsers, mockItems, mockSavedPosts, mockImages}
+  from '../../../server/database-mock-data';
 
 const testItem = {
   title: 'Lion popup store',
@@ -198,5 +199,42 @@ test('make isSaved field in items(ItemManager.fillIsSaved)', t => {
     t.fail();
     t.end(err);
     return;
+  });
+});
+
+test('remove item', t => {
+  const mockItem = mockImages[0];
+  const timeHash = KeyUtils.parseTimeHash(mockItem.key);
+  initMock().then(() => {
+    ItemManager.removeItem(mockItem.key).then(() => {
+      // check removed index keys
+      const keys = KeyUtils.getIdxKeys(mockItem.value.lat, mockItem.value.lng,
+        timeHash, STATE.REMOVED);
+      return Promise.all(keys.map(key => {
+        return getPromise(key);
+      }));
+    }).then(() => {
+      // check alive & expired index keys
+      const keys = KeyUtils.getIdxKeys(mockItem.value.lat, mockItem.value.lng,
+        timeHash, STATE.ALIVE);
+      keys.concat(KeyUtils.getIdxKeys(mockItem.value.lat, mockItem.value.lng,
+        timeHash, STATE.EXPIRED));
+      return Promise.all(keys.map(key => {
+        return new Promise((resolve, reject) => {
+          testDB.get(key, (err) => {
+            if (err) {
+              return err.notFound ? resolve() : reject(err);
+            }
+            return reject(new Error('key exist in database'));
+          });
+        });
+      }));
+    }).then(() => {
+      t.end();
+    }).catch((err) => {
+      t.comment(err.stack);
+      t.fail();
+      t.end();
+    });
   });
 });

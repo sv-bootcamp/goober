@@ -1,4 +1,4 @@
-import db from '../database';
+import db, {getPromise} from '../database';
 import {KeyUtils, STATE, CATEGORY, DEFAULT_PRECISON, ENTITY} from '../key-utils';
 import UserManager from '../../server/users/models';
 export const STATE_STRING = {
@@ -76,6 +76,32 @@ export default class ItemManager {
   static getFields(array, field) {
     return array.map((obj)=>{
       return obj[field];
+    });
+  }
+
+  static removeItem(itemKey) {
+    const timeHash = KeyUtils.parseTimeHash(itemKey);
+    return getPromise(itemKey).then(value => {
+      const opts = [];
+      const indexingValue = {key: itemKey};
+      const willBeAddedKeys =
+        KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.REMOVED);
+      const willBeRemovedKeys =
+        KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.ALIVE)
+          .concat(KeyUtils.getIdxKeys(value.lat, value.lng, timeHash, STATE.EXPIRED));
+
+      willBeAddedKeys.map(key => {
+        opts.push({type: 'put', key: key, value: indexingValue});
+      });
+      willBeRemovedKeys.map(key => {
+        opts.push({type: 'del', key: key});
+      });
+
+      return new Promise((resolve, reject) => {
+        db.batch(opts, (err) => {
+          return err ? reject(err) : resolve();
+        });
+      });
     });
   }
 }

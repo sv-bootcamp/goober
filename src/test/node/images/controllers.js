@@ -1,9 +1,11 @@
 import test from 'tape';
 import {STATE, KeyUtils, ENTITY} from '../../../server/key-utils';
-import testDB, {clearDB, initMock} from '../../../server/database';
+import testDB, {clearDB, initMock, getPromise} from '../../../server/database';
 import controller from '../../../server/images/controllers';
 import httpMocks from 'node-mocks-http';
 import {S3Utils} from '../../../server/aws-s3';
+import {mockImages, mockImageIndexies, mockCreatedPosts, mockUsers}
+  from '../../../server/database-mock-data';
 
 const MockImageA = {
   key: 'image-8523306706662-c8a94c49-0c3c-414a-bec0-74fc369a105e',
@@ -43,7 +45,7 @@ test('get all image of an item', t => {
       }
       const req = httpMocks.createRequest({
         method: 'GET',
-        url: `/images?item=${itemKey}`,
+        url: `/api/images?item=${itemKey}`,
         query: {
           item: itemKey
         }
@@ -129,7 +131,7 @@ test('Post image', t => {
     let idxImage;
     let createdPost;
     testDB.createReadStream({
-      start: '\x00',
+      start: '',
       end: '\xFF'
     }).on('data', (data) => {
       if (KeyUtils.parseTimeHash(data.key) !== timeHash) {
@@ -175,5 +177,57 @@ test('Post image', t => {
     /* eslint-disable no-console */
     console.log(err);
     /* eslint-enable */
+  });
+});
+
+test('Remove an image', t => {
+  function notExistInDB(key) {
+    return new Promise((resolve, reject) => {
+      testDB.get(key, (err) => {
+        if (err) {
+          return err.notFound ? resolve() : reject('Database internal error');
+        }
+        return reject('key still exists');
+      });
+    });
+  }
+  const mockUserKey = mockUsers[0].key;
+  const mockItemKey = mockImages[0].value.itemKey;
+  const mockImage = mockImages[0];
+  const mockImageIndex = mockImageIndexies[0];
+  const mockCreatedPost = mockCreatedPosts[0];
+  const expected = {
+    statusCode: 200
+  };
+  const req = httpMocks.createRequest({
+    method: 'DELETE',
+    url: `/api/images/${mockImage.key}`,
+    params: {
+      id: mockImage.key
+    }
+  });
+  req.headers = { userKey: mockUserKey };
+
+  const res = httpMocks.createResponse();
+
+  initMock().then(() => {
+    return new Promise((resolve, reject) => {
+      controller.remove(req, res, () => {
+        return res.statusCode !== expected.statusCode ?
+          reject('StatusCode is different') : resolve();
+      });
+    });
+  }).then(() => { return notExistInDB(mockImageIndex.key); }) // eslint-disable-line brace-style
+  .then(() => { return notExistInDB(mockCreatedPost.key); }) // eslint-disable-line brace-style
+  .then(() => { return getPromise(mockImage.key); }) // eslint-disable-line brace-style
+  .then(() => { return getPromise(mockItemKey); }) // eslint-disable-line brace-style
+  .then(() => {
+    t.pass('Not exist : image-index, created-post\nExist : image, item');
+    t.end();
+  })
+  .catch((err) => {
+    t.comment(err);
+    t.fail();
+    t.end();
   });
 });

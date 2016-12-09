@@ -45,7 +45,7 @@ export const fetchPrefix = (prefix, cb) => {
   const values = [];
   let error;
   db.createReadStream({
-    start: `${prefix}\x00`,
+    start: `${prefix}`,
     end: `${prefix}\xFF`
   }).on('data', (data) => {
     values.push(data.value);
@@ -56,6 +56,26 @@ export const fetchPrefix = (prefix, cb) => {
       return cb(error);
     }
     return cb(null, values);
+  });
+};
+
+export const fetchKeys = (prefix, cb) => {
+  const keys = [];
+  let error;
+  db.createReadStream({
+    keys: true,
+    values: false,
+    start: `${prefix}`,
+    end: `${prefix}\xFF`
+  }).on('data', (key) => {
+    keys.push(key);
+  }).on('error', (err) => {
+    error = err;
+  }).on('close', () => {
+    if (error) {
+      return cb(error);
+    }
+    return cb(null, keys);
   });
 };
 

@@ -1,5 +1,7 @@
 import test from 'tape';
-import testDB, {clearDB, fetchPrefix} from '../../../server/database';
+import testDB, {clearDB, fetchPrefix, putPromise} from '../../../server/database';
+import {ENTITY, STATE} from '../../../server/key-utils';
+import ImageManager from '../../../server/images/models';
 
 test('fetch prefix ImageManager', t => {
   const prefix = 'this-is-prefix';
@@ -38,5 +40,40 @@ test('fetch prefix ImageManager', t => {
         t.end();
       });
     });
+  });
+});
+
+test('count image of item', t => {
+  const mockItemKey = 'item-something';
+  const mockAliveImageKeys = [`${ENTITY.IMAGE}-${STATE.ALIVE}-${mockItemKey}-someUniqueString`];
+  const mockExpiredImageKeys = [`${ENTITY.IMAGE}-${STATE.EXPIRED}-${mockItemKey}-someUniqueString`];
+  const mockImageKeys = mockAliveImageKeys.concat(mockExpiredImageKeys);
+
+  const expected = {
+    lengthAlive: mockAliveImageKeys.length,
+    lengthExpired: mockExpiredImageKeys.length,
+    lengthBoth: mockImageKeys.length
+  };
+
+  putPromise(mockItemKey, {})
+  .then(() => { return putPromise(mockImageKeys[0], {}); }) // eslint-disable-line brace-style
+  .then(() => { return putPromise(mockImageKeys[1], {}); }) // eslint-disable-line brace-style
+  .then(() => {
+    return ImageManager.countImageOfItem(mockItemKey, STATE.ALIVE);
+  }).then((length) => {
+    t.equal(length, expected.lengthAlive, 'should be same length');
+  }).then(() => {
+    return ImageManager.countImageOfItem(mockItemKey, STATE.EXPIRED);
+  }).then((length) => {
+    t.equal(length, expected.lengthExpired, 'should be same length');
+  }).then(() => {
+    return ImageManager.countImageOfItem(mockItemKey, STATE.ALIVE, STATE.EXPIRED);
+  }).then((length) => {
+    t.equal(length, expected.lengthBoth, 'should be same length');
+    t.end();
+  }).catch(err => {
+    t.comment(err);
+    t.fail();
+    t.end();
   });
 });
