@@ -327,7 +327,7 @@ test('get created post using key set(CreatedPostManager.fetchPost)', t => {
     t.equal(post.hasOwnProperty('images'), true, 'should have images field');
     t.equal(post.images[0].hasOwnProperty('imageKey'), true, 'should have imageKey field');
     t.equal(post.images[0].hasOwnProperty('imageUrl'), true, 'should have imageUrl field');
-    t.end();
+    t.end();  
   });
 });
 test('delete saved post(SavedPostManager.deletePost)', t => {

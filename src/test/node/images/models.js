@@ -77,6 +77,7 @@ test('count image of item', t => {
     t.end();
   });
 });
+
 test('make simple image objects(ImageManager.getImageObjList)', t => {
   const testImageKeys = mockImages.map((image)=>{
     return image.key;

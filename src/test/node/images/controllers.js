@@ -45,14 +45,14 @@ test('get all image of an item', t => {
       }
       const req = httpMocks.createRequest({
         method: 'GET',
-        url: `/api/images?item=${itemKey}`,
+        url: `/api/images`,
         query: {
           item: itemKey
         }
       });
       const res = httpMocks.createResponse();
 
-      controller.get(req, res, () => {
+      controller.getAll(req, res, () => {
         const value = res._getData().values;
         t.equal(value[0].caption, MockImageA.caption, 'should be same caption');
         t.equal(value[0].key, MockImageA.key, 'should be same key');
@@ -75,13 +75,13 @@ test('get an image', t => {
   }).then(() => {
     const req = httpMocks.createRequest({
       method: 'GET',
-      url: `/images?image=${MockImageA.key}`,
-      query: {
-        image: MockImageA.key
+      url: `/api/images/${MockImageA.key}`,
+      params: {
+        id: MockImageA.key
       }
     });
     const res = httpMocks.createResponse();
-    controller.get(req, res, () => {
+    controller.getById(req, res, () => {
       const value = res._getData();
       t.equal(value.caption, MockImageA.caption, 'should be same caption');
       t.equal(value.key, MockImageA.key, 'should be same key');
