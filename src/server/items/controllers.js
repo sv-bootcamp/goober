@@ -264,7 +264,13 @@ export default {
     })
     .then(CreatedPostManager.addPost(req.headers.userKey, createdPost, timeHash))
     .then(() => {
-      res.status(200).send({message: 'success', data: key });
+      res.status(200).send({
+        message: 'success',
+        data: {
+          itemKey: key,
+          imageKey
+        }
+      });
       return cb();
     })
     .catch((err) => {
