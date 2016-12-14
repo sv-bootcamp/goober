@@ -140,7 +140,13 @@ export default {
       return CreatedPostManager.addPost(image.userKey, createdPost, timeHash);
     })
     .then(() => {
-      res.status(200).send({message: 'success', data: key });
+      res.status(200).send({
+        message: 'success',
+        data: {
+          itemKey: req.body.itemKey,
+          imageKey: key
+        }
+      });
       return cb();
     })
     .catch((err) => {
