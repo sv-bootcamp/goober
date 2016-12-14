@@ -243,7 +243,7 @@ test('add an item to database', t => {
     const message = res._getData().message;
     const key = res._getData().data.itemKey;
     const timeHash = KeyUtils.parseTimeHash(key);
-    t.equal(key, mockItem.key, 'should be same item key');
+    t.ok(key, 'should be return item key');
     t.equal(status, expected.status, 'should be same status');
     t.equal(message, expected.message, 'should be same message');
     let error;
