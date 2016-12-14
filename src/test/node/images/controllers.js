@@ -122,7 +122,7 @@ test('Post image', t => {
   .then(()=>{
     const status = res.statusCode;
     const message = res._getData().message;
-    const key = res._getData().data;
+    const key = res._getData().data.imageKey;
     const timeHash = KeyUtils.parseTimeHash(key);
     t.equal(status, expected.status, 'should be same status');
     t.equal(message, expected.message, 'should be same message');
