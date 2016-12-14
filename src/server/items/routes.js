@@ -108,7 +108,11 @@ router.get('/', requiredPermission(PERMISSION.R), ItemControllers.getAll);
  *     HTTP/1.1 200 OK
  *     {
  *       "message": "success",
- *       "data"   : "item-8523193492003-2d5f3460-d53a-42d3-a138-ae201070f27c"
+ *       "data"   : {
+ *         "itemKey"  : "item-8523193492003-2d5f3460-d53a-42d3-a138-ae201070f27c"
+ *         "imageKey" : "image-8523193492003-2d5f3460-d53a-42d3-a138-ae201070f27c"
+ *       }
+ *
  *     }
  *
  * @apiError (Error 500) error The id of the error occured while putting an Item in DB
