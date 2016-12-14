@@ -124,6 +124,7 @@ test('Post image', t => {
     const message = res._getData().message;
     const key = res._getData().data.imageKey;
     const timeHash = KeyUtils.parseTimeHash(key);
+    t.equal(res._getData().itemKey, MockImageB.itemKey, 'should be same item key.');
     t.equal(status, expected.status, 'should be same status');
     t.equal(message, expected.message, 'should be same message');
     let error;
