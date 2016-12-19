@@ -288,7 +288,7 @@ export class CreatedPostManager {
 export class SavedPostManager {
   static addPost(userKey, entityKey) {
     const key = `${ENTITY.SAVED_POST}-${STATE.ALIVE}-${userKey}-${entityKey}`;
-    const value = {key: entityKey};
+    const value = {key: entityKey, createdTime: Number(new Date())};
     return putPromise(key, value);
   }
   static getPosts(userKey, cb) {
@@ -300,6 +300,12 @@ export class SavedPostManager {
     ];
     UserManager.getPostKeys(ENTITY.SAVED_POST, userKey)
     .then((posts)=>{
+      // Descending sort saved posts using createdTime field.
+      posts.sort((a, b) => {
+        if (a.createdTime > b.createdTime) return -1; // eslint-disable-line curly
+        if (b.createdTime > a.createdTime) return 1; // eslint-disable-line curly
+        return 0;
+      });
       posts.map((post)=>{
         imagePromises.push(new Promise((resolve, reject) => {
           db.get(post.key, (err, item) => {

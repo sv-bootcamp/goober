@@ -48,10 +48,14 @@ export default class ItemManager {
     .then((posts)=>{
       return new Promise((resolve)=>{
         items.sort((a, b) => {
-          return a.key > b.key;
+          if (a.Key < b.key) return -1; // eslint-disable-line curly
+          if (b.key < a.key) return 1; // eslint-disable-line curly
+          return 0;
         });
         posts.sort((a, b) => {
-          return a.key > b.key;
+          if (a.Key < b.key) return -1; // eslint-disable-line curly
+          if (b.key < a.key) return 1; // eslint-disable-line curly
+          return 0;
         });
         const itemKeys = this.getFields(items, 'key');
         const postKeys = this.getFields(posts, 'key');
