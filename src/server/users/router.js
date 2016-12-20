@@ -229,7 +229,6 @@ router.post('/', requiredPermission(PERMISSION.W), controller.post);
  * @apiParam {String} itemKey itemKey
  * @apiParamExample {json} Request-Example:
  *      {
- *          "entity"      : "item",
  *          "itemKey"     : "item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004",
  *      }
  *
