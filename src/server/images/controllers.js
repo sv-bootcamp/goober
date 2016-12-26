@@ -1,4 +1,4 @@
-import db, {fetchPrefix, fetchValue, getPromise} from '../database';
+import db, {fetchValue, getPromise} from '../database';
 import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import {APIError, NotFoundError} from '../ErrorHandler';
@@ -37,24 +37,8 @@ export default {
     const {item} = req.query;
     if (item) {
       // get all images of item
-      const keys = [];
       const checkState = [STATE.ALIVE, STATE.EXPIRED];
-      // @TODO SORT!!!!
-      Promise.all(checkState.map((state) => {
-        return new Promise((resolve, reject) => {
-          const prefix = KeyUtils.getPrefix(ENTITY.IMAGE, state, item);
-          return fetchPrefix(prefix, (err, data) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-            data.map((value) => {
-              keys.push(value.key);
-            });
-            resolve();
-          });
-        });
-      })).then(() => {
+      ImageManager.getImageKeys(item, checkState).then((keys) => {
         const urls = new S3Connector().getImageUrls(keys);
         return fetchValue(keys).then((values)=> {
           return Promise.all(values.map((value) => {
