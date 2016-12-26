@@ -1,15 +1,15 @@
 import test from 'tape';
-import {STATE, KeyUtils, ENTITY} from '../../../server/key-utils';
+import {KeyUtils, ENTITY} from '../../../server/key-utils';
 import testDB, {clearDB, initMock, getPromise} from '../../../server/database';
 import controller from '../../../server/images/controllers';
 import httpMocks from 'node-mocks-http';
 import {S3Utils} from '../../../server/aws-s3';
-import {mockImages, mockImageIndexies, mockCreatedPosts, mockUsers}
+import {mockItems, mockImages, mockImageIndexies, mockCreatedPosts, mockUsers}
   from '../../../server/database-mock-data';
 
 const MockImageA = {
   key: 'image-8523306706662-c8a94c49-0c3c-414a-bec0-74fc369a105e',
-  userKey: 'user-1234uuid',
+  userKey: mockUsers[0].key,
   caption: 'thisissmaplecode.',
   createdDate: '2016-10-17T08:34:53.338Z'
 };
@@ -19,46 +19,36 @@ const MockImageB = {
   caption: 'Hello World'
 };
 test('get all image of an item', t => {
-  const itemKey = 'item-BlaBla';
-  const imageIndexKey = `image-${STATE.ALIVE}-${itemKey}-${MockImageA.key}`;
+  const itemKey = mockItems[0].key;
+  //const imageIndexKey = `image-${STATE.ALIVE}-${itemKey}-${MockImageA.key}`;
 
-  clearDB().then(() => {
-    const opts = [];
-    opts.push({
-      type: 'put',
-      key: imageIndexKey,
-      value: {
-        key: MockImageA.key
+  clearDB().then(initMock).then(() => {
+    const req = httpMocks.createRequest({
+      method: 'GET',
+      url: '/api/images',
+      query: {
+        item: itemKey
       }
     });
-    opts.push({
-      type: 'put',
-      key: MockImageA.key,
-      value: MockImageA
-    });
+    const res = httpMocks.createResponse();
 
-    testDB.batch(opts, (err) => {
-      if (err) {
-        t.fail('database batch error');
-        t.end();
-        return;
-      }
-      const req = httpMocks.createRequest({
-        method: 'GET',
-        url: '/api/images',
-        query: {
-          item: itemKey
-        }
+    controller.getAll(req, res, () => {
+      const values = res._getData().values;
+      console.log('values : ', values);
+      values.map((value) => {
+        /* eslint-disable curly, max-len*/
+        if (value.itemKey !== itemKey) t.fail('wrong item key');// eslint-disable-line curly
+        if (!value.hasOwnProperty('caption')) t.fail('no caption field'); // eslint-disable-line curly
+        if (!value.hasOwnProperty('key')) t.fail('no key field'); // eslint-disable-line curly
+        if (!value.hasOwnProperty('user')) t.fail('no user field'); // eslint-disable-line curly
+        if (!value.hasOwnProperty('userKey')) t.fail('no userKey field'); // eslint-disable-line curly
+        if (!value.hasOwnProperty('createdDate')) t.fail('no createdDate field'); // eslint-disable-line curly
+        if (!value.user.hasOwnProperty('key')) t.fail('no user.key field'); // eslint-disable-line curly
+        if (!value.user.hasOwnProperty('name')) t.fail('no user.name field'); // eslint-disable-line curly
+        if (!value.user.hasOwnProperty('email')) t.fail('no email field'); // eslint-disable-line curly
+        /* eslint-enable curly, max-len*/
       });
-      const res = httpMocks.createResponse();
-
-      controller.getAll(req, res, () => {
-        const value = res._getData().values;
-        t.equal(value[0].caption, MockImageA.caption, 'should be same caption');
-        t.equal(value[0].key, MockImageA.key, 'should be same key');
-        t.equal(typeof (value[0].url), 'string', 'should be same type');
-        t.end();
-      });
+      t.end();
     });
   });
 });

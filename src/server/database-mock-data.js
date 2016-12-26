@@ -357,16 +357,20 @@ export const mockUsers = [
     key: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
     value: {
       key: 'user-8000000000000-uuiduuid-uuid-uuid-uuid-uuiduuiduuid',
-      userName: 'Moongchi Jeong',
-      createdDate: '2007-11-22T07:30:38.064Z'
+      type: 'facebook',
+      name: 'Moongchi Jeong',
+      email: 'N/A',
+      facebookId: '00000000000'
     }
   },
   {
     key: 'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000',
     value: {
       key: 'user-8523569762000-dd3860f5-b82e-473b-4314-ead23640b000',
-      userName: 'Patrick Shim',
-      createdDate: '2016-10-14T07:30:38.064Z'
+      type: 'facebook',
+      name: 'Patrick Shim',
+      email: 'N/A',
+      facebookId: '00000000001'
     }
   }
 ];

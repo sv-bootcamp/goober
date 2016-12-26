@@ -1,9 +1,9 @@
-import db, {fetchPrefix, getPromise} from '../database';
+import db, {fetchPrefix, fetchValue, getPromise} from '../database';
 import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import {APIError, NotFoundError} from '../ErrorHandler';
 import ImageManager from './models';
-import {CreatedPostManager} from '../users/models';
+import UserManager, {CreatedPostManager} from '../users/models';
 import {ItemManager} from '../items/models';
 import assert from 'assert';
 
@@ -38,13 +38,12 @@ export default {
     if (item) {
       // get all images of item
       const keys = [];
-      const promises = [];
       const checkState = [STATE.ALIVE, STATE.EXPIRED];
-
-      for (const state of checkState) {
-        promises.push(new Promise((resolve, reject) => {
+      // @TODO SORT!!!!
+      Promise.all(checkState.map((state) => {
+        return new Promise((resolve, reject) => {
           const prefix = KeyUtils.getPrefix(ENTITY.IMAGE, state, item);
-          fetchPrefix(prefix, (err, data) => {
+          return fetchPrefix(prefix, (err, data) => {
             if (err) {
               reject(err);
               return;
@@ -54,29 +53,32 @@ export default {
             });
             resolve();
           });
-        }));
-      }
-      Promise.all(promises).then(() => {
-        const urls = new S3Connector().getImageUrls(keys);
-        ImageManager.fetchImage(keys, (err, values) => {
-          if (err) {
-            return cb(new APIError(err));
-          }
-
-          for (const url of urls) {
-            for (const value of values) {
-              if (url.indexOf(value.key) !== -1) {
-                value.url = url;
-                break;
-              }
-            }
-          }
-          res.status(200).send({
-            values: values
-          });
-          return cb();
         });
-      }).catch(err => cb(new APIError(err)));
+      })).then(() => {
+        const urls = new S3Connector().getImageUrls(keys);
+        return fetchValue(keys).then((values)=> {
+          return Promise.all(values.map((value) => {
+            return UserManager.getUserProfile(value.userKey).then((userValue)=> {
+              value.user = userValue;
+              for (const url of urls) {
+                if (url.indexOf(value.key) !== -1) {
+                  value.url = url;
+                  break;
+                }
+              }
+              return value;
+            });
+          }));
+        });
+      }).then((values) => {
+        res.status(200).send({values});
+        cb();
+      }).catch((err) => {
+        return cb(new APIError(err, {
+          statusCode: 500,
+          message: 'Internal Database Error'
+        }));
+      });
       return;
     }
     cb(new APIError(new Error('Bad Request : No query string'), 400));

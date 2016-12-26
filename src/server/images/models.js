@@ -1,30 +1,8 @@
-import db, {fetchPrefix, fetchKeys} from '../database';
+import {fetchPrefix, fetchKeys} from '../database';
 import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
 
 export default class ImageManager {
-  static fetchImage(keys = [], cb) {
-    const promises = [];
-    const values = [];
-    for (const key of keys) {
-      promises.push(new Promise((resolve, reject) => {
-        db.get(key, (err, value) => {
-          if (err) {
-            reject();
-            return;
-          }
-          value.key = key;
-          values.push(value);
-          resolve();
-        });
-      }));
-    }
-    Promise.all(promises).then(() => {
-      cb(null, values);
-    }).catch(() => {
-      cb(new Error('database error'));
-    });
-  }
   // get all image Urls of item
   static getImageUrls({itemKey, isThumbnail = false}, cb) {
     const keys = [];
