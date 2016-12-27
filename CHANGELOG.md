@@ -21,6 +21,17 @@ Ref: http://keepachangelog.com/en/0.3.0/
 
 ### goober v1 
 
+#### [1.0.11] - 2016-12-27
+
+- Edited addFacebookUser (#165)
+- Updated sorting function in item and savedPosts (#164)
+
+#### [1.0.10] - 2016-12-14
+
+- Added apidoc (#161)
+- Updated item post response data (#163)
+- Updated images post return data (#162)
+
 #### [1.0.9] - 2016-12-09
 
 - Updated images/get (#155)
