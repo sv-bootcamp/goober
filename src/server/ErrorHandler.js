@@ -14,3 +14,7 @@ export function handle404(req, res) {
     logger.error(`404 Not Found - ${req.method} - PATH : ${req.originalUrl} - ${new Date()}`);
   }
 }
+
+export const ERRNO = {
+  USER_EXIST: 1000001
+};
