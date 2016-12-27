@@ -20,8 +20,6 @@ const MockImageB = {
 };
 test('get all image of an item', t => {
   const itemKey = mockItems[0].key;
-  //const imageIndexKey = `image-${STATE.ALIVE}-${itemKey}-${MockImageA.key}`;
-
   clearDB().then(initMock).then(() => {
     const req = httpMocks.createRequest({
       method: 'GET',
@@ -34,7 +32,9 @@ test('get all image of an item', t => {
 
     controller.getAll(req, res, () => {
       const values = res._getData().values;
-      //console.log('values : ', values);
+      if (values.length === 0) {
+        t.fail('empty values array');
+      }
       values.map((value) => {
         /* eslint-disable curly */
         if (value.itemKey !== itemKey) t.fail('wrong item key');

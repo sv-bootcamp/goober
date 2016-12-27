@@ -1,4 +1,4 @@
-import db, {fetchValue, getPromise} from '../database';
+import db, {fetchValues, getPromise} from '../database';
 import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector} from '../aws-s3';
 import {APIError, NotFoundError} from '../ErrorHandler';
@@ -37,33 +37,21 @@ export default {
     const {item} = req.query;
     if (item) {
       // get all images of item
+      const s3 = new S3Connector();
       const checkState = [STATE.ALIVE, STATE.EXPIRED];
-      ImageManager.getImageKeys(item, checkState).then((keys) => {
-        const urls = new S3Connector().getImageUrls(keys);
-        return fetchValue(keys).then((values)=> {
-          return Promise.all(values.map((value) => {
-            return UserManager.getUserProfile(value.userKey).then((userValue)=> {
-              value.user = userValue;
-              for (const url of urls) {
-                if (url.indexOf(value.key) !== -1) {
-                  value.url = url;
-                  break;
-                }
-              }
-              return value;
-            });
+      return ImageManager.getImageKeys(item, checkState)
+        .then(fetchValues)
+        .then(values => {
+          return UserManager.fetchUserProfiles(s3.fetchImageUrls(values));
+        }).then(values => {
+          res.status(200).send({values});
+          cb();
+        }).catch(err => {
+          return cb(new APIError(err, {
+            statusCode: 500,
+            message: 'Internal Database Error'
           }));
         });
-      }).then((values) => {
-        res.status(200).send({values});
-        cb();
-      }).catch((err) => {
-        return cb(new APIError(err, {
-          statusCode: 500,
-          message: 'Internal Database Error'
-        }));
-      });
-      return;
     }
     cb(new APIError(new Error('Bad Request : No query string'), 400));
   },

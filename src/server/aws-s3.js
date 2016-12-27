@@ -77,6 +77,12 @@ export class S3Connector {
     }
     return urlList;
   }
+  fetchImageUrls(images = []) {
+    return images.map(image => {
+      image.imageUrl = this.getImageUrl(image.key);
+      return image;
+    });
+  }
   getPrefixedImageUrl(key, prefix) {
     return this.getImageUrl(`${prefix}-${key}`);
   }
