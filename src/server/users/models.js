@@ -6,6 +6,7 @@ import {PERMISSION} from '../permission';
 import {STATE_STRING} from '../../server/items/models';
 import ImageManager from '../../server/images/models';
 import assert from 'assert';
+import {ERRNO} from '../ErrorHandler';
 
 export const USER_TYPE = {
   ANONYMOUS: 'anonymous',
@@ -70,9 +71,11 @@ const UserManager = {
         return profile.id;
       })
       .then(FacebookModel.isDuplicated)
-      .then((isExist) => {
+      .then(isExist => {
         if (isExist) {
-          throw new Error('Already exists');
+          const err = new Error('Already exists');
+          err.errno = ERRNO.USER_EXIST;
+          throw err;
         }
         return FacebookManager.getProfileImage(userValue.facebookId);
       })
@@ -90,11 +93,12 @@ const UserManager = {
         const userIdx = FacebookModel.getIdxKey(userValue.facebookId);
         return putPromise(userIdx, {key: userKey});
       })
-      .then(() => {
-        return {
-          userKey,
-          userType: USER_TYPE.FACEBOOK
-        };
+      .then(() => ({ userKey, userType: USER_TYPE.FACEBOOK}))
+      .catch(err => {
+        if (err.errno === ERRNO.USER_EXIST) {
+          return { userKey, userType: USER_TYPE.FACEBOOK };
+        }
+        throw err;
       });
   },
   genUserKey: () => {
