@@ -68,7 +68,7 @@ export default class ImageManager {
   * //     imageUrl: 'url-of-image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000'
   * //   }
   * //  ]
-*/
+  */
   static getImageObjList(imageKeys) {
     const s3 = new S3Connector();
     return imageKeys.map((imageKey)=> {

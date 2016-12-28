@@ -47,10 +47,7 @@ export default {
           res.status(200).send({values});
           cb();
         }).catch(err => {
-          return cb(new APIError(err, {
-            statusCode: 500,
-            message: 'Internal Database Error'
-          }));
+          return cb(new APIError(err));
         });
     }
     cb(new APIError(new Error('Bad Request : No query string'), 400));
