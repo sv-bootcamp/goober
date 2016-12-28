@@ -26,20 +26,17 @@ export default class ImageManager {
         s3Connector.getPrefixedImageUrls(keys, IMAGE_SIZE_PREFIX.THUMBNAIL) :
         s3Connector.getImageUrls(keys);
       return cb(null, urls);
-    })
-      .catch((err) => {
-        return cb(err);
-      });
+    }).catch((err) => {
+      return cb(err);
+    });
   }
 
-  /**
-   *
-   * @countImageOfItem
-   *
-   * @param {string} itemKey - The key of target item.
-   * @param {string} stateList - The list of state which is checked.
-   * @return {Number} number of images of an item
-   */
+ /**
+  * @countImageOfItem
+  * @param {string} itemKey - The key of target item.
+  * @param {string} stateList - The list of state which is checked.
+  * @return {Number} number of images of an item
+  */
   static countImageOfItem(itemKey, ...stateList) {
     const prefixes = stateList.map(state => {
       return KeyUtils.getPrefix(ENTITY.IMAGE, state, itemKey);
@@ -58,20 +55,20 @@ export default class ImageManager {
     });
   }
 
-  /**
-   * @getImageObjList
-   * make simple image object list containing image key and url.
-   * @param {Array} imageKeys imageKeys
-   * @return {Array} objs
-   * @example
-   * const imageKeys = ['image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000'];
-   * ImageManager.getImageObjList(imageKeys);
-   * // →[
-   * //   { imageKey: 'image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000',
+ /**
+  * @getImageObjList
+  * make simple image object list containing image key and url.
+  * @param {Array} imageKeys imageKeys
+  * @return {Array} objs
+  * @example
+  * const imageKeys = ['image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000'];
+  * ImageManager.getImageObjList(imageKeys);
+  * // →[
+  * //   { imageKey: 'image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000',
   * //     imageUrl: 'url-of-image-8523569763000-dd3860f5-b82e-473b-1234-ead0f190b000'
   * //   }
-   * //  ]
-   */
+  * //  ]
+*/
   static getImageObjList(imageKeys) {
     const s3 = new S3Connector();
     return imageKeys.map((imageKey)=> {
@@ -79,13 +76,13 @@ export default class ImageManager {
     });
   }
 
-  /**
-   * @getImageKeys
-   * get sorted image keys using item key.
-   * @param {string} itemKey imageKey
-   * @param {Array} checkState checkState
-   * @return {Array} image keys
-   */
+ /**
+  * @getImageKeys
+  * get sorted image keys using item key.
+  * @param {string} itemKey imageKey
+  * @param {Array} checkState checkState
+  * @return {Array} image keys
+  */
   static getImageKeys(itemKey, checkState = [STATE.ALIVE, STATE.EXPIRED]) {
     const keys = [];
     return Promise.all(checkState.map((state) => {
