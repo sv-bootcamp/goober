@@ -14,10 +14,7 @@ export const PERMISSION = {
 export const requiredPermission = (permission) => {
   return (req, res, next) => {
     if (!req.headers.permission) {
-      next(new APIError(new Error('No permission in request header'), {
-        statusCode: 403,
-        message: 'No permission in request header'
-      }));
+      next(new APIError(new Error('No permission in request header'), 403));
       return;
     }
 
@@ -40,10 +37,7 @@ export const requiredPermission = (permission) => {
 export const requiredAdmin = () => {
   return (req, res, next) => {
     if (!req.headers.authorization || req.headers.authorization !== ADMIN_SECRET) {
-      next(new APIError(new Error('Unauthorized request'), {
-        statusCode: 403,
-        message: 'Unauthorized request'
-      }));
+      next(new APIError(new Error('Unauthorized request'), 403));
       return;
     }
     next();

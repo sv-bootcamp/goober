@@ -13,12 +13,7 @@ export default {
         res.status(200).send(profile);
         return next();
       })
-      .catch(err => {
-        return next(new APIError(err, {
-          statusCode: err.statusCode,
-          message: err.message
-        }));
-      });
+      .catch(err => next(new APIError(err)));
   },
   post(req, res, cb) {
     const currentTime = new Date();
@@ -65,9 +60,7 @@ export default {
     }).then(() => {
       res.status(200).send({ message: 'success', data: key });
       return cb();
-    }).catch((err) => {
-      return cb(new APIError(err, { statusCode: err.statusCode, message: err.message }));
-    });
+    }).catch(err => cb(new APIError(err)));
   },
   addSavedPost(req, res, cb) {
     const {userKey} = req.headers;
@@ -78,9 +71,7 @@ export default {
         data: idxKey
       });
       return cb();
-    }).catch((err) => {
-      return cb(new APIError(err));
-    });
+    }).catch(err => cb(new APIError(err)));
   },
   deleteSavedPost(req, res, cb) {
     const {itemKey} = req.body;
@@ -97,7 +88,7 @@ export default {
     const {userKey} = req.headers;
     SavedPostManager.getPosts(userKey, (err, posts) => {
       if (err) {
-        return cb(new APIError());
+        return cb(new APIError(err));
       }
       res.status(200).send(posts);
       return cb();
@@ -107,7 +98,7 @@ export default {
     const {userKey} = req.headers;
     CreatedPostManager.getPosts(userKey, (err, posts) => {
       if (err) {
-        return cb(new APIError());
+        return cb(new APIError(err));
       }
       res.status(200).send(posts);
       return cb();
@@ -125,10 +116,7 @@ export default {
       addUser = UserModel.addFacebookUser(req.body);
       break;
     default:
-      return next(new APIError(new Error(), {
-        statusCode: 400,
-        message: 'invalid user type'
-      }));
+      return next(new APIError(new Error('invalid user type'), 400));
     }
 
     return addUser
@@ -149,15 +137,9 @@ export default {
       })
       .catch((err) => {
         if (err.message === 'Already exists.') {
-          return next(new APIError(err, {
-            statusCode: 400,
-            message: err.message
-          }));
+          return next(new APIError(err, 400));
         }
-        return next(new APIError(err, {
-          statusCode: 500,
-          message: err.message
-        }));
+        return next(new APIError(err));
       });
   }
 };

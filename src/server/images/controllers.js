@@ -26,10 +26,7 @@ export default {
     })
     .catch((err)=>{
       if (err.notFound) {
-        cb(new APIError(err, {
-          statusCode: 400,
-          message: 'Item was not found'
-        }));
+        cb(new APIError(err, 400)); // 'Item was not found'
         return;
       }
       cb(new APIError(err));
@@ -63,10 +60,7 @@ export default {
         const urls = new S3Connector().getImageUrls(keys);
         ImageManager.fetchImage(keys, (err, values) => {
           if (err) {
-            return cb(new APIError(err, {
-              statusCode: 500,
-              message: 'Internal Database Error'
-            }));
+            return cb(new APIError(err));
           }
 
           for (const url of urls) {
@@ -82,18 +76,10 @@ export default {
           });
           return cb();
         });
-      }).catch((err) => {
-        return cb(new APIError(err, {
-          statusCode: 500,
-          message: 'Internal Database Error'
-        }));
-      });
+      }).catch(err => cb(new APIError(err)));
       return;
     }
-    cb(new APIError(new Error(), {
-      statusCode: 400,
-      message: 'Bad Request : No query string'
-    }));
+    cb(new APIError(new Error('Bad Request : No query string'), 400));
   },
   post(req, res, cb) {
     assert(req.headers.userKey, 'userKey should be provided.');
@@ -149,9 +135,7 @@ export default {
       });
       return cb();
     })
-    .catch((err) => {
-      return cb(new APIError(err, {statusCode: err.statusCode, message: err.message}));
-    });
+    .catch(err => cb(new APIError(err)));
   },
   remove(req, res, cb) {
     const {userKey} = req.headers;
@@ -218,9 +202,6 @@ export default {
     }).then(() => {
       res.status(200).send({ message: 'success', data: `${imageKey}` });
       cb();
-    }).catch((err) => {
-      console.log(err); // eslint-disable-line no-console
-      cb(new APIError(err, {statusCode: 400, message: err.message}));
-    });
+    }).catch(err => cb(new APIError(err, 400)));
   }
 };
