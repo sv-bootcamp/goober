@@ -66,8 +66,9 @@ export default (req, res, next) => {
       message: 'wrong item modifiedDate'
     }));
   }
-  if (req.body.category && !(typeof req.body.category === 'string'
-    && CATEGORIES.indexOf(req.body.category) !== -1)) {
+  if (req.body.category === '' || (req.body.category &&
+    !(typeof req.body.category === 'string'
+    && CATEGORIES.indexOf(req.body.category) !== -1))) {
     return next(new APIError(new Error(), {
       statusCode: 400,
       message: 'wrong item category'
