@@ -15,7 +15,7 @@ export default {
           });
       }
       return next(new APIError(new Error('Not a valid token type'), 400));
-    }).catch(err => next(new APIError(new Error('Not a valid token type'), 400)));
+    }).catch(() => next(new APIError(new Error('Not a valid token type'), 400)));
   },
   grant: (req, res, next) => {
     let {userKey, grantType} = req.body;
