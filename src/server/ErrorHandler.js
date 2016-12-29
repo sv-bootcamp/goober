@@ -8,6 +8,12 @@ export class APIError {
   }
 }
 
+export class NotFoundError extends Error{
+  constructor(message = 'Error : NotFound') {
+    super(message);
+  }
+}
+
 export function handle404(req, res) {
   if (!res.headersSent) {
     res.status(404).send('Request > 404 - Page Not Found');

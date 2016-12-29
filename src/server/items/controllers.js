@@ -1,5 +1,5 @@
 import db, {fetchPrefix} from '../database';
-import {APIError} from '../ErrorHandler';
+import {APIError, NotFoundError} from '../ErrorHandler';
 import {KeyUtils, STATE, ENTITY, CATEGORY} from '../key-utils';
 import ItemManager, {STATE_STRING} from './models';
 import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
@@ -76,9 +76,7 @@ export default {
         return cb();
       }).catch((err) => {
         if (err.notFound) {
-          res.status(200).send({
-            items
-          });
+          res.status(200).send({items});
           return cb();
         }
         return cb(new APIError(err));
@@ -107,7 +105,7 @@ export default {
     db.get(key, (errGet, value) => {
       if (errGet) {
         if (errGet.notFound) {
-          cb(new APIError(errGet, 400));
+          cb(new APIError(new NotFoundError, 400));
           return;
         }
         cb(new APIError(errGet));
@@ -140,7 +138,7 @@ export default {
     return db.get(key, (getErr, item) => {
       if (getErr) {
         if (getErr.notFound) {
-          return cb(new APIError(getErr, 400));
+          return cb(new APIError(new NotFoundError(), 400));
         }
         return cb(new APIError(getErr));
       }
@@ -266,7 +264,7 @@ export default {
     db.get(key, (getErr, value) => {
       if (getErr) {
         if (getErr.notFound) {
-          return cb(new APIError(getErr, 400));
+          return cb(new APIError(new NotFoundError(), 400));
         }
         return cb(new APIError(getErr));
       }

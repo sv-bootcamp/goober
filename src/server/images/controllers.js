@@ -1,7 +1,7 @@
 import db, {fetchPrefix, getPromise} from '../database';
 import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector} from '../aws-s3';
-import {APIError} from '../ErrorHandler';
+import {APIError, NotFoundError} from '../ErrorHandler';
 import ImageManager from './models';
 import {CreatedPostManager} from '../users/models';
 import {ItemManager} from '../items/models';
@@ -26,7 +26,7 @@ export default {
     })
     .catch((err)=>{
       if (err.notFound) {
-        cb(new APIError(err, 400)); // 'Item was not found'
+        cb(new APIError(new NotFoundError(), 400));
         return;
       }
       cb(new APIError(err));
