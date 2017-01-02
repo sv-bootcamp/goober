@@ -81,16 +81,14 @@ export default class ImageManager {
   */
   static getImageKeys(itemKey, checkState = [STATE.ALIVE, STATE.EXPIRED]) {
     const keys = [];
-    return Promise.all(checkState.map((state) => {
+    return Promise.all(checkState.map(state => {
       return new Promise((resolve, reject) => {
         const prefix = KeyUtils.getPrefix(ENTITY.IMAGE, state, itemKey);
         return fetchPrefix(prefix, (err, data) => {
           if (err) {
             return reject(err);
           }
-          return resolve(data.map((value) => {
-            keys.push(value.key);
-          }));
+          return resolve(data.map(value => keys.push(value.key)));
         });
       });
     })).then(()=>{
