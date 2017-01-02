@@ -1,5 +1,5 @@
 import db, {fetchPrefix} from '../database';
-import {APIError} from '../ErrorHandler';
+import {APIError, NotFoundError} from '../ErrorHandler';
 import {KeyUtils, STATE, ENTITY, CATEGORY} from '../key-utils';
 import ItemManager, {STATE_STRING} from './models';
 import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
@@ -76,15 +76,10 @@ export default {
         return cb();
       }).catch((err) => {
         if (err.notFound) {
-          res.status(200).send({
-            items
-          });
+          res.status(200).send({items});
           return cb();
         }
-        return cb(new APIError(err, {
-          statusCode: 500,
-          message: 'Internal Database Error'
-        }));
+        return cb(new APIError(err));
       });
       return;
     }
@@ -110,10 +105,7 @@ export default {
     db.get(key, (errGet, value) => {
       if (errGet) {
         if (errGet.notFound) {
-          cb(new APIError(errGet, {
-            statusCode: 400,
-            message: 'Item was not found'
-          }));
+          cb(new APIError(new NotFoundError, 400));
           return;
         }
         cb(new APIError(errGet));
@@ -146,10 +138,7 @@ export default {
     return db.get(key, (getErr, item) => {
       if (getErr) {
         if (getErr.notFound) {
-          return cb(new APIError(getErr, {
-            statusCode: 400,
-            message: 'Item was not found'
-          }));
+          return cb(new APIError(new NotFoundError(), 400));
         }
         return cb(new APIError(getErr));
       }
@@ -176,9 +165,7 @@ export default {
           });
           return cb();
         })
-        .catch((err) => {
-          return cb(new APIError(err, {statusCode: err.statusCode, message: err.message}));
-        });
+        .catch(err => cb(new APIError(err)));
       });
     });
   },
@@ -195,10 +182,7 @@ export default {
       });
     }).on('close', () => {
       if (errorList.length > 0) {
-        return cb(new APIError(errorList[0], {
-          statusCode: 500,
-          message: 'Internal Database Error'
-        }));
+        return cb(new APIError(errorList[0]));
       }
       res.status(200).send({
         message: 'success'
@@ -273,19 +257,14 @@ export default {
       });
       return cb();
     })
-    .catch((err) => {
-      return cb(new APIError(err, {statusCode: err.statusCode, message: err.message}));
-    });
+    .catch(err => cb(new APIError(err)));
   },
   modify: (req, res, cb) => {
     const key = req.params.id;
     db.get(key, (getErr, value) => {
       if (getErr) {
         if (getErr.notFound) {
-          return cb(new APIError(getErr, {
-            statusCode: 400,
-            message: getErr
-          }));
+          return cb(new APIError(new NotFoundError(), 400));
         }
         return cb(new APIError(getErr));
       }

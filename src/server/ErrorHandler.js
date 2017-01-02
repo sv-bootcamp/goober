@@ -1,10 +1,16 @@
 import logger from 'winston';
 
 export class APIError {
-  constructor(error, options = {}) {
+  constructor(error, statusCode) {
     this.error = error;
-    this.statusCode = options.statusCode || 500;
-    this.message = options.message || 'Internal Server Error';
+    this.statusCode = statusCode || 500;
+    this.message = error.message || 'Internal Server Error';
+  }
+}
+
+export class NotFoundError extends Error{
+  constructor(message = 'Error : NotFound') {
+    super(message);
   }
 }
 

@@ -14,16 +14,8 @@ export default {
             return next();
           });
       }
-      return next(new APIError(new Error(), {
-        statusCode: 400,
-        message: 'Not a valid token type'
-      }));
-    }).catch(err => {
-      return next(new APIError(err, {
-        statusCode: 400,
-        message: 'Not a valid refresh token'
-      }));
-    });
+      return next(new APIError(new Error('Not a valid token type'), 400));
+    }).catch(() => next(new APIError(new Error('Not a valid token type'), 400)));
   },
   grant: (req, res, next) => {
     let {userKey, grantType} = req.body;
@@ -54,29 +46,13 @@ export default {
     })
     .catch(err => {
       if (err.type === FACEBOOK_ERROR.OAUTH_EXCEPTION) {
-        return next(new APIError(err, {
-          statusCode: 400,
-          message: 'wrong facebook access token'
-        }));
+        return next(new APIError(new Error('wrong facebook access token'), 400));
+      } else if (err.notFound) {
+        return next(new APIError(new Error('wrong secret'), 400));
+      } else if (err.message === 'wrong facebook token') {
+        return next(new APIError(err, 400));
       }
-      if (err.notFound) {
-        return next(new APIError(err, {
-          statusCode: 400,
-          message: 'wrong secret'
-        }));
-      }
-      if (err.message === 'wrong facebook token') {
-        return next(new APIError(err, {
-          statusCode: 400,
-          message: 'wrong facebook token'
-        }));
-      }
-      return next(
-        new APIError(err, {
-          statusCode: 500,
-          message: err.message
-        })
-      );
+      return next(new APIError(err));
     });
   },
   validate: (req, res, next) => {

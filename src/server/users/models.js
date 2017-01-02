@@ -119,6 +119,7 @@ const UserManager = {
     }).then(()=>{
       return cb(null);
     }).catch((err)=>{
+      // TODO : check out error
       if (err.NotFound) {
         return new Error('Not found : invalid key');
       }

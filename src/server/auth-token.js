@@ -71,12 +71,7 @@ class AuthToken {
       req.headers.permission = USER_PERMISSION[payload.userType];
       next();
     })
-    .catch(err => {
-      next(new APIError(err, {
-        statusCode: 400,
-        message: err.message
-      }));
-    });
+    .catch(err => next(new APIError(err, 400)));
   }
 }
 
