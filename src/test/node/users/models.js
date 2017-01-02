@@ -406,7 +406,6 @@ test('fetchUserProfiles()', t => {
     UserManager.fetchUserProfiles(testObjs).then(fetchedVals => {
       t.equal(fetchedVals.length, testObjs.length, 'should be same length');
       fetchedVals.map((value, idx) => {
-        console.log('value', value);
         t.equal(testObjs[idx].userKey, value.user.key, 'should be same key');
         t.ok(value.user, 'has own user property');
       });

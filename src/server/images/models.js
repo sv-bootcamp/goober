@@ -88,14 +88,12 @@ export default class ImageManager {
           if (err) {
             return reject(err);
           }
-          //return resolve(data.map(value => value.key));
           return resolve(data.map((value) => {
             keys.push(value.key);
           }));
         });
       });
     })).then(()=>{
-      console.log(keys);
       return keys.sort((a, b) => {
         if (a.Key < b.key) return -1; // eslint-disable-line curly
         if (b.key < a.key) return 1; // eslint-disable-line curly

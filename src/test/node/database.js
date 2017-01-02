@@ -109,7 +109,6 @@ test('fetchValues', t => {
     })
     .then(()=> fetchValues(testKeys))
     .then(values => {
-      console.log(values);
       t.deepEqual(values, testVals, 'should be same values');
       t.end();
     })
