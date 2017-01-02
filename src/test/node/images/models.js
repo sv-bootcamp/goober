@@ -105,14 +105,10 @@ test('getImageKeys', t => {
     .then(initMock)
     .then(()=> ImageManager.getImageKeys(testItem.key))
     .then(imageKeys => {
-      if (imageKeys.length === 0) {
-        t.fail('empty imageKeys array');
-      }
+      t.ok(imageKeys.length, 'not empty imageKeys array');
       return Promise.all(imageKeys.map(
-        imageKey => getPromise(imageKey).then(imageVal => {
-          t.equal(imageVal.key, imageKey, 'should be same key of image value');
-        })
-      ));
+        imageKey => getPromise(imageKey).then(imageVal => t.equal(imageVal.key, imageKey,
+          'should be same key of image value'))));
     }).then(() => t.end())
     .catch(err => {
       t.fail();

@@ -39,16 +39,14 @@ export default {
       // get all images of item
       const s3 = new S3Connector();
       const checkState = [STATE.ALIVE, STATE.EXPIRED];
-      return ImageManager.getImageKeys(item, checkState)
+      ImageManager.getImageKeys(item, checkState)
         .then(fetchValues)
+        .then(values => UserManager.fetchUserProfiles(s3.fetchImageUrls(values)))
         .then(values => {
-          return UserManager.fetchUserProfiles(s3.fetchImageUrls(values));
-        }).then(values => {
           res.status(200).send({values});
           cb();
-        }).catch(err => {
-          return cb(new APIError(err));
-        });
+        }).catch(err => cb(new APIError(err)));
+      return;
     }
     cb(new APIError(new Error('Bad Request : No query string'), 400));
   },

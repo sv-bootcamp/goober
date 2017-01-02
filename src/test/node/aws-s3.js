@@ -157,12 +157,8 @@ test('fetchImageUrls()', t =>{
   const values = conn.fetchImageUrls(testObjs);
   t.equal(testObjs.length, values.length, 'should be same length');
   values.map((value, idx) => {
-    if (!value.hasOwnProperty('imageUrl')) {
-      t.fail('no imageUrl field');
-    }
-    if (testObjs[idx].key !== value.key) {
-      t.fail('wrong key');
-    }
+    t.ok(value.imageUrl, 'has own imageUrl property');
+    t.equal(value.key, testObjs[idx].key, 'should be key');
   });
   t.end();
 });

@@ -32,9 +32,7 @@ test('get all image of an item', t => {
 
     controller.getAll(req, res, () => {
       const values = res._getData().values;
-      if (values.length === 0) {
-        t.fail('empty values array');
-      }
+      t.ok(values.length, 'not empty values array');
       values.map(value => {
         t.equal(value.itemKey, itemKey, 'item key should be equal');
         t.ok(value.caption, 'no caption field');

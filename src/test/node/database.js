@@ -100,13 +100,8 @@ test('fetchValues', t => {
     { type: 'put', key: testKeys[1], value: testVals[1] }
   ];
   clearDB()
-    .then(() => {
-      return new Promise((resolve, reject) => {
-        db.batch(ops, err => {
-          return err ? reject(err) : resolve();
-        });
-      });
-    })
+    .then(() => new Promise((resolve, reject) =>
+      db.batch(ops, err => err ? reject(err) : resolve())))
     .then(()=> fetchValues(testKeys))
     .then(values => {
       t.deepEqual(values, testVals, 'should be same values');
