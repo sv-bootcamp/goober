@@ -26,15 +26,13 @@ export default class ImageManager {
         s3Connector.getPrefixedImageUrls(keys, IMAGE_SIZE_PREFIX.THUMBNAIL) :
         s3Connector.getImageUrls(keys);
       return cb(null, urls);
-    }).catch((err) => {
-      return cb(err);
-    });
+    }).catch(cb);
   }
 
  /**
   * @countImageOfItem
   * @param {string} itemKey - The key of target item.
-  * @param {string} stateList - The list of state which is checked.
+  * @param {Array} [stateList=[]] - The list of state which is checked.
   * @return {Number} number of images of an item
   */
   static countImageOfItem(itemKey, ...stateList) {
@@ -71,16 +69,14 @@ export default class ImageManager {
   */
   static getImageObjList(imageKeys) {
     const s3 = new S3Connector();
-    return imageKeys.map((imageKey)=> {
-      return {imageKey, imageUrl: s3.getImageUrl(imageKey)};
-    });
+    return imageKeys.map((imageKey)=> ({imageKey, imageUrl: s3.getImageUrl(imageKey)}));
   }
 
  /**
   * @getImageKeys
   * get sorted image keys using item key.
   * @param {string} itemKey imageKey
-  * @param {Array} checkState checkState
+  * @param {Array} [checkState=[STATE.ALIVE, STATE.EXPIRED]] checkState
   * @return {Array} image keys
   */
   static getImageKeys(itemKey, checkState = [STATE.ALIVE, STATE.EXPIRED]) {
@@ -92,12 +88,14 @@ export default class ImageManager {
           if (err) {
             return reject(err);
           }
+          //return resolve(data.map(value => value.key));
           return resolve(data.map((value) => {
             keys.push(value.key);
           }));
         });
       });
     })).then(()=>{
+      console.log(keys);
       return keys.sort((a, b) => {
         if (a.Key < b.key) return -1; // eslint-disable-line curly
         if (b.key < a.key) return 1; // eslint-disable-line curly

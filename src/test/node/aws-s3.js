@@ -153,9 +153,7 @@ test('test get image urls', t => {
 });
 test('fetchImageUrls()', t =>{
   const conn = new S3Connector();
-  const testObjs = mockImages.map(image => {
-    return image.value;
-  });
+  const testObjs = mockImages.map(image => image.value);
   const values = conn.fetchImageUrls(testObjs);
   t.equal(testObjs.length, values.length, 'should be same length');
   values.map((value, idx) => {

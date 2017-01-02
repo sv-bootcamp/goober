@@ -103,22 +103,17 @@ test('getImageKeys', t => {
   const testItem = mockItems[0];
   clearDB()
     .then(initMock)
-    .then(()=> {
-      return ImageManager.getImageKeys(testItem.key);
-    })
+    .then(()=> ImageManager.getImageKeys(testItem.key))
     .then(imageKeys => {
       if (imageKeys.length === 0) {
         t.fail('empty imageKeys array');
       }
-      imageKeys.map(imageKey => {
-        return getPromise(imageKey).then(imageVal => {
-          if (imageVal.key !== imageKey) {
-            t.fail('wrong image value');
-          }
-        });
-      });
-      t.end();
-    })
+      return Promise.all(imageKeys.map(
+        imageKey => getPromise(imageKey).then(imageVal => {
+          t.equal(imageVal.key, imageKey, 'should be same key of image value');
+        })
+      ));
+    }).then(() => t.end())
     .catch(err => {
       t.fail();
       t.end(err);

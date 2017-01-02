@@ -35,18 +35,16 @@ test('get all image of an item', t => {
       if (values.length === 0) {
         t.fail('empty values array');
       }
-      values.map((value) => {
-        /* eslint-disable curly */
-        if (value.itemKey !== itemKey) t.fail('wrong item key');
-        if (!value.hasOwnProperty('caption')) t.fail('no caption field');
-        if (!value.hasOwnProperty('key')) t.fail('no key field');
-        if (!value.hasOwnProperty('user')) t.fail('no user field');
-        if (!value.hasOwnProperty('userKey')) t.fail('no userKey field');
-        if (!value.hasOwnProperty('createdDate')) t.fail('no createdDate field');
-        if (!value.user.hasOwnProperty('key')) t.fail('no user.key field');
-        if (!value.user.hasOwnProperty('name')) t.fail('no user.name field');
-        if (!value.user.hasOwnProperty('email')) t.fail('no email field');
-        /* eslint-enable curly */
+      values.map(value => {
+        t.equal(value.itemKey, itemKey, 'item key should be equal');
+        t.ok(value.caption, 'no caption field');
+        t.ok(value.key, 'no key field');
+        t.ok(value.user, 'no user field');
+        t.ok(value.userKey, 'no userKey field');
+        t.ok(value.createdDate, 'no createdDate field');
+        t.ok(value.user.key, 'no user.key field');
+        t.ok(value.user.name, 'no user.name field');
+        t.ok(value.user.email, 'no user.email field');
       });
       t.end();
     });
