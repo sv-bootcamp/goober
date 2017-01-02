@@ -88,11 +88,11 @@ export default class ImageManager {
       });
     })).then(keyList => keyList.reduce((result, key) => result.concat(key)))
       .then(keys => {
-      return keys.sort((a, b) => {
-        if (a.Key < b.key) return -1; // eslint-disable-line curly
-        if (b.key < a.key) return 1; // eslint-disable-line curly
-        return 0;
-      });
+        return keys.sort((a, b) => {
+          if (a.Key < b.key) return -1; // eslint-disable-line curly
+          if (b.key < a.key) return 1; // eslint-disable-line curly
+          return 0;
+        });
     });
   }
 }
