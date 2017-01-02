@@ -8,7 +8,7 @@ export class APIError {
   }
 }
 
-export class NotFoundError extends Error{
+export class NotFoundError extends Error {
   constructor(message = 'Error : NotFound') {
     super(message);
   }
