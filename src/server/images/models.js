@@ -1,30 +1,8 @@
-import db, {fetchPrefix, fetchKeys} from '../database';
+import {fetchPrefix, fetchKeys} from '../database';
 import {ENTITY, STATE, KeyUtils} from '../key-utils';
 import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
 
 export default class ImageManager {
-  static fetchImage(keys = [], cb) {
-    const promises = [];
-    const values = [];
-    for (const key of keys) {
-      promises.push(new Promise((resolve, reject) => {
-        db.get(key, (err, value) => {
-          if (err) {
-            reject();
-            return;
-          }
-          value.key = key;
-          values.push(value);
-          resolve();
-        });
-      }));
-    }
-    Promise.all(promises).then(() => {
-      cb(null, values);
-    }).catch(() => {
-      cb(new Error('database error'));
-    });
-  }
   // get all image Urls of item
   static getImageUrls({itemKey, isThumbnail = false}, cb) {
     const keys = [];
@@ -48,19 +26,15 @@ export default class ImageManager {
         s3Connector.getPrefixedImageUrls(keys, IMAGE_SIZE_PREFIX.THUMBNAIL) :
         s3Connector.getImageUrls(keys);
       return cb(null, urls);
-    })
-    .catch((err) => {
-      return cb(err);
-    });
+    }).catch(cb);
   }
-  /**
-   *
-   * @countImageOfItem
-   *
-   * @param {string} itemKey - The key of target item.
-   * @param {string} stateList - The list of state which is checked.
-   * @return {Number} number of images of an item
-   */
+
+ /**
+  * @countImageOfItem
+  * @param {string} itemKey - The key of target item.
+  * @param {Array} [stateList=[]] - The list of state which is checked.
+  * @return {Number} number of images of an item
+  */
   static countImageOfItem(itemKey, ...stateList) {
     const prefixes = stateList.map(state => {
       return KeyUtils.getPrefix(ENTITY.IMAGE, state, itemKey);
@@ -78,7 +52,8 @@ export default class ImageManager {
       });
     });
   }
-  /**
+
+ /**
   * @getImageObjList
   * make simple image object list containing image key and url.
   * @param {Array} imageKeys imageKeys
@@ -94,8 +69,30 @@ export default class ImageManager {
   */
   static getImageObjList(imageKeys) {
     const s3 = new S3Connector();
-    return imageKeys.map((imageKey)=>{
-      return {imageKey, imageUrl: s3.getImageUrl(imageKey)};
+    return imageKeys.map((imageKey)=> ({imageKey, imageUrl: s3.getImageUrl(imageKey)}));
+  }
+
+ /**
+  * @getImageKeys
+  * get sorted image keys using item key.
+  * @param {string} itemKey imageKey
+  * @param {Array} [checkState=[STATE.ALIVE, STATE.EXPIRED]] checkState
+  * @return {Array} image keys
+  */
+  static getImageKeys(itemKey, checkState = [STATE.ALIVE, STATE.EXPIRED]) {
+    return Promise.all(checkState.map(state => {
+      return new Promise((resolve, reject) => {
+        const prefix = KeyUtils.getPrefix(ENTITY.IMAGE, state, itemKey);
+        return fetchPrefix(prefix, (err, data) =>
+          err ? reject(err) : resolve(data.map(value => value.key)));
+      });
+    })).then(keyList => keyList.reduce((result, key) => result.concat(key)))
+      .then(keys => {
+        return keys.sort((a, b) => {
+          if (a.Key < b.key) return -1; // eslint-disable-line curly
+          if (b.key < a.key) return 1; // eslint-disable-line curly
+          return 0;
+        });
     });
   }
 }

@@ -1,5 +1,5 @@
 import test from 'tape';
-import db, {clearDB, putPromise, getPromise} from '../../server/database';
+import db, {clearDB, putPromise, getPromise, fetchValues} from '../../server/database';
 
 test('database clear', t => {
   const onClear = () =>{
@@ -85,6 +85,27 @@ test('get data from database by promise', t => {
             t.end(err);
           });
       });
+    })
+    .catch(err => {
+      t.fail();
+      t.end(err);
+    });
+});
+
+test('fetchValues', t => {
+  const testKeys = ['key-00', 'key-01'];
+  const testVals = ['val-00', 'val-01'];
+  const ops = [
+    { type: 'put', key: testKeys[0], value: testVals[0] },
+    { type: 'put', key: testKeys[1], value: testVals[1] }
+  ];
+  clearDB()
+    .then(() => new Promise((resolve, reject) =>
+      db.batch(ops, err => err ? reject(err) : resolve())))
+    .then(()=> fetchValues(testKeys))
+    .then(values => {
+      t.deepEqual(values, testVals, 'should be same values');
+      t.end();
     })
     .catch(err => {
       t.fail();

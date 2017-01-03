@@ -1,8 +1,9 @@
 import test from 'tape';
-import testDB, {clearDB, fetchPrefix, putPromise} from '../../../server/database';
+import testDB, {clearDB, fetchPrefix, putPromise, getPromise, initMock}
+  from '../../../server/database';
 import {ENTITY, STATE} from '../../../server/key-utils';
 import ImageManager from '../../../server/images/models';
-import {mockImages} from '../../../server/database-mock-data';
+import {mockImages, mockItems} from '../../../server/database-mock-data';
 test('fetch prefix ImageManager', t => {
   const prefix = 'this-is-prefix';
   const keys = [
@@ -97,4 +98,22 @@ test('make simple image objects(ImageManager.getImageObjList)', t => {
     `should be same length: ${result.length}`);
   t.end();
 });
+
+test('getImageKeys', t => {
+  const testItem = mockItems[0];
+  clearDB()
+    .then(initMock)
+    .then(()=> ImageManager.getImageKeys(testItem.key))
+    .then(imageKeys => {
+      t.ok(imageKeys.length, 'not empty imageKeys array');
+      return Promise.all(imageKeys.map(
+        imageKey => getPromise(imageKey).then(imageVal => t.equal(imageVal.key, imageKey,
+          'should be same key of image value'))));
+    }).then(() => t.end())
+    .catch(err => {
+      t.fail();
+      t.end(err);
+    });
+});
+
 

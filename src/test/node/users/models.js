@@ -400,3 +400,19 @@ test('delete created post(CreatedPostManager.deletePost)', t => {
     t.end(err);
   });
 });
+test('fetchUserProfiles()', t => {
+  const testObjs = mockUsers.map(user => ({userKey: user.key}));
+  clearDB().then(initMock).then(() => {
+    UserManager.fetchUserProfiles(testObjs).then(fetchedVals => {
+      t.equal(fetchedVals.length, testObjs.length, 'should be same length');
+      fetchedVals.map((value, idx) => {
+        t.equal(testObjs[idx].userKey, value.user.key, 'should be same key');
+        t.ok(value.user, 'has own user property');
+      });
+      t.end();
+    });
+  }).catch(err => {
+    t.fail();
+    t.end(err);
+  });
+});

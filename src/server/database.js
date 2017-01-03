@@ -58,6 +58,7 @@ export const fetchPrefix = (prefix, cb) => {
     return cb(null, values);
   });
 };
+export const fetchValues = (keys = []) => Promise.all(keys.map(getPromise));
 
 export const fetchKeys = (prefix, cb) => {
   const keys = [];

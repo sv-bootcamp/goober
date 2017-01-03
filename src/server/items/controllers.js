@@ -105,7 +105,7 @@ export default {
     db.get(key, (errGet, value) => {
       if (errGet) {
         if (errGet.notFound) {
-          cb(new APIError(new NotFoundError, 400));
+          cb(new APIError(new NotFoundError(), 400));
           return;
         }
         cb(new APIError(errGet));

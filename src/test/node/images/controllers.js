@@ -1,10 +1,10 @@
 import test from 'tape';
-import {STATE, KeyUtils, ENTITY} from '../../../server/key-utils';
+import {KeyUtils, ENTITY} from '../../../server/key-utils';
 import testDB, {clearDB, initMock, getPromise} from '../../../server/database';
 import controller from '../../../server/images/controllers';
 import httpMocks from 'node-mocks-http';
 import {S3Utils} from '../../../server/aws-s3';
-import {mockImages, mockImageIndexies, mockCreatedPosts, mockUsers}
+import {mockItems, mockImages, mockImageIndexies, mockCreatedPosts, mockUsers}
   from '../../../server/database-mock-data';
 
 const MockImageA = {
@@ -19,46 +19,32 @@ const MockImageB = {
   caption: 'Hello World'
 };
 test('get all image of an item', t => {
-  const itemKey = 'item-BlaBla';
-  const imageIndexKey = `image-${STATE.ALIVE}-${itemKey}-${MockImageA.key}`;
-
-  clearDB().then(() => {
-    const opts = [];
-    opts.push({
-      type: 'put',
-      key: imageIndexKey,
-      value: {
-        key: MockImageA.key
+  const itemKey = mockItems[0].key;
+  clearDB().then(initMock).then(() => {
+    const req = httpMocks.createRequest({
+      method: 'GET',
+      url: '/api/images',
+      query: {
+        item: itemKey
       }
     });
-    opts.push({
-      type: 'put',
-      key: MockImageA.key,
-      value: MockImageA
-    });
+    const res = httpMocks.createResponse();
 
-    testDB.batch(opts, (err) => {
-      if (err) {
-        t.fail('database batch error');
-        t.end();
-        return;
-      }
-      const req = httpMocks.createRequest({
-        method: 'GET',
-        url: '/api/images',
-        query: {
-          item: itemKey
-        }
+    controller.getAll(req, res, () => {
+      const values = res._getData().values;
+      t.ok(values.length, 'not empty values array');
+      values.map(value => {
+        t.equal(value.itemKey, itemKey, 'item key should be equal');
+        t.ok(value.caption, 'no caption field');
+        t.ok(value.key, 'no key field');
+        t.ok(value.user, 'no user field');
+        t.ok(value.userKey, 'no userKey field');
+        t.ok(value.createdDate, 'no createdDate field');
+        t.ok(value.user.key, 'no user.key field');
+        t.ok(value.user.name, 'no user.name field');
+        t.ok(value.user.email, 'no user.email field');
       });
-      const res = httpMocks.createResponse();
-
-      controller.getAll(req, res, () => {
-        const value = res._getData().values;
-        t.equal(value[0].caption, MockImageA.caption, 'should be same caption');
-        t.equal(value[0].key, MockImageA.key, 'should be same key');
-        t.equal(typeof (value[0].url), 'string', 'should be same type');
-        t.end();
-      });
+      t.end();
     });
   });
 });

@@ -37,6 +37,14 @@ const UserManager = {
         };
       });
   },
+  fetchUserProfiles: (values = []) => {
+    return Promise.all(values.map(value => {
+      return UserManager.getUserProfile(value.userKey).then(userValue => {
+        value.user = userValue;
+        return value;
+      });
+    }));
+  },
   addAnonymousUser: ({secret, name = ANONYMOUS_USER_DEFAULT.NAME}) => {
     const userKey = UserManager.genUserKey();
     const userValue = {

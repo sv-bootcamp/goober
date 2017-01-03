@@ -2,6 +2,7 @@ import test from 'tape';
 import {S3Connector, IMAGE_SIZE_PREFIX} from '../../server/aws-s3';
 import fs from 'fs';
 import config from 'config';
+import {mockImages} from '../../server/database-mock-data';
 
 test('test aws instance', t => {
   fs.readFile(`${config.awsConfig}`, 'utf8', (err, json) => {
@@ -148,5 +149,16 @@ test('test get image urls', t => {
   for (let i = 0; i < result.length; i = i + 1) {
     t.equal(result[i], expected.imageUrls[i], 'should be same image urls');
   }
+  t.end();
+});
+test('fetchImageUrls()', t =>{
+  const conn = new S3Connector();
+  const testObjs = mockImages.map(image => image.value);
+  const values = conn.fetchImageUrls(testObjs);
+  t.equal(testObjs.length, values.length, 'should be same length');
+  values.map((value, idx) => {
+    t.ok(value.imageUrl, 'has own imageUrl property');
+    t.equal(value.key, testObjs[idx].key, 'should be key');
+  });
   t.end();
 });
