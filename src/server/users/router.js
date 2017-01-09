@@ -229,7 +229,7 @@ router.post('/', requiredPermission(PERMISSION.W), controller.post);
  * @apiParam {String} itemKey itemKey
  * @apiParamExample {json} Request-Example:
  *      {
- *          "itemKey"     : "item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004",
+ *          "itemKey"     : "item-8523910540001-dd3860f5-b82e-473b-1234-ead0f190b004"
  *      }
  *
  * @apiSuccess {String} message success
@@ -262,7 +262,7 @@ router.post('/savedposts', requiredPermission(PERMISSION.R), controller.addSaved
  * @apiParam {String} itemKey item key
  * @apiParamExample {json} Request-Example:
  *      {
- *          "itemKey"       : 'item-8523193492003-2d5f3460-d53a-42d3-a138-ae201070f27c',
+ *          "itemKey"       : 'item-8523193492003-2d5f3460-d53a-42d3-a138-ae201070f27c'
  *      }
  *
  * @apiSuccess {String} message message
@@ -270,7 +270,7 @@ router.post('/savedposts', requiredPermission(PERMISSION.R), controller.addSaved
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "message": "success",
+ *       "message": "success"
  *     }
  * @apiError (Error 500) DatabaseError Internal error occured in the database.
  *
