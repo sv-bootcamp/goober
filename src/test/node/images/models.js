@@ -3,6 +3,7 @@ import testDB, {clearDB, fetchPrefix, putPromise, getPromise, initMock}
   from '../../../server/database';
 import {ENTITY, STATE} from '../../../server/key-utils';
 import ImageManager from '../../../server/images/models';
+import {IMAGE_SIZE_PREFIX} from '../../../server/aws-s3';
 import {mockImages, mockItems} from '../../../server/database-mock-data';
 test('fetch prefix ImageManager', t => {
   const prefix = 'this-is-prefix';
@@ -116,4 +117,23 @@ test('getImageKeys', t => {
     });
 });
 
+test('ImageManager.getImageUrls', t => {
+  const itemKey = mockItems[0].key;
+  const isThumbnail = true;
+  clearDB()
+    .then(initMock)
+    .then(()=>ImageManager.getImageUrls({itemKey, isThumbnail}))
+    .then(urls => {
+      t.ok(urls.length, 'not empty urls array');
+      urls.map(url => {
+        t.equal(url.startsWith('url-of-'), true, 'should start with prefix');
+        t.equal(url.includes(IMAGE_SIZE_PREFIX.THUMBNAIL), isThumbnail,
+          `isThumbnail : should be ${isThumbnail}`);
+      });
+      t.end();
+    }).catch(err => {
+      t.fail();
+      t.end(err);
+    });
+});
 

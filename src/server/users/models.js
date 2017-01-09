@@ -318,21 +318,17 @@ export class SavedPostManager {
         return 0;
       });
       return Promise.all(
-        posts.map(post => getPromise(post.key).then(item => new Promise((resolve, reject) => {
+        posts.map(post => getPromise(post.key).then(item => new Promise(resolve => {
           if (targetStates.indexOf(item.state) === -1) {
             return resolve();
           }
-          return ImageManager.getImageUrls({itemKey: item.key, isThumbnail: true},
-            (err, imageUrls) => {
-              if (err) {
-                return reject(err);
-              }
-              item.imageUrls = imageUrls;
-              return resolve(item);
-            });
+          return ImageManager.getImageUrls({itemKey: item.key, isThumbnail: true}).then(urls => {
+            item.imageUrls = urls;
+            return resolve(item);
+          });
         })))
       ).then(items => cb(null, items.filter(item => item)));
-    }).catch(err => cb(err));
+    }).catch(cb);
   }
   static deletePost(userKey, itemKey) {
     const idxKey = `${ENTITY.SAVED_POST}-${STATE.ALIVE}-${userKey}-${itemKey}`;
