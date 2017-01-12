@@ -310,7 +310,7 @@ export class SavedPostManager {
       STATE_STRING[STATE.EXPIRED]
     ];
     return UserManager.getPostKeys(ENTITY.SAVED_POST, userKey)
-    .then(posts=>{
+    .then(posts => {
       // Descending sort saved posts using createdTime field.
       posts.sort((a, b) => {
         if (a.createdTime > b.createdTime) return -1; // eslint-disable-line curly
