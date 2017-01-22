@@ -185,9 +185,10 @@ test('get by area from database', t => {
     ]
   };
 
+  // sorting (leveldb sort data internally in lexical order)
   expected.items.sort((a, b) => {
-    if (a < b) return -1; // eslint-disable-line curly
-    else if (a > b) return 1; // eslint-disable-line curly
+    if (a.key < b.key) return -1; // eslint-disable-line curly
+    else if (a.key > b.key) return 1; // eslint-disable-line curly
     return 0;
   });
   const req = httpMocks.createRequest({
