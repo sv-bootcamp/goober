@@ -39,7 +39,22 @@ export default {
         });
       }))))
       .then(itemss => itemss.filter((item) => item !== null))
-        .then(console.log)
+      // get images
+      .then(itemss => Promise.all(itemss.map(item => new Promise((resolve, reject) => {
+        const imageIndexKey = `${ENTITY.IMAGE}-${STATE.ALIVE}-${item.key}-`;
+        fetchPrefix(imageIndexKey, (err, images) => {
+          if (err) reject(err); // eslint-disable-line curly
+          // TODO : refactoring, It does not seem good accessing S3Connector directly in controller.
+          if (isThumbnail === 'true') {
+            item.imageUrls = s3Connector.getPrefixedImageUrls(images, IMAGE_SIZE_PREFIX.THUMBNAIL);
+          } else {
+            item.imageUrls = s3Connector.getImageUrls(images);
+          }
+          resolve(item);
+        });
+      }).then((valueList) => {
+        console.log(valueList);
+      }))))
       .catch(err => {
         console.log('err');
         console.log(err.key);
