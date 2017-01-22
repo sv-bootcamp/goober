@@ -1,4 +1,4 @@
-import db, {fetchPrefix} from '../database';
+import db, {fetchPrefix, getPromise} from '../database';
 import {APIError, NotFoundError} from '../ErrorHandler';
 import {KeyUtils, STATE, ENTITY, CATEGORY} from '../key-utils';
 import ItemManager, {STATE_STRING} from './models';
@@ -16,6 +16,35 @@ export default {
       const promises = [];
       const items = [];
       const s3Connector = new S3Connector();
+
+      // get item-alive (index)
+      const proms = keys.map(key => new Promise((resolve, reject) => {
+        const itemIndexKey = `${ENTITY.ITEM}-${STATE.ALIVE}-${key}-`;
+        fetchPrefix(itemIndexKey, (err, list) => {
+          return err ? reject(err) : resolve(list);
+        });
+      }));
+      // get item value
+      Promise.all(proms).then(lists => {
+        return lists.reduce((result, list) => {
+          console.log(result);
+          return result.concat(list);
+        });
+      })
+      .then(values => Promise.all(values.map(value => getPromise(value.key))))
+      // valid checking
+      .then(itemss => Promise.all(itemss.map(item => new Promise(resolve => {
+        ItemManager.validChecker(item, valid => {
+          return valid ? resolve(item) : resolve(null);
+        });
+      }))))
+      .then(itemss => itemss.filter((item) => item !== null))
+        .then(console.log)
+      .catch(err => {
+        console.log('err');
+        console.log(err.key);
+      });
+
       for (const key of keys) {
         promises.push(new Promise((resolve, reject) => {
           // @TODO we have to limit the number of items.
