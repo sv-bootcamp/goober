@@ -27,13 +27,13 @@ export default {
         lists.reduce((result, list) => result.concat(list)))
       .then(values => Promise.all(values.map(value => getPromise(value.key))))
       // valid checking
-      .then(itemss => Promise.all(itemss.map(item => new Promise(resolve => {
+      .then(items => Promise.all(items.map(item => new Promise(resolve => {
         ItemManager.validChecker(item, valid =>
           valid ? resolve(item) : resolve(null));
       }))))
-      .then(itemss => itemss.filter((item) => item !== null))
+      .then(items => items.filter((item) => item !== null))
       // get images
-      .then(itemss => Promise.all(itemss.map(item => new Promise((resolve, reject) => {
+      .then(items => Promise.all(items.map(item => new Promise((resolve, reject) => {
         const imageIndexKey = `${ENTITY.IMAGE}-${STATE.ALIVE}-${item.key}-`;
         fetchPrefix(imageIndexKey, (err, imageIndexes) => {
           if (err) reject(err); // eslint-disable-line curly
@@ -46,14 +46,14 @@ export default {
         });
       }))))
       // fill isSaved
-      .then(itemss => ItemManager.fillIsSaved(userKey, itemss))
-      .then(itemss => {
-        res.status(200).send({items: itemss});
+      .then(items => ItemManager.fillIsSaved(userKey, items))
+      .then(items => {
+        res.status(200).send({items});
         return cb();
       }).catch(err => {
         // TODO: no more working code since 20170122, Check out usage and refacoring or remove it
         // if (err.notFound) {
-        //   res.status(200).send({itemss});
+        //   res.status(200).send({items});
         //   return cb();
         // }
         return cb(new APIError(err));
