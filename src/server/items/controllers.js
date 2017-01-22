@@ -13,8 +13,6 @@ export default {
       const precision = KeyUtils.calcPrecisionByZoom(Number(zoom));
       const keys = KeyUtils.getKeysByArea(lat, lng, precision);
       const {userKey} = req.headers;
-      // const promises = [];
-      // const items = [];
       const s3Connector = new S3Connector();
 
       // get item-alive (index)
@@ -60,72 +58,6 @@ export default {
         // }
         return cb(new APIError(err));
       });
-
-      // for (const key of keys) {
-      //   promises.push(new Promise((resolve, reject) => {
-      //     // @TODO we have to limit the number of items.
-      //     const imagePromises = [];
-      //     db.createReadStream({
-      //       start: `${ENTITY.ITEM}-${STATE.ALIVE}-${key}-`,
-      //       end: `${ENTITY.ITEM}-${STATE.ALIVE}-${key}-\xFF`
-      //     }).on('data', (data) => {
-      //       db.get(data.value.key, (err, refData) => {
-      //         if (err) {
-      //           reject(err);
-      //           return;
-      //         }
-      //         ItemManager.validChecker(refData, (valid) => {
-      //           if (valid) {
-      //             imagePromises.push(new Promise((imageResolve, imageReject) => {
-      //               const images = [];
-      //               db.createReadStream({
-      //                 start: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-`,
-      //                 end: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-\xFF`
-      //               }).on('data', (imageIndex) => {
-      //                 images.push(imageIndex.value.key);
-      //               }).on('error', (imageErr) => {
-      //                 imageReject(imageErr);
-      //               }).on('close', () => {
-      //                 if (isThumbnail === 'true') {
-      //                   refData.imageUrls =
-      //                     s3Connector.getPrefixedImageUrls(images, IMAGE_SIZE_PREFIX.THUMBNAIL);
-      //                 } else {
-      //                   refData.imageUrls = s3Connector.getImageUrls(images);
-      //                 }
-      //                 items.push(refData);
-      //                 imageResolve();
-      //               });
-      //             }));
-      //           }
-      //         });
-      //       });
-      //     }).on('error', (err) => {
-      //       reject(err);
-      //     }).on('close', () => {
-      //       Promise.all(imagePromises).then(()=>{
-      //         resolve();
-      //       }).catch((err)=>{
-      //         reject(err);
-      //       });
-      //     });
-      //   }));
-      // }
-      // Promise.all(promises)
-      // .then(() => {
-      //   return ItemManager.fillIsSaved(userKey, items);
-      // })
-      // .then(() => {
-      //   res.status(200).send({
-      //     items
-      //   });
-      //   return cb();
-      // }).catch((err) => {
-      //   if (err.notFound) {
-      //     res.status(200).send({items});
-      //     return cb();
-      //   }
-      //   return cb(new APIError(err));
-      // });
       return;
     }
     const items = [];
