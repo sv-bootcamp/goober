@@ -25,31 +25,25 @@ export default {
         });
       }));
       // get item value
-      Promise.all(proms).then(lists => {
-        return lists.reduce((result, list) => {
-          console.log(result);
-          return result.concat(list);
-        });
-      })
+      Promise.all(proms).then(lists =>
+        lists.reduce((result, list) => result.concat(list)))
       .then(values => Promise.all(values.map(value => getPromise(value.key))))
       // valid checking
       .then(itemss => Promise.all(itemss.map(item => new Promise(resolve => {
-        ItemManager.validChecker(item, valid => {
-          return valid ? resolve(item) : resolve(null);
-        });
+        ItemManager.validChecker(item, valid =>
+          valid ? resolve(item) : resolve(null))
       }))))
       .then(itemss => itemss.filter((item) => item !== null))
       // get images
       .then(itemss => Promise.all(itemss.map(item => new Promise((resolve, reject) => {
         const imageIndexKey = `${ENTITY.IMAGE}-${STATE.ALIVE}-${item.key}-`;
-        fetchPrefix(imageIndexKey, (err, images) => {
+        fetchPrefix(imageIndexKey, (err, imageIndexes) => {
           if (err) reject(err); // eslint-disable-line curly
+          const imageKeys = imageIndexes.map(index => index.key);
           // TODO : refactoring, It does not seem good accessing S3Connector directly in controller.
-          if (isThumbnail === 'true') {
-            item.imageUrls = s3Connector.getPrefixedImageUrls(images, IMAGE_SIZE_PREFIX.THUMBNAIL);
-          } else {
-            item.imageUrls = s3Connector.getImageUrls(images);
-          }
+          item.imageUrls = isThumbnail === 'true' ?
+            s3Connector.getPrefixedImageUrls(imageKeys, IMAGE_SIZE_PREFIX.THUMBNAIL) :
+            s3Connector.getImageUrls(imageKeys);
           resolve(item);
         });
       }).then((valueList) => {
