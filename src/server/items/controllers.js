@@ -46,13 +46,20 @@ export default {
             s3Connector.getImageUrls(imageKeys);
           resolve(item);
         });
-      }).then((valueList) => {
-        console.log(valueList);
-      }))))
-      .catch(err => {
-        console.log('err');
-        console.log(err.key);
+      })
+      // fill isSaved
+      .then(itemss => ItemManager.fillIsSaved(userKey, itemss))
+      .then(() => {
+        res.status(200).send({items});
+        return cb();
+      }).catch(err => {
+        if (err.notFound) {
+          res.status(200).send({items});
+          return cb();
+        }
+        return cb(new APIError(err));
       });
+      // return;
 
       for (const key of keys) {
         promises.push(new Promise((resolve, reject) => {
