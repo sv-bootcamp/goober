@@ -18,9 +18,8 @@ export default {
       // get item-alive (index)
       const proms = keys.map(key => new Promise((resolve, reject) => {
         const itemIndexKey = `${ENTITY.ITEM}-${STATE.ALIVE}-${key}-`;
-        fetchPrefix(itemIndexKey, (err, list) => {
-          return err ? reject(err) : resolve(list);
-        });
+        fetchPrefix(itemIndexKey, (err, list) =>
+          err ? reject(err) : resolve(list));
       }));
       // get item value
       Promise.all(proms).then(lists =>
