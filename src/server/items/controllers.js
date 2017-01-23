@@ -16,14 +16,13 @@ export default {
       const s3Connector = new S3Connector();
 
       // get item-alive (index)
-      const proms = keys.map(key => new Promise((resolve, reject) => {
+      Promise.all(keys.map(key => new Promise((resolve, reject) => {
         const itemIndexKey = `${ENTITY.ITEM}-${STATE.ALIVE}-${key}-`;
         fetchPrefix(itemIndexKey, (err, list) =>
           err ? reject(err) : resolve(list));
-      }));
+      })))
       // get item value
-      Promise.all(proms).then(lists =>
-        lists.reduce((result, list) => result.concat(list)))
+      .then(lists => lists.reduce((result, list) => result.concat(list)))
       .then(values => Promise.all(values.map(value => getPromise(value.key))))
       // valid checking
       .then(items => Promise.all(items.map(item => new Promise(resolve => {
