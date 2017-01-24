@@ -4,29 +4,22 @@ import {S3Connector, IMAGE_SIZE_PREFIX} from '../aws-s3';
 
 export default class ImageManager {
   // get all image Urls of item
-  static getImageUrls({itemKey, isThumbnail = false}, cb) {
-    const keys = [];
+  static getImageUrls({itemKey, isThumbnail = false}) {
     const checkState = [STATE.ALIVE, STATE.EXPIRED];
-    Promise.all(checkState.map((state) => {
+    return Promise.all(checkState.map(state => {
       return new Promise((resolve, reject) => {
         const prefix = KeyUtils.getPrefix(ENTITY.IMAGE, state, itemKey);
-        fetchPrefix(prefix, (err, data) => {
-          if (err) {
-            return reject(err);
-          }
-          data.map((value) => {
-            keys.push(value.key);
-          });
-          return resolve();
-        });
+        fetchPrefix(prefix, (err, data) => err ?
+          reject(err) : resolve(data.map(value => value.key)));
       });
-    })).then(() => {
+    })).then(arrs => arrs.reduce((result, key) => result.concat(key)))
+    .then(keys => {
       const s3Connector = new S3Connector();
       const urls = (isThumbnail) ?
         s3Connector.getPrefixedImageUrls(keys, IMAGE_SIZE_PREFIX.THUMBNAIL) :
         s3Connector.getImageUrls(keys);
-      return cb(null, urls);
-    }).catch(cb);
+      return urls;
+    });
   }
 
  /**
@@ -87,12 +80,12 @@ export default class ImageManager {
           err ? reject(err) : resolve(data.map(value => value.key)));
       });
     })).then(keyList => keyList.reduce((result, key) => result.concat(key)))
-      .then(keys => {
-        return keys.sort((a, b) => {
-          if (a.Key < b.key) return -1; // eslint-disable-line curly
-          if (b.key < a.key) return 1; // eslint-disable-line curly
-          return 0;
-        });
+    .then(keys => {
+      return keys.sort((a, b) => {
+        if (a.Key < b.key) return -1; // eslint-disable-line curly
+        if (b.key < a.key) return 1; // eslint-disable-line curly
+        return 0;
+      });
     });
   }
 }

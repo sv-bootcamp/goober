@@ -305,53 +305,30 @@ export class SavedPostManager {
     return putPromise(key, value);
   }
   static getPosts(userKey, cb) {
-    const imagePromises = [];
-    const items = [];
-    const TARGET_STATE = [
+    const targetStates = [
       STATE_STRING[STATE.ALIVE],
       STATE_STRING[STATE.EXPIRED]
     ];
-    UserManager.getPostKeys(ENTITY.SAVED_POST, userKey)
-    .then((posts)=>{
+    return UserManager.getPostKeys(ENTITY.SAVED_POST, userKey)
+    .then(posts => {
       // Descending sort saved posts using createdTime field.
       posts.sort((a, b) => {
         if (a.createdTime > b.createdTime) return -1; // eslint-disable-line curly
         if (b.createdTime > a.createdTime) return 1; // eslint-disable-line curly
         return 0;
       });
-      posts.map((post)=>{
-        imagePromises.push(new Promise((resolve, reject) => {
-          db.get(post.key, (err, item) => {
-            return (err) ? reject(err) : resolve(item);
+      return Promise.all(
+        posts.map(post => getPromise(post.key).then(item => new Promise(resolve => {
+          if (targetStates.indexOf(item.state) === -1) {
+            return resolve();
+          }
+          return ImageManager.getImageUrls({itemKey: item.key, isThumbnail: true}).then(urls => {
+            item.imageUrls = urls;
+            return resolve(item);
           });
-        }).then((item)=>{
-          items.push(item);
-          return new Promise((resolve, reject) => {
-            if (TARGET_STATE.indexOf(item.state) === -1) {
-              resolve();
-              return;
-            }
-            ImageManager.getImageUrls({itemKey: item.key, isThumbnail: true}, (err, imageUrls) => {
-              if (err) {
-                reject(err);
-                return;
-              }
-              item.imageUrls = imageUrls;
-              resolve();
-            });
-          });
-        }).catch((err) => {
-          return err;
-        }));
-      });
-      Promise.all(imagePromises).then(() => {
-        cb(null, items);
-      }).catch((err) => {
-        return err;
-      });
-    }).catch((err)=>{
-      return cb(err);
-    });
+        })))
+      ).then(items => cb(null, items.filter(item => item)));
+    }).catch(cb);
   }
   static deletePost(userKey, itemKey) {
     const idxKey = `${ENTITY.SAVED_POST}-${STATE.ALIVE}-${userKey}-${itemKey}`;
