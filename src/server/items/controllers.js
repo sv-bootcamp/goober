@@ -1,4 +1,4 @@
-import db, {fetchPrefix} from '../database';
+import db, {fetchPrefix, getPromise} from '../database';
 import {APIError, NotFoundError} from '../ErrorHandler';
 import {KeyUtils, STATE, ENTITY, CATEGORY} from '../key-utils';
 import ItemManager, {STATE_STRING} from './models';
@@ -13,72 +13,47 @@ export default {
       const precision = KeyUtils.calcPrecisionByZoom(Number(zoom));
       const keys = KeyUtils.getKeysByArea(lat, lng, precision);
       const {userKey} = req.headers;
-      const promises = [];
-      const items = [];
       const s3Connector = new S3Connector();
-      for (const key of keys) {
-        promises.push(new Promise((resolve, reject) => {
-          // @TODO we have to limit the number of items.
-          const imagePromises = [];
-          db.createReadStream({
-            start: `${ENTITY.ITEM}-${STATE.ALIVE}-${key}-`,
-            end: `${ENTITY.ITEM}-${STATE.ALIVE}-${key}-\xFF`
-          }).on('data', (data) => {
-            db.get(data.value.key, (err, refData) => {
-              if (err) {
-                reject(err);
-                return;
-              }
-              ItemManager.validChecker(refData, (valid) => {
-                if (valid) {
-                  imagePromises.push(new Promise((imageResolve, imageReject) => {
-                    const images = [];
-                    db.createReadStream({
-                      start: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-`,
-                      end: `${ENTITY.IMAGE}-${STATE.ALIVE}-${refData.key}-\xFF`
-                    }).on('data', (imageIndex) => {
-                      images.push(imageIndex.value.key);
-                    }).on('error', (imageErr) => {
-                      imageReject(imageErr);
-                    }).on('close', () => {
-                      if (isThumbnail === 'true') {
-                        refData.imageUrls =
-                          s3Connector.getPrefixedImageUrls(images, IMAGE_SIZE_PREFIX.THUMBNAIL);
-                      } else {
-                        refData.imageUrls = s3Connector.getImageUrls(images);
-                      }
-                      items.push(refData);
-                      imageResolve();
-                    });
-                  }));
-                }
-              });
-            });
-          }).on('error', (err) => {
-            reject(err);
-          }).on('close', () => {
-            Promise.all(imagePromises).then(()=>{
-              resolve();
-            }).catch((err)=>{
-              reject(err);
-            });
-          });
-        }));
-      }
-      Promise.all(promises)
-      .then(() => {
-        return ItemManager.fillIsSaved(userKey, items);
-      })
-      .then(() => {
-        res.status(200).send({
-          items
+
+      // get item-alive (index)
+      Promise.all(keys.map(key => new Promise((resolve, reject) => {
+        const itemIndexKey = `${ENTITY.ITEM}-${STATE.ALIVE}-${key}-`;
+        fetchPrefix(itemIndexKey, (err, list) =>
+          err ? reject(err) : resolve(list));
+      })))
+      // get item value
+      .then(lists => lists.reduce((result, list) => result.concat(list)))
+      .then(values => Promise.all(values.map(value => getPromise(value.key))))
+      // valid checking
+      .then(items => Promise.all(items.map(item => new Promise(resolve => {
+        ItemManager.validChecker(item, valid =>
+          valid ? resolve(item) : resolve(null));
+      }))))
+      .then(items => items.filter(item => item !== null))
+      // get images
+      .then(items => Promise.all(items.map(item => new Promise((resolve, reject) => {
+        const imageIndexKey = `${ENTITY.IMAGE}-${STATE.ALIVE}-${item.key}-`;
+        fetchPrefix(imageIndexKey, (err, imageIndexes) => {
+          if (err) reject(err); // eslint-disable-line curly
+          const imageKeys = imageIndexes.map(index => index.key);
+          // TODO : refactoring, It does not seem good accessing S3Connector directly in controller.
+          item.imageUrls = isThumbnail === 'true' ?
+            s3Connector.getPrefixedImageUrls(imageKeys, IMAGE_SIZE_PREFIX.THUMBNAIL) :
+            s3Connector.getImageUrls(imageKeys);
+          resolve(item);
         });
+      }))))
+      // fill isSaved
+      .then(items => ItemManager.fillIsSaved(userKey, items))
+      .then(items => {
+        res.status(200).send({items});
         return cb();
-      }).catch((err) => {
-        if (err.notFound) {
-          res.status(200).send({items});
-          return cb();
-        }
+      }).catch(err => {
+        // TODO: no more working code since 20170122, Check out usage and refacoring or remove it
+        // if (err.notFound) {
+        //   res.status(200).send({items});
+        //   return cb();
+        // }
         return cb(new APIError(err));
       });
       return;

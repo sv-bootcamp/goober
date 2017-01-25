@@ -184,6 +184,13 @@ test('get by area from database', t => {
       }
     ]
   };
+
+  // sorting (leveldb sort data internally in lexical order)
+  expected.items.sort((a, b) => {
+    if (a.key < b.key) return -1; // eslint-disable-line curly
+    else if (a.key > b.key) return 1; // eslint-disable-line curly
+    return 0;
+  });
   const req = httpMocks.createRequest({
     method: 'GET',
     url: '/items?lat=37.768696&lng=-122.419495&zoom=14'
@@ -193,14 +200,11 @@ test('get by area from database', t => {
     ItemController.getAll(req, res, () => {
       t.equal(res.statusCode, expected.status, 'should be same status');
       const items = res._getData().items;
-      if (items.length === 0) {
-        t.fail('respone data is empty');
-      }
-      for (let j = 0; j < items.length; j = j + 1) {
-        t.equal(items[j].id, expected.items[j].id, 'should be same id');
-        t.equal(items[j].imageUrls.length, expected.items[j].imageUrls.length,
-          'should be same length');
-      }
+
+      expected.items.map((item, i) => {
+        t.equal(items[i].id, item.id, 'should be same id');
+        t.equal(items[i].imageUrls.length, item.imageUrls.length, 'should be same length');
+      });
       t.end();
     });
   });
