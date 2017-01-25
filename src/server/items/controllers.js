@@ -29,7 +29,7 @@ export default {
         ItemManager.validChecker(item, valid =>
           valid ? resolve(item) : resolve(null));
       }))))
-      .then(items => items.filter((item) => item !== null))
+      .then(items => items.filter(item => item !== null))
       // get images
       .then(items => Promise.all(items.map(item => new Promise((resolve, reject) => {
         const imageIndexKey = `${ENTITY.IMAGE}-${STATE.ALIVE}-${item.key}-`;
