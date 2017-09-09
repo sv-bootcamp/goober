@@ -21,6 +21,16 @@ Ref: http://keepachangelog.com/en/0.3.0/
 
 ### goober v1 
 
+#### [1.0.12] - 2017-02-13
+
+- Refactored item-get (#173)
+- Fixed checking state error in savedPosts/get (#171)
+- Updated gitignore (#172)
+- Images/get all images (#167)
+- Edited error handler (#168) 
+- Refactoring unit test (#166)
+
+
 #### [1.0.11] - 2016-12-27
 
 - Edited addFacebookUser (#165)
